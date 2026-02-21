@@ -44,3 +44,6 @@
 ## Tests
 - [x] Vitest: immobilien CRUD (plan.get, immobilien.list, immobilien.create)
 - [x] Vitest: auth.logout
+
+## Bugfixes
+- [x] Exposé-PDF-Export reparieren (PDF-Ausgabe funktioniert nicht)

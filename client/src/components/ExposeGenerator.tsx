@@ -1,6 +1,8 @@
 import { FormData, ProResults, formatEuro, formatProzent } from '@/lib/calculations';
+import { exportExposePDF } from '@/lib/pdfExport';
 import { Button } from '@/components/ui/button';
-import { Building2, MapPin, Euro, TrendingUp, Star, FileDown } from 'lucide-react';
+import { Building2, MapPin, Euro, TrendingUp, Star, FileDown, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
@@ -35,8 +37,19 @@ export function ExposeGenerator({ formData, results }: ExposeGeneratorProps) {
     { name: 'EK-Rendite', value: Math.max(0, results.eigenkapitalrendite), fill: '#7C3AED' },
   ];
 
-  const handleExport = () => {
-    toast.info('PDF-Export wird vorbereitet...', { description: 'Nutze den PDF-Export-Button für das vollständige Dokument.' });
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      await exportExposePDF(formData, results);
+      toast.success('Exposé-PDF exportiert!', { description: 'Das PDF wurde in deinen Downloads gespeichert.' });
+    } catch (e) {
+      console.error('Exposé PDF error:', e);
+      toast.error('PDF-Export fehlgeschlagen', { description: 'Bitte versuche es erneut.' });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -46,9 +59,12 @@ export function ExposeGenerator({ formData, results }: ExposeGeneratorProps) {
           <Building2 className="w-4 h-4 text-blue-600" />
           <h3 className="font-display font-bold text-sm">Exposé-Vorschau</h3>
         </div>
-        <Button size="sm" variant="outline" className="h-8 text-xs" onClick={handleExport}>
-          <FileDown className="w-3.5 h-3.5 mr-1.5" />
-          Als PDF
+        <Button size="sm" variant="outline" className="h-8 text-xs" onClick={handleExport} disabled={isExporting}>
+          {isExporting
+            ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+            : <FileDown className="w-3.5 h-3.5 mr-1.5" />
+          }
+          {isExporting ? 'Wird erstellt...' : 'Als PDF exportieren'}
         </Button>
       </div>
 
