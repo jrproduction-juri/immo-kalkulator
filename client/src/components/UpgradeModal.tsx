@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { usePro } from '@/contexts/ProContext';
-import { Check, Lock, Zap, FileText, Mail, Building2, BarChart3, X } from 'lucide-react';
+import { Check, Lock, Zap, FileText, Mail, Building2, BarChart3, X, ArrowRight } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 const PRO_FEATURES = [
   { icon: BarChart3, text: 'Vollständige Berechnungen & erweiterte Szenarien' },
@@ -13,7 +14,13 @@ const PRO_FEATURES = [
 ];
 
 export function UpgradeModal() {
-  const { showUpgradeModal, setShowUpgradeModal, activatePro } = usePro();
+  const { showUpgradeModal, setShowUpgradeModal } = usePro();
+  const [, navigate] = useLocation();
+
+  const handleUpgrade = () => {
+    setShowUpgradeModal(false);
+    navigate('/pricing');
+  };
 
   return (
     <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
@@ -22,9 +29,7 @@ export function UpgradeModal() {
         {/* Header */}
         <div
           className="relative px-8 pt-8 pb-6 text-white"
-          style={{
-            background: 'linear-gradient(135deg, #0A2540 0%, #1565C0 100%)',
-          }}
+          style={{ background: 'linear-gradient(135deg, #0A2540 0%, #1565C0 100%)' }}
         >
           <button
             onClick={() => setShowUpgradeModal(false)}
@@ -65,22 +70,22 @@ export function UpgradeModal() {
           {/* Pricing */}
           <div className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100">
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-display font-bold text-blue-900">29 €</span>
+              <span className="text-3xl font-display font-bold text-blue-900">ab 49 €</span>
               <span className="text-sm text-blue-600">einmalig</span>
             </div>
-            <p className="text-xs text-blue-600 mt-1">Lebenslanger Zugang · Keine Abo-Gebühren</p>
+            <p className="text-xs text-blue-600 mt-1">Basic, Pro oder Investor · Kein Abo-Zwang</p>
           </div>
 
           {/* CTA */}
           <Button
             className="w-full mt-4 h-12 text-base font-semibold btn-gradient"
-            onClick={activatePro}
+            onClick={handleUpgrade}
           >
-            <Zap className="w-4 h-4 mr-2" />
-            Jetzt Pro freischalten
+            <ArrowRight className="w-4 h-4 mr-2" />
+            Zur Preisübersicht
           </Button>
           <p className="text-center text-xs text-muted-foreground mt-3">
-            Demo: Klick aktiviert Pro direkt · Keine echte Zahlung
+            14 Tage Pro kostenlos testen · Keine Kreditkarte
           </p>
         </div>
       </DialogContent>

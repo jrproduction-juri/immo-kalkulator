@@ -14,6 +14,7 @@ interface InputFormProps {
 }
 
 const DEFAULT_DATA: FormData = {
+  art: 'etw',
   kaufpreis: 350000,
   wohnflaeche: 75,
   hausgeld: 280,
@@ -33,6 +34,8 @@ const DEFAULT_DATA: FormData = {
   szenarioSanierungEigennutzung: false,
   standort: '',
   highlights: '',
+  eigennutzungMonate: 0,
+  anzahlEinheiten: 1,
 };
 
 function FormSection({ title, icon: Icon, children, defaultOpen = true }: {
@@ -102,6 +105,23 @@ export function InputForm({ onCalculate, isCalculating }: InputFormProps) {
     <form onSubmit={handleSubmit} className="space-y-3">
       {/* Objekt */}
       <FormSection title="Objekt" icon={Building2}>
+        <FormField label="Immobilienart" info="Art der Immobilie beeinflusst Berechnungen und Steuerregeln." fullWidth>
+          <Select
+            value={data.art ?? 'etw'}
+            onValueChange={v => set('art', v)}
+          >
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="etw">Eigentumswohnung (ETW)</SelectItem>
+              <SelectItem value="mfh">Mehrfamilienhaus (MFH)</SelectItem>
+              <SelectItem value="efh">Einfamilienhaus (EFH)</SelectItem>
+              <SelectItem value="gewerbe">Gewerbeimmobilie</SelectItem>
+              <SelectItem value="neubau">Neubauprojekt</SelectItem>
+            </SelectContent>
+          </Select>
+        </FormField>
         <FormField label="Kaufpreis (€)" info="Der Kaufpreis der Immobilie ohne Nebenkosten. Nebenkosten (ca. 10,6%) werden automatisch berechnet.">
           <Input
             type="number"
@@ -248,6 +268,15 @@ export function InputForm({ onCalculate, isCalculating }: InputFormProps) {
             value={data.standort || ''}
             onChange={e => set('standort', e.target.value)}
             placeholder="z.B. München, Schwabing"
+            className="h-9 text-sm"
+          />
+        </FormField>
+        <FormField label="Eigennutzung (Monate)" info="Wie lange nutzt du die Immobilie selbst? Ab 24 Monaten Eigennutzung im Verkaufsjahr und den 2 Vorjahren ist der Verkauf steuerfrei (Spekulationssteuer = 0 €).">
+          <Input
+            type="number"
+            value={data.eigennutzungMonate || ''}
+            onChange={e => numInput('eigennutzungMonate', e.target.value)}
+            placeholder="0"
             className="h-9 text-sm"
           />
         </FormField>

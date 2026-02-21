@@ -5,6 +5,7 @@
 
 export interface FormData {
   // Objekt
+  art?: 'etw' | 'mfh' | 'efh' | 'gewerbe' | 'neubau';
   kaufpreis: number;
   wohnflaeche: number;
   hausgeld: number;
@@ -28,6 +29,10 @@ export interface FormData {
   // Standort (für Exposé)
   standort?: string;
   highlights?: string;
+  // Eigennutzung Steuerfreiheit
+  eigennutzungMonate?: number; // Monate der Eigennutzung
+  // MFH: Anzahl Einheiten
+  anzahlEinheiten?: number;
 }
 
 export interface FreeResults {
@@ -53,6 +58,8 @@ export interface FreeResults {
 }
 
 export interface ProResults extends FreeResults {
+  // Eigennutzung Steuerfreiheit
+  steuerfreierVerkaufMoeglich: boolean;
   // Erweiterte Kennzahlen
   eigenkapitalrendite: number;
   preisProQm: number;
@@ -340,8 +347,12 @@ export function berechneProResults(data: FormData): ProResults {
     lage: 'Mittel: Lageanalyse anhand lokaler Marktdaten empfohlen',
   };
 
+  // Eigennutzung Steuerfreiheit: mind. 24 Monate = steuerfrei
+  const steuerfreierVerkaufMoeglich = (data.eigennutzungMonate ?? 0) >= 24;
+
   return {
     ...freeResults,
+    steuerfreierVerkaufMoeglich,
     eigenkapitalrendite,
     preisProQm,
     vervielfaeltiger,

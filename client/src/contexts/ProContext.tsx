@@ -1,40 +1,56 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
 
 interface ProContextType {
   isPro: boolean;
-  activatePro: () => void;
-  deactivatePro: () => void;
+  isBasic: boolean;
+  isInvestor: boolean;
+  plan: string;
   showUpgradeModal: boolean;
   setShowUpgradeModal: (show: boolean) => void;
+  // Legacy für bestehende Komponenten
+  activatePro: () => void;
 }
 
 const ProContext = createContext<ProContextType>({
   isPro: false,
-  activatePro: () => {},
-  deactivatePro: () => {},
+  isBasic: false,
+  isInvestor: false,
+  plan: 'none',
   showUpgradeModal: false,
   setShowUpgradeModal: () => {},
+  activatePro: () => {},
 });
 
 export function ProProvider({ children }: { children: React.ReactNode }) {
-  const [isPro, setIsPro] = useState(() => {
-    return localStorage.getItem('immo_pro_status') === 'true';
-  });
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const { isAuthenticated } = useAuth();
+
+  // Plan aus der DB laden wenn eingeloggt
+  const planQuery = trpc.plan.get.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+
+  const plan = planQuery.data?.plan ?? 'none';
+  const isInvestor = plan === 'investor';
+  const isPro = plan === 'pro' || plan === 'trial' || isInvestor;
+  const isBasic = plan === 'basic' || isPro;
 
   const activatePro = () => {
-    setIsPro(true);
-    localStorage.setItem('immo_pro_status', 'true');
     setShowUpgradeModal(false);
   };
 
-  const deactivatePro = () => {
-    setIsPro(false);
-    localStorage.removeItem('immo_pro_status');
-  };
-
   return (
-    <ProContext.Provider value={{ isPro, activatePro, deactivatePro, showUpgradeModal, setShowUpgradeModal }}>
+    <ProContext.Provider value={{
+      isPro,
+      isBasic,
+      isInvestor,
+      plan,
+      showUpgradeModal,
+      setShowUpgradeModal,
+      activatePro,
+    }}>
       {children}
     </ProContext.Provider>
   );

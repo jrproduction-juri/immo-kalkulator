@@ -144,6 +144,15 @@ export function ProResultsPanel({ results }: ProResultsProps) {
             trend="up"
           />
         </MetricGrid>
+        {results.steuerfreierVerkaufMoeglich && (
+          <div className="mt-3 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-emerald-800">Steuerfreier Verkauf möglich</p>
+              <p className="text-xs text-emerald-600">Bei mind. 24 Monaten Eigennutzung im Verkaufsjahr und den 2 Vorjahren: Spekulationssteuer = 0 €</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Erweiterte Szenarien */}
