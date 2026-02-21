@@ -99,6 +99,7 @@ export function ProResultsPanel({ results }: ProResultsProps) {
             trend={results.eigenkapitalrendite >= 8 ? 'up' : results.eigenkapitalrendite >= 4 ? 'neutral' : 'down'}
             color={results.eigenkapitalrendite >= 8 ? 'success' : results.eigenkapitalrendite >= 4 ? 'warning' : 'danger'}
             highlight
+            infoKuerzel="EKR"
           />
           <MetricCard
             label="Cashflow nach Steuer"
@@ -113,6 +114,7 @@ export function ProResultsPanel({ results }: ProResultsProps) {
             value={`${formatZahl(results.preisProQm)} €`}
             size="sm"
             color="blue"
+            infoKuerzel="P/m²"
           />
           <MetricCard
             label="Vervielfältiger"
@@ -120,6 +122,7 @@ export function ProResultsPanel({ results }: ProResultsProps) {
             subValue="Kaufpreis / Jahreskaltmiete"
             size="sm"
             color={results.vervielfaeltiger <= 20 ? 'success' : results.vervielfaeltiger <= 30 ? 'warning' : 'danger'}
+            infoKuerzel="VV"
           />
         </MetricGrid>
       </div>
@@ -134,6 +137,7 @@ export function ProResultsPanel({ results }: ProResultsProps) {
             subValue="Steuerliche Abschreibung"
             size="sm"
             color="blue"
+            infoKuerzel="AfA"
           />
           <MetricCard
             label="Steuerersparnis / Jahr"
@@ -142,6 +146,7 @@ export function ProResultsPanel({ results }: ProResultsProps) {
             size="sm"
             color="success"
             trend="up"
+            infoKuerzel="SE"
           />
         </MetricGrid>
         {results.steuerfreierVerkaufMoeglich && (

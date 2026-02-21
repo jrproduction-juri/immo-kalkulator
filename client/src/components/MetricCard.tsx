@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { KennzahlInfoButton } from './KennzahlenLegende';
 
 interface MetricCardProps {
   label: string;
@@ -11,6 +12,8 @@ interface MetricCardProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   tooltip?: string;
+  /** Kürzel für automatischen Info-Button (z.B. 'BMR', 'CF', 'EKR') */
+  infoKuerzel?: string;
 }
 
 const colorMap = {
@@ -38,6 +41,7 @@ export function MetricCard({
   color = 'default',
   size = 'md',
   className,
+  infoKuerzel,
 }: MetricCardProps) {
   const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
   const trendColor = trend === 'up' ? 'text-emerald-500' : trend === 'down' ? 'text-red-500' : 'text-muted-foreground';
@@ -52,7 +56,10 @@ export function MetricCard({
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-medium text-muted-foreground leading-tight">{label}</p>
+        <div className="flex items-center gap-0.5 min-w-0">
+          <p className="text-xs font-medium text-muted-foreground leading-tight truncate">{label}</p>
+          {infoKuerzel && <KennzahlInfoButton kuerzel={infoKuerzel} />}
+        </div>
         {trend && (
           <TrendIcon className={cn('w-3.5 h-3.5 shrink-0 mt-0.5', trendColor)} />
         )}

@@ -47,3 +47,13 @@
 
 ## Bugfixes
 - [x] Exposé-PDF-Export reparieren (PDF-Ausgabe funktioniert nicht)
+
+## Neue Features (Feb 2026)
+- [x] 14-Tage-Trial entfernt (Backend, ProContext, Pricing-Seite)
+- [x] Free-Version: max. 1 Objekt speichern (Backend-Limit)
+- [x] Free-Version: eingeschränkte Kennzahlen (NMR, Finanzierung gesperrt mit Blur)
+- [x] Free-Version: kein PDF-Export, kein Excel-Export (gesperrt mit Lock-Icon)
+- [x] Free-Version: Szenarien gesperrt mit Upsell-Banner
+- [x] Pricing-Seite: Free-Karte hinzugefügt (jetzt 4 Pläne)
+- [x] Kennzahlen-Legende: ausklappbarer Bereich mit 10 Kennzahlen (Formel, Erklärung, Beispiel)
+- [x] Info-Buttons (i) an MetricCards: BMR, CF, NMR, NK, GI, EKR, P/m², VV, AfA, SE

@@ -15,8 +15,7 @@ import {
 } from "./db";
 
 const PLAN_LIMITS = {
-  none: 0,
-  trial: 5,
+  none: 1,   // Free: 1 Objekt speichern
   basic: 10,
   pro: 50,
   investor: 999999,
@@ -37,10 +36,7 @@ export const appRouter = router({
   plan: router({
     get: protectedProcedure.query(({ ctx }) => {
       const user = ctx.user;
-      const now = new Date();
-      if (user.plan === "trial" && user.planExpiresAt && user.planExpiresAt < now) {
-        return { plan: "none" as const, isExpired: true, user };
-      }
+      // Kein Trial mehr – plan ist direkt der aktive Plan
       return { plan: user.plan, isExpired: false, user };
     }),
 
@@ -62,18 +58,7 @@ export const appRouter = router({
         return { success: true, plan: input.plan };
       }),
 
-    startTrial: protectedProcedure.mutation(async ({ ctx }) => {
-      if (ctx.user.trialStartedAt) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Trial wurde bereits genutzt." });
-      }
-      const trialExpiry = new Date();
-      trialExpiry.setDate(trialExpiry.getDate() + 14);
-      await updateUserPlan(ctx.user.id, "trial", {
-        planExpiresAt: trialExpiry,
-        trialStartedAt: new Date(),
-      });
-      return { success: true, expiresAt: trialExpiry };
-    }),
+    // Trial entfernt – keine kostenlose Testversion mehr
   }),
 
   immobilien: router({
@@ -102,16 +87,13 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         const plan = ctx.user.plan;
-        if (plan === "none") {
-          throw new TRPCError({ code: "FORBIDDEN", message: "Upgrade erforderlich, um Immobilien zu speichern." });
-        }
         const count = await countImmobilienByUser(ctx.user.id);
-        const limit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS] ?? 0;
+        const limit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS] ?? 1;
         if (count >= limit) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: `Limit erreicht (${limit} Immobilien). Upgrade auf Investor für unbegrenzte Speicherung.`,
-          });
+          const msg = plan === "none"
+            ? "Free-Limit erreicht (1 Objekt). Upgrade für mehr Speicherplätze."
+            : `Limit erreicht (${limit} Objekte). Upgrade auf Investor für unbegrenzte Speicherung.`;
+          throw new TRPCError({ code: "FORBIDDEN", message: msg });
         }
         await createImmobilie({
           userId: ctx.user.id,

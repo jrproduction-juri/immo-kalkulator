@@ -8,10 +8,39 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 type BillingType = "once" | "monthly" | "yearly";
+type PaidPlanId = "basic" | "pro" | "investor";
 
-const PLANS = [
+const FREE_PLAN = {
+  name: "Free",
+  priceLabel: "0 €",
+  billing: "Dauerhaft kostenlos",
+  desc: "Schnelle Ersteinschätzung – kein Upgrade nötig",
+  features: [
+    { text: "1 Objekt speichern", included: true },
+    { text: "Bruttomietrendite", included: true },
+    { text: "Netto-Cashflow (vereinfacht)", included: true },
+    { text: "Basis-Empfehlung (sinnvoll / prüfen / kritisch)", included: true },
+    { text: "Erweiterte Kennzahlen (EK-Rendite, AfA …)", included: false },
+    { text: "PDF-Export & Excel-Export", included: false },
+    { text: "Szenarien & Vergleich", included: false },
+    { text: "Speichern & Report", included: false },
+  ],
+};
+
+const PAID_PLANS: Array<{
+  id: PaidPlanId;
+  name: string;
+  priceOnce: string;
+  priceMonthly: string | null;
+  priceYearly: string | null;
+  billing: string;
+  desc: string;
+  highlight: boolean;
+  badge: string | null;
+  features: { text: string; included: boolean }[];
+}> = [
   {
-    id: "basic" as const,
+    id: "basic",
     name: "Basic",
     priceOnce: "49 €",
     priceMonthly: null,
@@ -22,8 +51,7 @@ const PLANS = [
     badge: null,
     features: [
       { text: "Buy & Hold Szenario", included: true },
-      { text: "Bruttomietrendite", included: true },
-      { text: "Netto-Cashflow", included: true },
+      { text: "Bruttomietrendite & Netto-Cashflow", included: true },
       { text: "AfA & vereinfachte Steuer", included: true },
       { text: "Eigenkapitalrendite", included: true },
       { text: "Bis zu 10 Immobilien speichern", included: true },
@@ -34,7 +62,7 @@ const PLANS = [
     ],
   },
   {
-    id: "pro" as const,
+    id: "pro",
     name: "Pro",
     priceOnce: "99 €",
     priceMonthly: "19 €",
@@ -53,11 +81,10 @@ const PLANS = [
       { text: "Email-Generator", included: true },
       { text: "Szenario-Vergleich in Diagrammen", included: true },
       { text: "Bis zu 50 Immobilien", included: true },
-      { text: "14 Tage kostenlos testen", included: true },
     ],
   },
   {
-    id: "investor" as const,
+    id: "investor",
     name: "Investor",
     priceOnce: "149 €",
     priceMonthly: null,
@@ -91,22 +118,12 @@ export default function Pricing() {
       toast.success(`${data.plan.charAt(0).toUpperCase() + data.plan.slice(1)}-Plan aktiviert!`);
       navigate("/dashboard");
     },
-    onError: (err) => {
+    onError: (err: { message: string }) => {
       toast.error("Fehler beim Upgrade: " + err.message);
     },
   });
 
-  const trialMutation = trpc.plan.startTrial.useMutation({
-    onSuccess: () => {
-      toast.success("14-Tage Pro-Trial gestartet!");
-      navigate("/dashboard");
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-
-  const handleSelect = (planId: "basic" | "pro" | "investor") => {
+  const handleSelect = (planId: PaidPlanId) => {
     if (!isAuthenticated) {
       window.location.href = getLoginUrl();
       return;
@@ -115,15 +132,7 @@ export default function Pricing() {
     upgradeMutation.mutate({ plan: planId, billingType: billing });
   };
 
-  const handleTrial = () => {
-    if (!isAuthenticated) {
-      window.location.href = getLoginUrl();
-      return;
-    }
-    trialMutation.mutate();
-  };
-
-  const getPrice = (plan: typeof PLANS[0]) => {
+  const getPrice = (plan: typeof PAID_PLANS[0]) => {
     const billing = selectedBilling[plan.id] ?? "once";
     if (billing === "monthly" && plan.priceMonthly) return plan.priceMonthly + "/Monat";
     if (billing === "yearly" && plan.priceYearly) return plan.priceYearly + "/Jahr";
@@ -160,26 +169,55 @@ export default function Pricing() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 text-center">
         <h1 className="font-bold text-4xl text-gray-900 mb-4">Transparente Preise</h1>
         <p className="text-gray-500 text-xl max-w-xl mx-auto">
-          Einmalzahlung oder flexibles Abo — du entscheidest. Kein Abo-Zwang.
+          Starte kostenlos — upgrade wenn du mehr brauchst. Kein Abo-Zwang.
         </p>
 
-        {/* Pro Trial Banner */}
+        {/* Upsell-Hinweis */}
         <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200">
           <Zap className="w-4 h-4 text-blue-600" />
-          <span className="text-blue-700 text-sm font-medium">Pro 14 Tage kostenlos testen — keine Kreditkarte erforderlich</span>
-          <button
-            onClick={handleTrial}
-            className="ml-2 text-xs font-semibold text-blue-600 underline hover:text-blue-800"
-          >
-            Jetzt starten →
-          </button>
+          <span className="text-blue-700 text-sm font-medium">
+            Free: 1 Objekt · Upgrade für Speichern, Vergleich, PDF & Szenarien
+          </span>
         </div>
       </div>
 
-      {/* Plans */}
+      {/* Plans Grid: Free + 3 bezahlte Pläne */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PLANS.map((plan) => (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+
+          {/* Free-Karte */}
+          <div className="relative rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm">
+            <div className="p-6">
+              <div className="mb-6">
+                <p className="text-xs font-semibold uppercase tracking-wider mb-1 text-gray-400">Free</p>
+                <p className="font-bold text-4xl text-gray-900">0 €</p>
+                <p className="text-xs text-gray-400 mt-1">{FREE_PLAN.billing}</p>
+                <p className="text-sm mt-2 text-gray-500">{FREE_PLAN.desc}</p>
+              </div>
+              <ul className="space-y-3 mb-6">
+                {FREE_PLAN.features.map((f) => (
+                  <li key={f.text} className="flex items-center gap-2.5 text-sm text-gray-600">
+                    {f.included ? (
+                      <CheckCircle2 className="w-4 h-4 shrink-0 text-blue-500" />
+                    ) : (
+                      <X className="w-4 h-4 shrink-0 text-gray-300" />
+                    )}
+                    <span className={!f.included ? 'opacity-40' : ''}>{f.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button
+                className="w-full font-semibold"
+                variant="outline"
+                onClick={() => navigate("/kalkulator")}
+              >
+                Kostenlos starten
+              </Button>
+            </div>
+          </div>
+
+          {/* Bezahlte Pläne */}
+          {PAID_PLANS.map((plan) => (
             <div
               key={plan.id}
               className={`relative rounded-2xl overflow-hidden border ${plan.highlight ? 'border-blue-500 shadow-xl shadow-blue-100' : 'border-gray-200 bg-white shadow-sm'}`}
@@ -244,16 +282,6 @@ export default function Pricing() {
                 >
                   {upgradeMutation.isPending ? 'Wird aktiviert...' : `${plan.name} wählen`}
                 </Button>
-
-                {plan.id === "pro" && (
-                  <button
-                    onClick={handleTrial}
-                    disabled={trialMutation.isPending}
-                    className="w-full mt-2 text-xs text-center text-white/60 hover:text-white/90 transition-colors"
-                  >
-                    Oder 14 Tage kostenlos testen →
-                  </button>
-                )}
               </div>
             </div>
           ))}
@@ -264,8 +292,8 @@ export default function Pricing() {
           <h2 className="font-bold text-2xl text-gray-900 text-center mb-8">Häufige Fragen</h2>
           <div className="space-y-4">
             {[
+              { q: "Was kann ich mit der Free-Version?", a: "Du kannst den Kalkulator vollständig nutzen und 1 Objekt speichern. Bruttomietrendite, Netto-Cashflow und Basis-Empfehlung sind immer kostenlos." },
               { q: "Gibt es eine Rückerstattungsgarantie?", a: "Ja, innerhalb von 14 Tagen nach Kauf erstatten wir dir den vollen Betrag — kein Wenn und Aber." },
-              { q: "Wie funktioniert der Pro-Trial?", a: "Du kannst Pro 14 Tage kostenlos testen. Ohne Zahlung wird der Plan nach Ablauf automatisch deaktiviert." },
               { q: "Kann ich später upgraden?", a: "Ja, du kannst jederzeit von Basic auf Pro oder Investor upgraden. Der Preis wird anteilig berechnet." },
               { q: "Ist die Zahlung sicher?", a: "Zahlungen werden über Stripe abgewickelt — dem weltweit führenden Zahlungsdienstleister." },
             ].map(({ q, a }) => (
