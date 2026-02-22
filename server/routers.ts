@@ -34,10 +34,17 @@ export const appRouter = router({
   }),
 
   plan: router({
-    get: protectedProcedure.query(({ ctx }) => {
+    get: protectedProcedure.query(async ({ ctx }) => {
       const user = ctx.user;
       // Kein Trial mehr – plan ist direkt der aktive Plan
-      return { plan: user.plan, isExpired: false, user };
+      const immobilienCount = await countImmobilienByUser(user.id);
+      return {
+        plan: user.plan,
+        isExpired: false,
+        planExpiresAt: user.planExpiresAt ?? null,
+        immobilienCount,
+        user,
+      };
     }),
 
     upgrade: protectedProcedure

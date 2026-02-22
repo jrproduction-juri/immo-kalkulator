@@ -57,3 +57,6 @@
 - [x] Pricing-Seite: Free-Karte hinzugefügt (jetzt 4 Pläne)
 - [x] Kennzahlen-Legende: ausklappbarer Bereich mit 10 Kennzahlen (Formel, Erklärung, Beispiel)
 - [x] Info-Buttons (i) an MetricCards: BMR, CF, NMR, NK, GI, EKR, P/m², VV, AfA, SE
+
+## Profil-Dropdown (Feb 2026)
+- [x] Klick auf Namen oben rechts öffnet Dropdown mit Plan-Info, Ablaufdatum, Upgrade-Link, Logout
