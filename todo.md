@@ -60,3 +60,6 @@
 
 ## Profil-Dropdown (Feb 2026)
 - [x] Klick auf Namen oben rechts öffnet Dropdown mit Plan-Info, Ablaufdatum, Upgrade-Link, Logout
+
+## Pricing-Update (Feb 2026)
+- [x] Preisstruktur korrigiert: Monatlich < Jährlich < Einmalig (Lifetime)
