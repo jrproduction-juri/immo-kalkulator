@@ -14,7 +14,7 @@ export function exportExcel(formData: FormData, freeResults: FreeResults, proRes
 
   // ── Sheet 1: Eingaben ────────────────────────────────────────────────────
   const eingabenData = [
-    ['Immobilien Investment Kalkulator – Eingaben', ''],
+    ['ImmoRenditeTool – Eingaben', ''],
     ['', ''],
     ['OBJEKT', ''],
     ['Immobilienart', formData.art ?? 'etw'],
@@ -106,6 +106,6 @@ export function exportExcel(formData: FormData, freeResults: FreeResults, proRes
 
   // Datei herunterladen
   const standort = formData.standort ? `_${formData.standort.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
-  const filename = `ImmoKalkulator${standort}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  const filename = `ImmoRenditeTool${standort}_${new Date().toISOString().slice(0, 10)}.xlsx`;
   XLSX.writeFile(wb, filename);
 }

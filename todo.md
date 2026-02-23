@@ -63,3 +63,6 @@
 
 ## Pricing-Update (Feb 2026)
 - [x] Preisstruktur korrigiert: Monatlich < Jährlich < Einmalig (Lifetime)
+
+## Rebranding (Feb 2026)
+- [x] App-Namen von "ImmoKalkulator" auf "ImmoRenditeTool" umbenannt (Navbar, Pricing, Landing, Browser-Tab, PDF, Excel, Exposé)

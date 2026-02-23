@@ -116,7 +116,7 @@ export default function Dashboard() {
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0A2540 0%, #0D6EFD 100%)' }}>
               <Building2 className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-gray-900 text-lg">ImmoKalkulator</span>
+            <span className="font-bold text-gray-900 text-lg">ImmoRenditeTool</span>
           </a>
           <div className="flex items-center gap-3">
             <Badge className={PLAN_COLORS[plan]}>

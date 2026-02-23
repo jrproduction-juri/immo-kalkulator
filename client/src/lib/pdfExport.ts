@@ -27,7 +27,7 @@ export async function exportFreePDF(formData: FormData, results: FreeResults): P
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
-  doc.text('Immobilien Investment Kalkulator', margin, 16);
+  doc.text('ImmoRenditeTool', margin, 16);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.text('Basis-Analyse (Free Version)', margin, 24);
@@ -146,9 +146,9 @@ export async function exportFreePDF(formData: FormData, results: FreeResults): P
   // Footer
   doc.setTextColor(150, 150, 150);
   doc.setFontSize(7);
-  doc.text('Erstellt mit ImmoKalkulator · Alle Angaben ohne Gewähr · Keine Anlageberatung', pageW / 2, 285, { align: 'center' });
+  doc.text('Erstellt mit ImmoRenditeTool · Alle Angaben ohne Gewähr · Keine Anlageberatung', pageW / 2, 285, { align: 'center' });
 
-  doc.save(`ImmoKalkulator_Basis_${new Date().toISOString().slice(0, 10)}.pdf`);
+  doc.save(`ImmoRenditeTool_Basis_${new Date().toISOString().slice(0, 10)}.pdf`);
 }
 
 export async function exportProPDF(formData: FormData, results: ProResults): Promise<void> {
@@ -175,7 +175,7 @@ export async function exportProPDF(formData: FormData, results: ProResults): Pro
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20);
   doc.setFont('helvetica', 'bold');
-  doc.text('Immobilien Investment Kalkulator', margin, 17);
+  doc.text('ImmoRenditeTool', margin, 17);
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
   doc.text('Pro-Analyse – Vollständiger Report', margin, 26);
@@ -412,14 +412,14 @@ export async function exportProPDF(formData: FormData, results: ProResults): Pro
     doc.setTextColor(150, 150, 150);
     doc.setFontSize(7);
     doc.text(
-      `ImmoKalkulator Pro · Alle Angaben ohne Gewähr · Keine Anlageberatung · Seite ${i}/${totalPages}`,
+      `ImmoRenditeTool Pro · Alle Angaben ohne Gewähr · Keine Anlageberatung · Seite ${i}/${totalPages}`,
       pageW / 2,
       285,
       { align: 'center' }
     );
   }
 
-  doc.save(`ImmoKalkulator_Pro_${new Date().toISOString().slice(0, 10)}.pdf`);
+  doc.save(`ImmoRenditeTool_Pro_${new Date().toISOString().slice(0, 10)}.pdf`);
 }
 
 /**
@@ -750,7 +750,7 @@ export async function exportExposePDF(formData: FormData, results: ProResults): 
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text(
-      `ImmoKalkulator Exposé · Alle Angaben ohne Gewähr · Keine Anlageberatung · Seite ${i}/${totalPages}`,
+      `ImmoRenditeTool Exposé · Alle Angaben ohne Gewähr · Keine Anlageberatung · Seite ${i}/${totalPages}`,
       pageW / 2,
       291,
       { align: 'center' }
@@ -758,5 +758,5 @@ export async function exportExposePDF(formData: FormData, results: ProResults): 
   }
 
   const standort = formData.standort ? `_${formData.standort.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
-  doc.save(`ImmoKalkulator_Expose${standort}_${new Date().toISOString().slice(0, 10)}.pdf`);
+  doc.save(`ImmoRenditeTool_Expose${standort}_${new Date().toISOString().slice(0, 10)}.pdf`);
 }

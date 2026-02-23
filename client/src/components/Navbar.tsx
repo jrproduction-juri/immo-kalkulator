@@ -94,10 +94,10 @@ export function Navbar() {
             </div>
             <div>
               <span className="font-display font-bold text-sm text-foreground leading-none block">
-                ImmoKalkulator
+                ImmoRenditeTool
               </span>
               <span className="text-[10px] text-muted-foreground leading-none">
-                Investment Analyse
+                Rendite & Cashflow
               </span>
             </div>
           </a>

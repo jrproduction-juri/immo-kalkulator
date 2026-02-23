@@ -31,7 +31,7 @@ export default function Home() {
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0A2540 0%, #0D6EFD 100%)' }}>
               <Building2 className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-gray-900 text-lg">ImmoKalkulator</span>
+            <span className="font-bold text-gray-900 text-lg">ImmoRenditeTool</span>
           </a>
           <div className="flex items-center gap-3">
             <a href="/pricing" className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors hidden sm:block">Preise</a>
@@ -254,10 +254,10 @@ export default function Home() {
             <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0A2540 0%, #0D6EFD 100%)' }}>
               <Building2 className="w-3 h-3 text-white" />
             </div>
-            <span className="font-semibold text-sm text-gray-900">ImmoKalkulator</span>
+            <span className="font-semibold text-sm text-gray-900">ImmoRenditeTool</span>
           </div>
           <p className="text-xs text-gray-400 text-center">
-            Alle Berechnungen ohne Gewähr · Keine Anlageberatung · © {new Date().getFullYear()} ImmoKalkulator
+            Alle Berechnungen ohne Gewähr · Keine Anlageberatung · © {new Date().getFullYear()} ImmoRenditeTool
           </p>
           <div className="flex gap-4">
             <a href="/pricing" className="text-xs text-gray-400 hover:text-gray-600">Preise</a>

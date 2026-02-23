@@ -200,7 +200,7 @@ export function ExposeGenerator({ formData, results }: ExposeGeneratorProps) {
           {/* Footer */}
           <div className="text-center pt-2 border-t border-border">
             <p className="text-[10px] text-muted-foreground">
-              Erstellt mit ImmoKalkulator · Alle Angaben ohne Gewähr · Stand: {new Date().toLocaleDateString('de-DE')}
+              Erstellt mit ImmoRenditeTool · Alle Angaben ohne Gewähr · Stand: {new Date().toLocaleDateString('de-DE')}
             </p>
           </div>
         </div>

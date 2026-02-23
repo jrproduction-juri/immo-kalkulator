@@ -169,7 +169,7 @@ export default function Pricing() {
             >
               <Building2 className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-gray-900 text-lg">ImmoKalkulator</span>
+            <span className="font-bold text-gray-900 text-lg">ImmoRenditeTool</span>
           </a>
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
