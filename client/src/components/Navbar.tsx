@@ -86,12 +86,11 @@ export function Navbar() {
 
           {/* ── Logo ─────────────────────────────────────────────── */}
           <a href="/dashboard" className="flex items-center gap-2.5 group">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105"
-              style={{ background: 'linear-gradient(135deg, #0A2540 0%, #1565C0 100%)' }}
-            >
-              <Building2 className="w-4 h-4 text-white" />
-            </div>
+            <img
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png"
+              alt="ImmoRenditeTool Logo"
+              className="w-9 h-9 object-contain transition-transform group-hover:scale-105"
+            />
             <div>
               <span className="font-display font-bold text-sm text-foreground leading-none block">
                 ImmoRenditeTool

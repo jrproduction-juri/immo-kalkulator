@@ -66,3 +66,6 @@
 
 ## Rebranding (Feb 2026)
 - [x] App-Namen von "ImmoKalkulator" auf "ImmoRenditeTool" umbenannt (Navbar, Pricing, Landing, Browser-Tab, PDF, Excel, Exposé)
+
+## Logo-Integration (Feb 2026)
+- [x] ImmoRenditeTool-Logo als Favicon (ICO + PNG) und in Navbar (Navbar, Home, Pricing, Dashboard) eingebaut

@@ -163,12 +163,11 @@ export default function Pricing() {
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #0A2540 0%, #0D6EFD 100%)" }}
-            >
-              <Building2 className="w-4 h-4 text-white" />
-            </div>
+            <img
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png"
+              alt="ImmoRenditeTool Logo"
+              className="w-9 h-9 object-contain"
+            />
             <span className="font-bold text-gray-900 text-lg">ImmoRenditeTool</span>
           </a>
           <div className="flex items-center gap-3">
