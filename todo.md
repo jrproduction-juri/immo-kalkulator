@@ -69,3 +69,7 @@
 
 ## Logo-Integration (Feb 2026)
 - [x] ImmoRenditeTool-Logo als Favicon (ICO + PNG) und in Navbar (Navbar, Home, Pricing, Dashboard) eingebaut
+
+## Logo-Größe & Footer (Feb 2026)
+- [x] Logo in Navbar größer gemacht (h-11 w-auto, alle Seiten)
+- [x] Logo im Footer aller Seiten ergänzt (Home, Pricing, Dashboard)

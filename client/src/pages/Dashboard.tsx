@@ -113,7 +113,7 @@ export default function Dashboard() {
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a href="/dashboard" className="flex items-center gap-2.5">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png" alt="ImmoRenditeTool Logo" className="w-9 h-9 object-contain" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png" alt="ImmoRenditeTool Logo" className="h-11 w-auto object-contain" />
             <span className="font-bold text-gray-900 text-lg">ImmoRenditeTool</span>
           </a>
           <div className="flex items-center gap-3">
@@ -331,6 +331,27 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-gray-100 py-6 bg-white mt-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <img
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png"
+              alt="ImmoRenditeTool Logo"
+              className="h-10 w-auto object-contain"
+            />
+            <span className="font-semibold text-sm text-gray-900">ImmoRenditeTool</span>
+          </div>
+          <p className="text-xs text-gray-400 text-center">
+            Alle Berechnungen ohne Gewähr · Keine Anlageberatung · © {new Date().getFullYear()} ImmoRenditeTool
+          </p>
+          <div className="flex gap-4">
+            <a href="/pricing" className="text-xs text-gray-400 hover:text-gray-600">Preise</a>
+            <a href="/kalkulator" className="text-xs text-gray-400 hover:text-gray-600">Kalkulator</a>
+          </div>
+        </div>
+      </footer>
 
       {/* Delete Dialog */}
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>

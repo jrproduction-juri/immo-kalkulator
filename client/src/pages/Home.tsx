@@ -28,7 +28,7 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png" alt="ImmoRenditeTool Logo" className="w-9 h-9 object-contain" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png" alt="ImmoRenditeTool Logo" className="h-11 w-auto object-contain" />
             <span className="font-bold text-gray-900 text-lg">ImmoRenditeTool</span>
           </a>
           <div className="flex items-center gap-3">
@@ -248,10 +248,8 @@ export default function Home() {
       {/* ── Footer ── */}
       <footer className="border-t border-gray-100 py-8 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0A2540 0%, #0D6EFD 100%)' }}>
-              <Building2 className="w-3 h-3 text-white" />
-            </div>
+          <div className="flex items-center gap-2.5">
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png" alt="ImmoRenditeTool Logo" className="h-10 w-auto object-contain" />
             <span className="font-semibold text-sm text-gray-900">ImmoRenditeTool</span>
           </div>
           <p className="text-xs text-gray-400 text-center">

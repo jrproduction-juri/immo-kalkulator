@@ -89,7 +89,7 @@ export function Navbar() {
             <img
               src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png"
               alt="ImmoRenditeTool Logo"
-              className="w-9 h-9 object-contain transition-transform group-hover:scale-105"
+              className="h-11 w-auto object-contain transition-transform group-hover:scale-105"
             />
             <div>
               <span className="font-display font-bold text-sm text-foreground leading-none block">
