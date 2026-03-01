@@ -403,9 +403,9 @@ export function berechneProResults(data: FormData): ProResults {
     beschreibung: 'Kaufen, vermieten & 10 Jahre halten',
     cashflowMonat: cashflowNachSteuer,
     rendite: freeResults.nettomietrendite + 3,
-    gewinnNachSteuer: freeResults.nettoCashflowJahr * 10 + data.kaufpreis * 0.3,
-    bewertung: freeResults.nettoCashflowMonat >= -100 ? 'positiv' : 'neutral',
-    details: `Kumulierter Cashflow: ${(freeResults.nettoCashflowJahr * 10).toLocaleString('de-DE')} € | Wertsteigerung (3 % p.a.): ${(data.kaufpreis * 0.3).toLocaleString('de-DE')} €`,
+    gewinnNachSteuer: (cashflowNachSteuer * 12 * 10) + data.kaufpreis * 0.3,
+    bewertung: cashflowNachSteuer >= -8.33 ? 'positiv' : 'neutral',
+    details: `Kumulierter Cashflow (nach Steuern): ${((cashflowNachSteuer * 12 * 10)).toLocaleString('de-DE')} EUR | Steuerersparnis/Jahr: ${steuerersparnis.toLocaleString('de-DE')} EUR | Wertsteigerung (3 % p.a.): ${(data.kaufpreis * 0.3).toLocaleString('de-DE')} EUR`,
     dauer: '10 Jahre',
   };
 
@@ -414,11 +414,11 @@ export function berechneProResults(data: FormData): ProResults {
   let restschuld = darlehenssumme;
   let kumulierterCashflow = 0;
   const jahresTilgung = darlehenssumme * (data.tilgung / 100);
-
+  const cashflowNachSteuerJaehrlich = cashflowNachSteuer * 12;
   for (let j = 1; j <= 10; j++) {
     const immobilienwert = data.kaufpreis * Math.pow(1.03, j);
     restschuld = Math.max(0, restschuld - jahresTilgung);
-    kumulierterCashflow += freeResults.nettoCashflowJahr + steuerersparnis;
+    kumulierterCashflow += cashflowNachSteuerJaehrlich;
     const eigenkapitalAktuell = immobilienwert - restschuld;
     const gesamtrendite = data.eigenkapital > 0
       ? ((eigenkapitalAktuell - data.eigenkapital + kumulierterCashflow) / data.eigenkapital) * 100
