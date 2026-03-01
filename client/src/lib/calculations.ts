@@ -182,13 +182,15 @@ export function berechneSteuerersparnis(
 }
 
 function berechneGrenzsteuersatz(nettoEinkommen: number, steuerklasse: string): number {
+  // nettoEinkommen ist monatlich, muss zu jährlich konvertiert werden
+  const nettoJaehrlich = nettoEinkommen * 12;
   const bruttoFaktor = steuerklasse === '1' || steuerklasse === '4' ? 1.35 :
     steuerklasse === '3' ? 1.2 : 1.4;
-  const bruttoEinkommen = nettoEinkommen * bruttoFaktor;
-  if (bruttoEinkommen <= 11604) return 0;
-  if (bruttoEinkommen <= 17005) return 0.14;
-  if (bruttoEinkommen <= 66760) return 0.24;
-  if (bruttoEinkommen <= 277825) return 0.42;
+  const bruttoJaehrlich = nettoJaehrlich * bruttoFaktor;
+  if (bruttoJaehrlich <= 11604) return 0;
+  if (bruttoJaehrlich <= 17005) return 0.14;
+  if (bruttoJaehrlich <= 66760) return 0.24;
+  if (bruttoJaehrlich <= 277825) return 0.42;
   return 0.45;
 }
 
@@ -354,14 +356,17 @@ export function berechneProResults(data: FormData): ProResults {
   // Steuer
   const zinsenJaehrlich = darlehenssumme * (data.zinssatz / 100);
   const afaJaehrlich = berechneAfA(data.kaufpreis, data.baujahr, data.afaSatz);
+  const bewirtschaftungJaehrlich = (data.hausgeld + data.ruecklagen + data.nichtUmlagefaehig + data.sonstigeAusgaben) * 12;
   const steuerersparnis = berechneSteuerersparnis(
     afaJaehrlich,
     zinsenJaehrlich,
-    (data.hausgeld + data.ruecklagen) * 12,
+    bewirtschaftungJaehrlich,
     data.nettoEinkommen,
     data.steuerklasse
   );
-  const cashflowNachSteuer = freeResults.nettoCashflowMonat + steuerersparnis / 12;
+  console.log('[DEBUG Steuerersparnis]', { afaJaehrlich, zinsenJaehrlich, bewirtschaftungJaehrlich, nettoEinkommen: data.nettoEinkommen, steuerklasse: data.steuerklasse, steuerersparnis });
+  const cashflowNachSteuer = freeResults.nettoCashflowMonat + (steuerersparnis / 12);
+  console.log('[DEBUG Cashflow nach Steuer]', { nettoCashflowMonat: freeResults.nettoCashflowMonat, steuerersparnis, cashflowNachSteuer });
 
   // Szenario: Fix & Flip
   const sanierungskosten = data.zustand === 'renovierungsbeduerftig'

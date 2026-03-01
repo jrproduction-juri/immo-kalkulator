@@ -91,4 +91,4 @@
 
 ## Bugs (März 2026)
 - [x] AfA wird in 10-Jahres-Projektion nicht abgezogen (vor/nach Steuer gleich) — BEHOBEN: cashflowNachSteuerJaehrlich verwendet
-- [x] Steuerersparnis/Jahr zeigt immer 0€ statt korrekte Berechnung — BEHOBEN: steuerersparnis wird berechnet und in Details angezeigt
+- [x] Steuerersparnis/Jahr zeigt immer 0€ statt korrekte Berechnung — BEHOBEN: berechneGrenzsteuersatz konvertiert jetzt monatliches zu jährlichem Einkommen
