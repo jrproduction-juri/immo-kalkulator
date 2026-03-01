@@ -70,10 +70,10 @@ export function UpgradeModal() {
           {/* Pricing */}
           <div className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100">
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-display font-bold text-blue-900">ab 49 €</span>
-              <span className="text-sm text-blue-600">einmalig</span>
+              <span className="text-3xl font-display font-bold text-blue-900">ab 9 €</span>
+              <span className="text-sm text-blue-600">/Monat</span>
             </div>
-            <p className="text-xs text-blue-600 mt-1">Basic, Pro oder Investor · Kein Abo-Zwang</p>
+            <p className="text-xs text-blue-600 mt-1">Basic, Pro oder Investor · Monatlich, jährlich oder einmalig</p>
           </div>
 
           {/* CTA */}
@@ -85,7 +85,7 @@ export function UpgradeModal() {
             Zur Preisübersicht
           </Button>
           <p className="text-center text-xs text-muted-foreground mt-3">
-            14 Tage Pro kostenlos testen · Keine Kreditkarte
+            Alle Pläne ohne Risiko · Jederzeit kündbar
           </p>
         </div>
       </DialogContent>

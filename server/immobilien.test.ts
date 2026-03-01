@@ -64,7 +64,7 @@ describe("immobilien.create", () => {
         art: "etw",
         eingaben: { kaufpreis: 300000 },
       })
-    ).rejects.toThrow("Upgrade erforderlich");
+    ).rejects.toThrow("Free-Limit");
   });
 });
 

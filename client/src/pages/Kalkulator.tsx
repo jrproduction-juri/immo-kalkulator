@@ -10,7 +10,7 @@ import { ProResultsPanel } from '@/components/ProResults';
 import { EmailGenerator } from '@/components/EmailGenerator';
 import { ExposeGenerator } from '@/components/ExposeGenerator';
 import { Navbar } from '@/components/Navbar';
-import { UpgradeModal, ProLockBadge } from '@/components/UpgradeModal';
+import { UpgradeModal } from '@/components/UpgradeModal';
 import { usePro } from '@/contexts/ProContext';
 import { trpc } from '@/lib/trpc';
 import {
@@ -19,13 +19,14 @@ import {
   ProResults,
   berechneFreeResults,
   berechneProResults,
+  getDefaultFormData,
 } from '@/lib/calculations';
 import { exportFreePDF, exportProPDF } from '@/lib/pdfExport';
 import { exportExcel } from '@/lib/excelExport';
 import { toast } from 'sonner';
 import {
   Building2, BarChart3, Mail, FileText, ChevronRight,
-  Zap, Calculator, TrendingUp, Shield, Star, Save, ArrowLeft, Check, Table
+  Zap, Calculator, TrendingUp, Save, ArrowLeft, Check, Table
 } from 'lucide-react';
 import {
   Dialog,
@@ -42,6 +43,9 @@ export default function Kalkulator() {
   const params = useParams<{ id?: string }>();
   const [, navigate] = useLocation();
   const { isPro, isBasic, isInvestor, setShowUpgradeModal } = usePro();
+
+  // Formular-State (kontrolliert)
+  const [formData, setFormData] = useState<FormData>(() => getDefaultFormData('wohnung'));
 
   const [freeResults, setFreeResults] = useState<FreeResults | null>(null);
   const [proResults, setProResults] = useState<ProResults | null>(null);
@@ -105,15 +109,15 @@ export default function Kalkulator() {
     }
   }, [existingQuery.data]);
 
-  const handleCalculate = (data: FormData) => {
+  const handleCalculate = () => {
     setIsCalculating(true);
-    setLastFormData(data);
+    setLastFormData(formData);
 
     setTimeout(() => {
       try {
-        const free = berechneFreeResults(data);
+        const free = berechneFreeResults(formData);
         setFreeResults(free);
-        const pro = berechneProResults(data);
+        const pro = berechneProResults(formData);
         setProResults(pro);
         setActiveTab('ergebnisse');
         setIsCalculating(false);
@@ -143,7 +147,7 @@ export default function Kalkulator() {
       updateMutation.mutate({
         id: savedId,
         name: saveName || 'Meine Immobilie',
-        art: lastFormData.art ?? 'etw',
+        art: lastFormData.art as any,
         standort: lastFormData.standort,
         eingaben: lastFormData as any,
         ergebnisse: freeResults as any,
@@ -158,7 +162,7 @@ export default function Kalkulator() {
     if (!lastFormData || !freeResults) return;
     createMutation.mutate({
       name: saveName || 'Meine Immobilie',
-      art: lastFormData.art ?? 'etw',
+      art: lastFormData.art as any,
       standort: lastFormData.standort,
       eingaben: lastFormData as any,
       ergebnisse: freeResults as any,
@@ -250,7 +254,14 @@ export default function Kalkulator() {
                 </div>
               </div>
               <div className="p-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-                <InputForm onCalculate={handleCalculate} isCalculating={isCalculating} />
+                <InputForm
+                  data={formData}
+                  onChange={setFormData}
+                  onCalculate={handleCalculate}
+                  isPro={isPro}
+                  onUpgrade={() => setShowUpgradeModal(true)}
+                  isLoading={isCalculating}
+                />
               </div>
             </div>
           </div>
@@ -280,7 +291,7 @@ export default function Kalkulator() {
                       { icon: BarChart3, label: 'Bruttomietrendite', desc: 'Sofort berechnet' },
                       { icon: Calculator, label: 'Netto-Cashflow', desc: 'Monatlich & jährlich' },
                       { icon: TrendingUp, label: 'Szenarien', desc: 'Vermietung & mehr' },
-                      { icon: Shield, label: 'Empfehlung', desc: 'Kauf sinnvoll?' },
+                      { icon: TrendingUp, label: 'Empfehlung', desc: 'Kauf sinnvoll?' },
                     ].map(({ icon: Icon, label, desc }) => (
                       <div key={label} className="p-3 rounded-xl bg-secondary/50 text-left">
                         <Icon className="w-4 h-4 text-blue-600 mb-1.5" />
@@ -412,7 +423,7 @@ export default function Kalkulator() {
                   >
                     <div className="flex items-center gap-1.5 mb-1">
                       <Icon className="w-3.5 h-3.5 text-muted-foreground group-hover:text-blue-600 transition-colors" />
-                      <ProLockBadge />
+                      <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-semibold">Pro</span>
                     </div>
                     <p className="text-xs font-semibold text-foreground">{label}</p>
                     <p className="text-xs text-muted-foreground">{desc}</p>

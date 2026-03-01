@@ -165,8 +165,7 @@ export function ProResultsPanel({ results }: ProResultsProps) {
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Erweiterte Szenarien</p>
         <div className="space-y-3">
           {results.szenarioFlipSanieren && <SzenarioCard szenario={results.szenarioFlipSanieren} />}
-          {results.szenarioEigennutzung2J && <SzenarioCard szenario={results.szenarioEigennutzung2J} />}
-          {results.szenarioSanierungEigennutzung && <SzenarioCard szenario={results.szenarioSanierungEigennutzung} />}
+          {results.szenarioVerkauf24Monate && <SzenarioCard szenario={results.szenarioVerkauf24Monate} />}
           {results.szenarioBuyHold10J && <SzenarioCard szenario={results.szenarioBuyHold10J} />}
         </div>
       </div>

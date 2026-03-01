@@ -305,8 +305,7 @@ export async function exportProPDF(formData: FormData, results: ProResults): Pro
   const szenarien = [
     results.szenarioVermietung,
     results.szenarioFlipSanieren,
-    results.szenarioEigennutzung2J,
-    results.szenarioSanierungEigennutzung,
+    results.szenarioVerkauf24Monate,
     results.szenarioBuyHold10J,
   ].filter(Boolean);
 

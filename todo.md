@@ -73,3 +73,18 @@
 ## Logo-Größe & Footer (Feb 2026)
 - [x] Logo in Navbar größer gemacht (h-11 w-auto, alle Seiten)
 - [x] Logo im Footer aller Seiten ergänzt (Home, Pricing, Dashboard)
+
+## Großes Redesign (März 2026)
+- [ ] Berechnungslogik: dynamische Felder je Immobilienart (Wohnung/MFH/Neubau/Gewerbe)
+- [ ] Cashflow-Formel: Kaltmiete – nicht umlagefähige Kosten – Kreditrate
+- [ ] Warmmiete-Hinweis: "Von der Warmmiete bleiben wirklich X € übrig"
+- [ ] Free: nur Wohnung (Buy-and-Hold), Pro: alle Immobilienarten + Szenarien
+- [ ] Formular: dynamische Felder je Immobilienart mit Info-Buttons
+- [ ] MFH: Anzahl Einheiten, Ø Kaltmiete/Einheit, Leerstandsquote
+- [ ] Neubau: AfA-Satz, Erstvermietungsstatus, Kaufnebenkosten, reduzierte Rücklage
+- [ ] Gewerbe: Mietvertragslaufzeit, Indexmiete, Triple-Net, Leerstandsquote
+- [ ] Pro-Szenarien: Eigennutzung, Buy-and-Hold, Verkauf nach 24 Monaten (steuerfrei ETW)
+- [ ] Upgrade-Popup: modernes X zum Schließen
+- [ ] Logo oben links klickbar → zurück zur Startseite
+- [ ] Live-Berechnung: Ergebnisse sofort nach Eingabe aktualisieren
+- [ ] Responsives Layout: Mobile + Desktop
