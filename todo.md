@@ -92,3 +92,4 @@
 ## Bugs (März 2026)
 - [x] AfA wird in 10-Jahres-Projektion nicht abgezogen (vor/nach Steuer gleich) — BEHOBEN: cashflowNachSteuerJaehrlich verwendet
 - [x] Steuerersparnis/Jahr zeigt immer 0€ statt korrekte Berechnung — BEHOBEN: berechneGrenzsteuersatz konvertiert jetzt monatliches zu jährlichem Einkommen
+- [x] Speicherfehler: Free-Nutzer konnten keine Immobilien speichern — BEHOBEN: handleSave prüfte isBasic statt alle Pläne zuzulassen

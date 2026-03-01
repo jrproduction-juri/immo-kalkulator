@@ -138,10 +138,8 @@ export default function Kalkulator() {
 
   const handleSave = () => {
     if (!lastFormData || !freeResults) return;
-    if (!isBasic) {
-      navigate('/pricing');
-      return;
-    }
+    // Speichern ist fuer alle Plaene erlaubt (Free, Basic, Pro, Investor)
+    // Das Backend prueft die Limits
     if (savedId) {
       // Update
       updateMutation.mutate({
