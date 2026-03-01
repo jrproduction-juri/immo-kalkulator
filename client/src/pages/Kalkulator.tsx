@@ -36,6 +36,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { KennzahlenLegende } from '@/components/KennzahlenLegende';
+import { parseImmobilienSaveError } from '@/lib/saveErrorHandler';
 
 const PRO_BG = 'https://private-us-east-1.manuscdn.com/sessionFile/d1B7vnkB4jEDrlWUS8LSxe/sandbox/l45cXWfOMIxTINpDvpvKli-img-3_1771591078000_na1fn_cHJvLWZlYXR1cmUtYmc.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZDFCN3Zua0I0akVEcmxXVVM4TFN4ZS9zYW5kYm94L2w0NWNYV2ZPTUl4VElOcER2cHZLbGktaW1nLTNfMTc3MTU5MTA3ODAwMF9uYTFmbl9jSEp2TFdabFlYUjFjbVV0WW1jLnBuZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE5MjAsaF8xOTIwL2Zvcm1hdCx3ZWJwL3F1YWxpdHkscV84MCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=RS28g3EBd~EPunsFekybwqu0aewP6mf6XXvu~lIQY-XO6erJwjZE-lLUq-7obXeGI7veSrx4-bYpOdlfTLQxODG582opb5OkUrIjVfj58PZd12-P6t5DePbVzCojt54FxqypRFznXYvEtaMlr-Bm5Z1xesSahyigYdQdVojFmDZekY1sxoJ5XF6~OVd9DvAyPrAxfPfKmPSzM2N2Ksk7mxJACOeYmwtCrieVYda19p1t9O8qWCXAkaYsCOwR4KcGoQ-tZEUCbVMzVlhHV52kJi106sBQEWOx8QYvzynvGP7sPW3-b8cjP5KfjGGL~pZmZfGYfnyF2t1WdeF21e~JqQ__';
 
@@ -80,28 +81,43 @@ export default function Kalkulator() {
 
   const createMutation = trpc.immobilien.create.useMutation({
     onSuccess: (data: any) => {
-      toast.success('Analyse gespeichert!');
+      toast.success('Analyse gespeichert!', {
+        description: `"${saveName || 'Meine Immobilie'}" wurde erfolgreich gespeichert.`,
+      });
       setSavedId(data.id ?? null);
       setShowSaveDialog(false);
       utils.immobilien.list.invalidate();
     },
     onError: (err) => {
-      if (err.message.includes('Upgrade')) {
-        toast.error('Upgrade erforderlich', { description: err.message });
-        navigate('/pricing');
-      } else {
-        toast.error(err.message);
-      }
+      const info = parseImmobilienSaveError(err);
+      toast.error(info.title, {
+        description: info.description,
+        duration: info.redirectToPricing ? 6000 : 4000,
+        action: info.redirectToPricing
+          ? { label: 'Upgrade ansehen', onClick: () => navigate('/pricing') }
+          : undefined,
+      });
     },
   });
 
   const updateMutation = trpc.immobilien.update.useMutation({
     onSuccess: () => {
-      toast.success('Analyse aktualisiert!');
+      toast.success('Analyse aktualisiert!', {
+        description: `"${saveName || 'Meine Immobilie'}" wurde erfolgreich aktualisiert.`,
+      });
       setShowSaveDialog(false);
       utils.immobilien.list.invalidate();
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => {
+      const info = parseImmobilienSaveError(err);
+      toast.error(info.title, {
+        description: info.description,
+        duration: info.redirectToPricing ? 6000 : 4000,
+        action: info.redirectToPricing
+          ? { label: 'Upgrade ansehen', onClick: () => navigate('/pricing') }
+          : undefined,
+      });
+    },
   });
 
   // Bestehende Daten laden
