@@ -94,27 +94,6 @@ export function FreeResultsPanel({ results, onExportPDF }: FreeResultsProps) {
       {/* Empfehlung */}
       <EmpfehlungBanner empfehlung={results.empfehlung} text={results.empfehlungText} />
 
-      {/* Warmmiete-Hinweis */}
-      {results.nettoCashflowMonat !== undefined && (
-        <div className="flex items-start gap-3 p-3 rounded-xl bg-blue-50 border border-blue-100">
-          <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
-            <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-blue-900">
-              Von der Warmmiete bleiben wirklich{' '}
-              <span className={results.nettoCashflowMonat >= 0 ? 'text-emerald-700' : 'text-red-600'}>
-                {formatEuro(results.nettoCashflowMonat)}
-              </span>{' '}
-              übrig
-            </p>
-            <p className="text-xs text-blue-700 mt-0.5">
-              Nach Abzug von Kreditrate, Hausgeld und nicht umlagefähigen Kosten
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Kernkennzahlen: Free zeigt nur Brutto + Cashflow, Rest gesperrt */}
       <div>
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Kernkennzahlen</p>
