@@ -95,3 +95,9 @@
 - [x] Speicherfehler: Free-Nutzer konnten keine Immobilien speichern — BEHOBEN: handleSave prüfte isBasic statt alle Pläne zuzulassen
 - [x] Speicherfehler: Auch Investor-Plan kann nicht speichern — BEHOBEN: Frontend verwendete 'wohnung' statt 'etw' als art-Wert (Mapping-Funktion mapArtToBackend hinzugefügt)
 - [x] Spezifische Fehlermeldungen beim Speichern: Limit-Fehler, Auth-Fehler, Validierungsfehler, Netzwerkfehler — BEHOBEN: parseImmobilienSaveError() Utility + 9 Vitest-Tests
+- [x] Ziel-Bruttomietrendite-Eingabe (Pro-only, Standard 6%, sofortige Neuberechnung)
+- [x] Neue Berechnungen: Jahreskaltmiete, BMR, Max-Kaufpreis für Zielrendite, Preisabweichung
+- [x] Pro-PDF: Seite 1 Executive Summary mit automatischem Bewertungstext
+- [x] Pro-PDF: Seite 2 Kennzahlenübersicht (Kaufpreis, Nebenkosten, Rendite, Cashflow)
+- [x] Pro-PDF: Seite 3 Wirtschaftlichkeitsanalyse mit Disclaimer
+- [x] PDF-Design: Blau/weißes Investment-Report-Layout, professionelle Typografie

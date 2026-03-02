@@ -759,3 +759,466 @@ export async function exportExposePDF(formData: FormData, results: ProResults): 
   const standort = formData.standort ? `_${formData.standort.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
   doc.save(`ImmoRenditeTool_Expose${standort}_${new Date().toISOString().slice(0, 10)}.pdf`);
 }
+
+// ─── Investment-Report PDF (Pro) ───────────────────────────────────────────────
+
+/**
+ * Exportiert einen professionellen 3-seitigen Investment-Report als PDF.
+ * Seite 1: Executive Summary mit automatischer Zielrendite-Bewertung
+ * Seite 2: Kennzahlenübersicht
+ * Seite 3: Wirtschaftlichkeitsanalyse mit Disclaimer
+ */
+export async function exportInvestmentReportPDF(
+  formData: FormData,
+  results: ProResults
+): Promise<void> {
+  const jsPDF = await getJsPDF();
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const pageW = 210;
+  const margin = 18;
+  const contentW = pageW - margin * 2;
+  const z = results.zielrenditeAnalyse;
+  const today = new Date().toLocaleDateString('de-DE', {
+    day: '2-digit', month: 'long', year: 'numeric'
+  });
+
+  // ── Hilfsfunktionen ──────────────────────────────────────────────────────────
+
+  /** Zeichnet den Standard-Header für jede Seite */
+  function drawHeader(title: string, subtitle: string) {
+    // Dunkelblauer Header-Bereich
+    doc.setFillColor(10, 37, 64);
+    doc.rect(0, 0, pageW, 42, 'F');
+    // Akzentlinie
+    doc.setFillColor(21, 101, 192);
+    doc.rect(0, 42, pageW, 2, 'F');
+
+    // Logo / Markenname
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('ImmoRenditeTool', margin, 12);
+
+    // Titel
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text(title, margin, 24);
+
+    // Untertitel + Datum
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(180, 210, 255);
+    doc.text(subtitle, margin, 33);
+    doc.text(today, pageW - margin, 33, { align: 'right' });
+  }
+
+  /** Zeichnet den Footer mit Seitenzahl */
+  function drawFooter(pageNum: number, totalPages: number) {
+    doc.setFillColor(10, 37, 64);
+    doc.rect(0, 284, pageW, 13, 'F');
+    doc.setTextColor(140, 180, 230);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.text(
+      `ImmoRenditeTool Investment-Report · Alle Angaben ohne Gewähr · Keine Anlageberatung · Seite ${pageNum}/${totalPages}`,
+      pageW / 2, 291, { align: 'center' }
+    );
+  }
+
+  /** Zeichnet eine Trennlinie */
+  function drawDivider(y: number) {
+    doc.setDrawColor(210, 225, 245);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+  }
+
+  /** Zeichnet einen Abschnittstitel */
+  function drawSectionTitle(title: string, y: number): number {
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(10, 37, 64);
+    doc.text(title, margin, y);
+    doc.setFillColor(21, 101, 192);
+    doc.rect(margin, y + 1.5, 30, 0.8, 'F');
+    return y + 8;
+  }
+
+  /** Zeichnet eine Kennzahl-Zeile (Label links, Wert rechts) */
+  function drawKennzahl(
+    label: string,
+    value: string,
+    y: number,
+    valueColor?: [number, number, number],
+    bgShade = false
+  ) {
+    if (bgShade) {
+      doc.setFillColor(247, 250, 255);
+      doc.rect(margin, y - 3.5, contentW, 6, 'F');
+    }
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(70, 80, 100);
+    doc.text(label, margin + 2, y);
+    doc.setFont('helvetica', 'bold');
+    if (valueColor) {
+      doc.setTextColor(...valueColor);
+    } else {
+      doc.setTextColor(10, 37, 64);
+    }
+    doc.text(value, pageW - margin - 2, y, { align: 'right' });
+    doc.setTextColor(70, 80, 100);
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // SEITE 1 – EXECUTIVE SUMMARY
+  // ════════════════════════════════════════════════════════════════════════════
+
+  drawHeader('Investment-Report', 'Executive Summary · Zielrendite-Analyse');
+  let y = 54;
+
+  // Objekt-Chip
+  if (formData.standort) {
+    doc.setFillColor(230, 240, 255);
+    doc.roundedRect(margin, y - 4, contentW, 10, 2, 2, 'F');
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(21, 101, 192);
+    doc.text(`Objekt: ${formData.standort}`, margin + 4, y + 2);
+    y += 14;
+  }
+
+  // ── Zielrendite-Bewertungsbox ─────────────────────────────────────────────
+  const bewertungFarbe: [number, number, number] =
+    z.bewertung === 'gleich' ? [5, 150, 105] :
+    z.bewertung === 'ueber'  ? [220, 38, 38] :
+                               [21, 101, 192];
+
+  doc.setFillColor(...bewertungFarbe);
+  doc.roundedRect(margin, y, contentW, 22, 3, 3, 'F');
+
+  const bewertungLabel =
+    z.bewertung === 'gleich' ? '✓ Kaufpreis entspricht Zielrendite' :
+    z.bewertung === 'ueber'  ? '⚠ Kaufpreis liegt über Zielrendite' :
+                               '↓ Kaufpreis liegt unter Zielrendite';
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text(bewertungLabel, margin + 5, y + 9);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  const bewertungsLines = doc.splitTextToSize(z.bewertungstext, contentW - 10);
+  doc.text(bewertungsLines, margin + 5, y + 17);
+  y += 30;
+
+  // ── Zielrendite-Kennzahlen (4er-Kacheln) ─────────────────────────────────
+  y = drawSectionTitle('Zielrendite-Übersicht', y);
+
+  const kacheln = [
+    { label: 'Aktuelle BMR', value: `${z.bruttomietrendite.toFixed(2)} %`, color: bewertungFarbe },
+    { label: 'Zielrendite', value: `${z.zielRendite.toFixed(1)} %`, color: [21, 101, 192] as [number, number, number] },
+    { label: 'Max. Kaufpreis', value: formatEuro(z.maxKaufpreisZielrendite), color: [5, 150, 105] as [number, number, number] },
+    { label: 'Preisabweichung', value: `${z.preisabweichung >= 0 ? '+' : ''}${formatEuro(z.preisabweichung)}`, color: z.preisabweichung > 0 ? [220, 38, 38] as [number, number, number] : [5, 150, 105] as [number, number, number] },
+  ];
+
+  const kachelW = (contentW - 9) / 4;
+  kacheln.forEach((k, i) => {
+    const kx = margin + i * (kachelW + 3);
+    doc.setFillColor(240, 247, 255);
+    doc.setDrawColor(...k.color);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(kx, y, kachelW, 22, 2, 2, 'FD');
+    doc.setFontSize(6.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 120, 160);
+    doc.text(k.label, kx + kachelW / 2, y + 7, { align: 'center' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...k.color);
+    doc.text(k.value, kx + kachelW / 2, y + 16, { align: 'center' });
+  });
+  y += 30;
+
+  // ── Kerndaten ─────────────────────────────────────────────────────────────
+  y = drawSectionTitle('Kerndaten', y);
+
+  const kerndaten: [string, string][] = [
+    ['Kaufpreis', formatEuro(formData.kaufpreis)],
+    ['Jahreskaltmiete', formatEuro(z.jahreskaltmiete)],
+    ['Maximaler Kaufpreis für Zielrendite', formatEuro(z.maxKaufpreisZielrendite)],
+    ['Preisabweichung', `${z.preisabweichung >= 0 ? '+' : ''}${formatEuro(z.preisabweichung)}`],
+  ];
+
+  kerndaten.forEach(([label, value], i) => {
+    const isAbweichung = label === 'Preisabweichung';
+    const vc: [number, number, number] | undefined = isAbweichung
+      ? (z.preisabweichung > 0 ? [220, 38, 38] : [5, 150, 105])
+      : undefined;
+    drawKennzahl(label, value, y, vc, i % 2 === 0);
+    y += 7;
+  });
+
+  y += 3;
+  drawDivider(y);
+  y += 8;
+
+  // ── Automatischer Bewertungstext ──────────────────────────────────────────
+  y = drawSectionTitle('Automatische Bewertung', y);
+
+  const bewertungsAbsatz =
+    `Auf Basis der eingegebenen Daten ergibt sich für das Objekt eine Bruttomietrendite von ${z.bruttomietrendite.toFixed(2)} %. ` +
+    z.bewertungstext +
+    (z.bewertung !== 'gleich'
+      ? ` Die Differenz zwischen aktuellem Kaufpreis (${formatEuro(formData.kaufpreis)}) und dem für die Zielrendite erforderlichen Kaufpreis (${formatEuro(z.maxKaufpreisZielrendite)}) beträgt ${formatEuro(Math.abs(z.preisabweichung))}.`
+      : '');
+
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(50, 65, 90);
+  const bewLines = doc.splitTextToSize(bewertungsAbsatz, contentW);
+  doc.text(bewLines, margin, y);
+  y += bewLines.length * 5 + 5;
+
+  // Disclaimer-Hinweis
+  doc.setFillColor(255, 248, 230);
+  doc.setDrawColor(217, 119, 6);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(margin, y, contentW, 14, 2, 2, 'FD');
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(146, 64, 14);
+  doc.text('Hinweis:', margin + 4, y + 6);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Diese Analyse basiert ausschließlich auf den eingegebenen Daten und stellt keine Anlageberatung dar.', margin + 22, y + 6);
+  doc.text('Alle Angaben ohne Gewähr. Bitte konsultieren Sie einen Fachberater vor Investitionsentscheidungen.', margin + 4, y + 11);
+
+  drawFooter(1, 3);
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // SEITE 2 – KENNZAHLENÜBERSICHT
+  // ════════════════════════════════════════════════════════════════════════════
+
+  doc.addPage();
+  drawHeader('Kennzahlenübersicht', 'Vollständige Investitionsanalyse');
+  y = 54;
+
+  // ── Investitionskosten ────────────────────────────────────────────────────
+  y = drawSectionTitle('Investitionskosten', y);
+
+  const investData: [string, string][] = [
+    ['Kaufpreis', formatEuro(formData.kaufpreis)],
+    ['Kaufnebenkosten (~10,6 %)', formatEuro(results.kaufnebenkosten)],
+    ['Eigenkapital', formatEuro(formData.eigenkapital)],
+    ['Darlehenssumme', formatEuro(results.darlehenssumme)],
+    ['Gesamtkapitalbedarf', formatEuro(results.gesamtinvestition)],
+  ];
+
+  investData.forEach(([label, value], i) => {
+    const bold = label === 'Gesamtkapitalbedarf';
+    if (bold) {
+      doc.setFillColor(230, 240, 255);
+      doc.rect(margin, y - 3.5, contentW, 6, 'F');
+    }
+    drawKennzahl(label, value, y, bold ? [10, 37, 64] : undefined, !bold && i % 2 === 0);
+    if (bold) {
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(10, 37, 64);
+    }
+    y += 7;
+  });
+
+  y += 3;
+  drawDivider(y);
+  y += 8;
+
+  // ── Mieteinnahmen & Cashflow ──────────────────────────────────────────────
+  y = drawSectionTitle('Mieteinnahmen & Cashflow', y);
+
+  const cashflowData: [string, string, [number, number, number] | undefined][] = [
+    ['Kaltmiete / Monat', formatEuro(formData.kaltmiete), undefined],
+    ['Jahreskaltmiete', formatEuro(z.jahreskaltmiete), undefined],
+    ['Monatliche Kreditrate', formatEuro(results.monatlicheRate), [220, 38, 38]],
+    ['Monatliche Kosten gesamt', formatEuro(results.monatlicheKosten), [220, 38, 38]],
+    ['Netto-Cashflow / Monat (brutto)', formatEuro(results.nettoCashflowMonat), results.nettoCashflowMonat >= 0 ? [5, 150, 105] : [220, 38, 38]],
+    ['Netto-Cashflow / Monat (nach Steuer)', formatEuro(results.cashflowNachSteuer), results.cashflowNachSteuer >= 0 ? [5, 150, 105] : [220, 38, 38]],
+    ['Netto-Cashflow / Jahr', formatEuro(results.nettoCashflowJahr), results.nettoCashflowJahr >= 0 ? [5, 150, 105] : [220, 38, 38]],
+  ];
+
+  cashflowData.forEach(([label, value, color], i) => {
+    drawKennzahl(label, value, y, color, i % 2 === 0);
+    y += 7;
+  });
+
+  y += 3;
+  drawDivider(y);
+  y += 8;
+
+  // ── Renditekennzahlen ─────────────────────────────────────────────────────
+  y = drawSectionTitle('Renditekennzahlen', y);
+
+  const renditeData: [string, string][] = [
+    ['Bruttomietrendite', formatProzent(results.bruttomietrendite)],
+    ['Nettomietrendite', formatProzent(results.nettomietrendite)],
+    ['Eigenkapitalrendite', formatProzent(results.eigenkapitalrendite)],
+    ['Ziel-Bruttomietrendite', formatProzent(z.zielRendite)],
+    ['Preis / m²', `${results.preisProQm.toFixed(0)} €/m²`],
+    ['Vervielfältiger', `${results.vervielfaeltiger.toFixed(1)}x`],
+  ];
+
+  renditeData.forEach(([label, value], i) => {
+    drawKennzahl(label, value, y, undefined, i % 2 === 0);
+    y += 7;
+  });
+
+  y += 3;
+  drawDivider(y);
+  y += 8;
+
+  // ── Steueroptimierung ─────────────────────────────────────────────────────
+  y = drawSectionTitle('Steueroptimierung', y);
+
+  const steuerData: [string, string][] = [
+    ['AfA (jährlich)', formatEuro(results.afaJaehrlich)],
+    ['Steuerersparnis / Jahr', formatEuro(results.steuerersparnis)],
+    ['Steuerersparnis / Monat', formatEuro(results.steuerersparnis / 12)],
+    ['Steuerfreier Verkauf möglich', results.steuerfreierVerkaufMoeglich ? 'Ja (§ 23 EStG)' : 'Nein'],
+  ];
+
+  steuerData.forEach(([label, value], i) => {
+    const isJa = value.includes('Ja');
+    drawKennzahl(label, value, y, isJa ? [5, 150, 105] : undefined, i % 2 === 0);
+    y += 7;
+  });
+
+  drawFooter(2, 3);
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // SEITE 3 – WIRTSCHAFTLICHKEITSANALYSE
+  // ════════════════════════════════════════════════════════════════════════════
+
+  doc.addPage();
+  drawHeader('Wirtschaftlichkeitsanalyse', 'Automatisch generierter Analysebericht');
+  y = 54;
+
+  // ── Cashflow-Bewertung ────────────────────────────────────────────────────
+  y = drawSectionTitle('Cashflow-Bewertung', y);
+
+  const cfPositiv = results.nettoCashflowMonat >= 0;
+  const cfNachSteuerPositiv = results.cashflowNachSteuer >= 0;
+
+  const cashflowText =
+    cfPositiv
+      ? `Das Objekt erzielt einen positiven monatlichen Netto-Cashflow von ${formatEuro(results.nettoCashflowMonat)}. ` +
+        `Nach Berücksichtigung der steuerlichen Abschreibungen (AfA: ${formatEuro(results.afaJaehrlich / 12)}/Monat) ` +
+        `ergibt sich ein Cashflow nach Steuern von ${formatEuro(results.cashflowNachSteuer)}/Monat. ` +
+        `Das Objekt trägt sich aus laufenden Mieteinnahmen und generiert einen positiven Überschuss.`
+      : `Das Objekt weist einen negativen monatlichen Netto-Cashflow von ${formatEuro(results.nettoCashflowMonat)} auf. ` +
+        `Das bedeutet, dass die laufenden Kosten (Kreditrate: ${formatEuro(results.monatlicheRate)}/Monat, ` +
+        `Bewirtschaftungskosten: ${formatEuro(results.monatlicheKosten - results.monatlicheRate)}/Monat) ` +
+        `die Mieteinnahmen übersteigen. ` +
+        (cfNachSteuerPositiv
+          ? `Nach steuerlicher Optimierung (Steuerersparnis: ${formatEuro(results.steuerersparnis / 12)}/Monat) ` +
+            `ergibt sich jedoch ein positiver Cashflow nach Steuern von ${formatEuro(results.cashflowNachSteuer)}/Monat.`
+          : `Auch nach steuerlicher Optimierung verbleibt ein negativer Cashflow nach Steuern von ${formatEuro(results.cashflowNachSteuer)}/Monat. ` +
+            `Dieser Betrag muss monatlich aus Eigenmitteln zugeschossen werden.`);
+
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(50, 65, 90);
+  const cfLines = doc.splitTextToSize(cashflowText, contentW);
+  doc.text(cfLines, margin, y);
+  y += cfLines.length * 5 + 8;
+
+  // ── Finanzierungseinfluss ─────────────────────────────────────────────────
+  y = drawSectionTitle('Finanzierungseinfluss', y);
+
+  const finText =
+    `Die gewählte Finanzierungsstruktur (Zinssatz: ${formData.zinssatz} % p.a., Tilgung: ${formData.tilgung} % p.a.) ` +
+    `ergibt eine monatliche Kreditrate von ${formatEuro(results.monatlicheRate)}. ` +
+    `Bei einem Eigenkapitaleinsatz von ${formatEuro(formData.eigenkapital)} (${((formData.eigenkapital / formData.kaufpreis) * 100).toFixed(1)} % des Kaufpreises) ` +
+    `und einer Darlehenssumme von ${formatEuro(results.darlehenssumme)} ` +
+    `beträgt die Eigenkapitalrendite ${formatProzent(results.eigenkapitalrendite)}. ` +
+    `Eine Veränderung des Zinssatzes um 1 Prozentpunkt würde die monatliche Kreditrate um ca. ${formatEuro(results.darlehenssumme * 0.01 / 12)} verändern.`;
+
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(50, 65, 90);
+  const finLines = doc.splitTextToSize(finText, contentW);
+  doc.text(finLines, margin, y);
+  y += finLines.length * 5 + 8;
+
+  // ── Risikobewertung ───────────────────────────────────────────────────────
+  y = drawSectionTitle('Risikobewertung', y);
+
+  const risikoFarbe: [number, number, number] =
+    results.risikoBewertung.gesamt === 'niedrig' ? [5, 150, 105] :
+    results.risikoBewertung.gesamt === 'mittel'  ? [217, 119, 6] :
+                                                   [220, 38, 38];
+
+  const risikoLabel =
+    results.risikoBewertung.gesamt === 'niedrig' ? 'Gesamtrisiko: Niedrig' :
+    results.risikoBewertung.gesamt === 'mittel'  ? 'Gesamtrisiko: Mittel' :
+                                                   'Gesamtrisiko: Hoch';
+
+  doc.setFillColor(...risikoFarbe);
+  doc.roundedRect(margin, y, contentW, 8, 2, 2, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text(risikoLabel, margin + 5, y + 5.5);
+  y += 13;
+
+  const risikoItems: [string, string][] = [
+    ['Zinsänderungsrisiko', results.risikoBewertung.zinsaenderung],
+    ['Mietausfallrisiko', results.risikoBewertung.mietausfall],
+    ['Sanierungsrisiko', results.risikoBewertung.sanierungsrisiko],
+    ['Lagerisiko', results.risikoBewertung.lage],
+  ];
+
+  risikoItems.forEach(([label, text], i) => {
+    if (y + 12 > 275) { doc.addPage(); drawHeader('Wirtschaftlichkeitsanalyse (Forts.)', ''); y = 54; }
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(10, 37, 64);
+    doc.text(label + ':', margin + 2, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 75, 100);
+    const rLines = doc.splitTextToSize(text, contentW - 45);
+    doc.text(rLines, margin + 45, y);
+    y += Math.max(rLines.length * 5, 7);
+  });
+
+  y += 5;
+  drawDivider(y);
+  y += 8;
+
+  // ── Disclaimer ────────────────────────────────────────────────────────────
+  y = drawSectionTitle('Rechtlicher Hinweis', y);
+
+  const disclaimer =
+    'Dieser Report wurde automatisch auf Basis der vom Nutzer eingegebenen Daten erstellt. ' +
+    'Alle Berechnungen dienen ausschließlich der informativen Orientierung und stellen keine Anlage-, Steuer- oder Rechtsberatung dar. ' +
+    'Die Ergebnisse basieren auf vereinfachten Annahmen und können von der tatsächlichen wirtschaftlichen Entwicklung abweichen. ' +
+    'Vor einer Investitionsentscheidung wird empfohlen, einen qualifizierten Finanz- oder Immobilienberater hinzuzuziehen. ' +
+    'ImmoRenditeTool übernimmt keine Haftung für Entscheidungen, die auf Basis dieser Analyse getroffen werden.';
+
+  doc.setFillColor(248, 250, 255);
+  doc.setDrawColor(200, 215, 240);
+  doc.setLineWidth(0.3);
+  const disclaimerLines = doc.splitTextToSize(disclaimer, contentW - 8);
+  const disclaimerH = disclaimerLines.length * 5 + 8;
+  doc.roundedRect(margin, y - 2, contentW, disclaimerH, 2, 2, 'FD');
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(80, 95, 130);
+  doc.text(disclaimerLines, margin + 4, y + 4);
+
+  drawFooter(3, 3);
+
+  // ── Speichern ─────────────────────────────────────────────────────────────
+  const standort = formData.standort
+    ? `_${formData.standort.replace(/[^a-zA-Z0-9]/g, '_')}`
+    : '';
+  doc.save(`ImmoRenditeTool_Investment_Report${standort}_${new Date().toISOString().slice(0, 10)}.pdf`);
+}

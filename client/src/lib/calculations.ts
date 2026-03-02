@@ -60,8 +60,12 @@ export interface FormData {
   szenarioVerkauf24Monate: boolean; // steuerfrei nach 24 Monaten Eigennutzung
   szenarioFlipSanieren: boolean;
 
-  // ── Eigennutzung Steuerfreiheit ───────────────────────────────────────────
+  // ── Eigennutzung Steuerfreiheit ────────────────────────────────────────────────
   eigennutzungMonate?: number;
+
+  // ── Zielrendite (Pro) ────────────────────────────────────────────────
+  /** Ziel-Bruttomietrendite in % (Standard: 6). Nur für Pro-Version. */
+  zielRendite?: number;
 }
 
 export interface FreeResults {
@@ -88,6 +92,23 @@ export interface FreeResults {
   szenarioEigennutzung?: SzenarioResult;
 }
 
+export interface ZielrenditeAnalyse {
+  /** Jahreskaltmiete = Kaltmiete × 12 */
+  jahreskaltmiete: number;
+  /** Aktuelle Bruttomietrendite = (Jahreskaltmiete / Kaufpreis) × 100 */
+  bruttomietrendite: number;
+  /** Ziel-Bruttomietrendite in % */
+  zielRendite: number;
+  /** Maximaler Kaufpreis für Zielrendite = Jahreskaltmiete / (Zielrendite / 100) */
+  maxKaufpreisZielrendite: number;
+  /** Preisabweichung = Aktueller Kaufpreis – Maximaler Kaufpreis */
+  preisabweichung: number;
+  /** Bewertung der Abweichung */
+  bewertung: 'ueber' | 'unter' | 'gleich';
+  /** Automatisch generierter Bewertungstext */
+  bewertungstext: string;
+}
+
 export interface ProResults extends FreeResults {
   // Eigennutzung Steuerfreiheit
   steuerfreierVerkaufMoeglich: boolean;
@@ -112,6 +133,8 @@ export interface ProResults extends FreeResults {
   projektion10J: JahresProjektion[];
   // Risiko
   risikoBewertung: RisikoBewertung;
+  // Zielrendite-Analyse (Pro)
+  zielrenditeAnalyse: ZielrenditeAnalyse;
 }
 
 export interface SzenarioResult {
@@ -458,6 +481,34 @@ export function berechneProResults(data: FormData): ProResults {
   // Eigennutzung Steuerfreiheit: mind. 24 Monate = steuerfrei
   const steuerfreierVerkaufMoeglich = (data.eigennutzungMonate ?? 0) >= 24 && istEtw;
 
+  // ── Zielrendite-Analyse ────────────────────────────────────────────────
+  const zielRendite = data.zielRendite ?? 6;
+  const jahreskaltmiete = data.kaltmiete * 12;
+  const bmr = data.kaufpreis > 0 ? (jahreskaltmiete / data.kaufpreis) * 100 : 0;
+  const maxKaufpreisZielrendite = zielRendite > 0 ? jahreskaltmiete / (zielRendite / 100) : 0;
+  const preisabweichung = data.kaufpreis - maxKaufpreisZielrendite;
+  // Toleranz: ±2 % des Kaufpreises gilt als "ungefähr gleich"
+  const toleranz = data.kaufpreis * 0.02;
+  const bewertung: ZielrenditeAnalyse['bewertung'] =
+    Math.abs(preisabweichung) <= toleranz ? 'gleich' :
+    preisabweichung > 0 ? 'ueber' : 'unter';
+  const bewertungstext =
+    bewertung === 'gleich'
+      ? 'Der aktuelle Kaufpreis entspricht in etwa dem Preisniveau für die gewünschte Zielrendite.'
+      : bewertung === 'ueber'
+      ? 'Auf Basis der eingegebenen Daten liegt der aktuelle Kaufpreis über dem Preisniveau, das für die gewünschte Zielrendite erforderlich wäre.'
+      : 'Der aktuelle Kaufpreis liegt unter dem Preisniveau, das für die gewünschte Zielrendite erforderlich wäre.';
+
+  const zielrenditeAnalyse: ZielrenditeAnalyse = {
+    jahreskaltmiete,
+    bruttomietrendite: bmr,
+    zielRendite,
+    maxKaufpreisZielrendite,
+    preisabweichung,
+    bewertung,
+    bewertungstext,
+  };
+
   return {
     ...freeResults,
     steuerfreierVerkaufMoeglich,
@@ -475,6 +526,7 @@ export function berechneProResults(data: FormData): ProResults {
     szenarioBuyHold10J: data.szenarioVermietung ? szenarioBuyHold10J : undefined,
     projektion10J,
     risikoBewertung,
+    zielrenditeAnalyse,
   };
 }
 

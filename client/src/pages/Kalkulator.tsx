@@ -21,7 +21,7 @@ import {
   berechneProResults,
   getDefaultFormData,
 } from '@/lib/calculations';
-import { exportFreePDF, exportProPDF } from '@/lib/pdfExport';
+import { exportFreePDF, exportProPDF, exportInvestmentReportPDF } from '@/lib/pdfExport';
 import { exportExcel } from '@/lib/excelExport';
 import { toast } from 'sonner';
 import {
@@ -382,26 +382,50 @@ export default function Kalkulator() {
                         {proResults ? (
                           <>
                             <ProResultsPanel results={proResults} />
-                            <div className="mt-4 flex gap-2">
-                              <Button
-                                size="sm"
-                                className="flex-1 btn-gradient text-xs"
-                                onClick={handleExportPDF}
-                              >
-                                <FileText className="w-3.5 h-3.5 mr-1.5" />
-                                Pro-PDF exportieren
-                              </Button>
-                              {isInvestor && (
+                            <div className="mt-4 flex flex-col gap-2">
+                              <div className="flex gap-2">
                                 <Button
                                   size="sm"
-                                  variant="outline"
-                                  className="text-xs"
-                                  onClick={handleExportExcel}
+                                  className="flex-1 btn-gradient text-xs"
+                                  onClick={handleExportPDF}
                                 >
-                                  <Table className="w-3.5 h-3.5 mr-1.5" />
-                                  Excel
+                                  <FileText className="w-3.5 h-3.5 mr-1.5" />
+                                  Pro-PDF exportieren
                                 </Button>
-                              )}
+                                {isInvestor && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-xs"
+                                    onClick={handleExportExcel}
+                                  >
+                                    <Table className="w-3.5 h-3.5 mr-1.5" />
+                                    Excel
+                                  </Button>
+                                )}
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="w-full text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                                onClick={async () => {
+                                  if (!lastFormData || !proResults) return;
+                                  try {
+                                    toast.loading('Investment-Report wird erstellt...');
+                                    await exportInvestmentReportPDF(lastFormData, proResults);
+                                    toast.dismiss();
+                                    toast.success('Investment-Report exportiert', {
+                                      description: '3-seitiger Report mit Zielrendite-Analyse'
+                                    });
+                                  } catch (e) {
+                                    toast.dismiss();
+                                    toast.error('Report-Export fehlgeschlagen');
+                                  }
+                                }}
+                              >
+                                <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
+                                Investment-Report (Zielrendite)
+                              </Button>
                             </div>
                           </>
                         ) : (

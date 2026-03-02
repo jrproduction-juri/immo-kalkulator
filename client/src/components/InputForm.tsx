@@ -502,8 +502,45 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
           )}
         </div>
       </div>
+      {/* ── Zielrendite (Pro-only) ───────────────────────────────────── */}
+      {isPro ? (
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5">
+            <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">Zielrendite-Analyse</Label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent side="right" className="max-w-xs text-xs">
+                Gibt an, welche Bruttomietrendite du anstrebst. Daraus wird der maximale Kaufpreis berechnet, den du zahlen solltest.
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <div>
+            <FieldLabel label="Ziel-Bruttomietrendite" field="kaltmiete" />
+            <NumberInput
+              value={data.zielRendite ?? 6}
+              onChange={v => set('zielRendite', v)}
+              suffix="%"
+              placeholder="6"
+              step={0.1}
+              min={0.1}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 border border-gray-100 opacity-70">
+          <div className="flex items-center gap-1.5">
+            <Lock className="w-3.5 h-3.5 text-gray-400" />
+            <Label className="text-xs text-gray-500">Zielrendite-Analyse (Pro)</Label>
+          </div>
+          <button type="button" onClick={onUpgrade} className="text-xs text-blue-600 hover:underline font-medium">
+            Freischalten
+          </button>
+        </div>
+      )}
 
-      {/* ── Berechnen-Button ─────────────────────────────────────────── */}
+      {/* ── Berechnen-Button ─────────────────────────────────────────────── */}
       <Button
         onClick={onCalculate}
         disabled={isLoading}

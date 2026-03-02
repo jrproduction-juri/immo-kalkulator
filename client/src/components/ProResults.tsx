@@ -160,6 +160,53 @@ export function ProResultsPanel({ results }: ProResultsProps) {
         )}
       </div>
 
+      {/* Zielrendite-Analyse */}
+      {results.zielrenditeAnalyse && (
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Zielrendite-Analyse</p>
+          <div className={`p-4 rounded-xl border ${
+            results.zielrenditeAnalyse.bewertung === 'gleich' ? 'border-emerald-200 bg-emerald-50' :
+            results.zielrenditeAnalyse.bewertung === 'ueber'  ? 'border-red-200 bg-red-50' :
+                                                                'border-blue-200 bg-blue-50'
+          }`}>
+            <div className="flex items-start gap-2 mb-3">
+              <TrendingUp className={`w-4 h-4 shrink-0 mt-0.5 ${
+                results.zielrenditeAnalyse.bewertung === 'gleich' ? 'text-emerald-600' :
+                results.zielrenditeAnalyse.bewertung === 'ueber'  ? 'text-red-600' : 'text-blue-600'
+              }`} />
+              <p className={`text-xs font-medium ${
+                results.zielrenditeAnalyse.bewertung === 'gleich' ? 'text-emerald-800' :
+                results.zielrenditeAnalyse.bewertung === 'ueber'  ? 'text-red-800' : 'text-blue-800'
+              }`}>
+                {results.zielrenditeAnalyse.bewertungstext}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-xs text-muted-foreground">Aktuelle BMR</p>
+                <p className="text-sm font-bold num-display text-foreground">{formatProzent(results.zielrenditeAnalyse.bruttomietrendite)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Zielrendite</p>
+                <p className="text-sm font-bold num-display text-blue-700">{formatProzent(results.zielrenditeAnalyse.zielRendite)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Max. Kaufpreis</p>
+                <p className="text-sm font-bold num-display text-emerald-700">{formatEuro(results.zielrenditeAnalyse.maxKaufpreisZielrendite)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Preisabweichung</p>
+                <p className={`text-sm font-bold num-display ${
+                  results.zielrenditeAnalyse.preisabweichung > 0 ? 'text-red-600' : 'text-emerald-600'
+                }`}>
+                  {results.zielrenditeAnalyse.preisabweichung >= 0 ? '+' : ''}{formatEuro(results.zielrenditeAnalyse.preisabweichung)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Erweiterte Szenarien */}
       <div>
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Erweiterte Szenarien</p>
