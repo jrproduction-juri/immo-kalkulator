@@ -277,16 +277,17 @@ export function berechneFreeResults(data: FormData): FreeResults {
     ? ((jaehrlicheKaltmiete - bewirtschaftungskosten) / gesamtinvestition) * 100
     : 0;
 
-  // Cashflow (neue Formel: Kaltmiete – nicht umlagefähige Kosten – Kreditrate)
-  const monatlicheEinnahmen = effektiveKaltmiete;
+  // Cashflow: Warmmiete - Kreditrate - Hausgeld - Ruecklagen - nicht umlagefaehige Kosten
+  // Die Warmmiete ist die tatsaechliche Einnahme vom Mieter
+  const monatlicheEinnahmen = data.warmmiete && data.warmmiete > 0 ? data.warmmiete : effektiveKaltmiete;
   const monatlicheKosten = berechneMonatlicheKosten(data, monatlicheRate);
   const nettoCashflowMonat = monatlicheEinnahmen - monatlicheKosten;
   const nettoCashflowJahr = nettoCashflowMonat * 12;
 
-  // Warmmiete-Hinweis
+  // Warmmiete-Hinweis (nur wenn Warmmiete eingegeben wurde)
   let warmmieteUeberschuss: number | undefined;
   if (data.warmmiete && data.warmmiete > 0) {
-    warmmieteUeberschuss = data.warmmiete - monatlicheKosten;
+    warmmieteUeberschuss = nettoCashflowMonat;
   }
 
   // Empfehlung
