@@ -102,3 +102,4 @@
 - [x] Pro-PDF: Seite 3 Wirtschaftlichkeitsanalyse mit Disclaimer
 - [x] PDF-Design: Blau/weißes Investment-Report-Layout, professionelle Typografie
 - [x] Cashflow-Bug: Netto-Cashflow wird mit Kaltmiete statt Warmmiete berechnet (sollte Warmmiete - Kosten sein) — BEHOBEN: monatlicheEinnahmen verwendet jetzt Warmmiete wenn vorhanden
+- [x] Redundante Warmmiete-Überschuss-Anzeige entfernen (identisch mit Netto-Cashflow) — BEHOBEN: aus FreeResults-Interface und Berechnung entfernt

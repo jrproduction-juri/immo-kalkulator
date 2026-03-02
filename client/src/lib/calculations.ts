@@ -82,8 +82,6 @@ export interface FreeResults {
   monatlicheKosten: number;
   nettoCashflowMonat: number;
   nettoCashflowJahr: number;
-  // Warmmiete-Hinweis
-  warmmieteUeberschuss?: number;
   // Empfehlung
   empfehlung: 'sinnvoll' | 'kritisch' | 'pruefen';
   empfehlungText: string;
@@ -284,12 +282,6 @@ export function berechneFreeResults(data: FormData): FreeResults {
   const nettoCashflowMonat = monatlicheEinnahmen - monatlicheKosten;
   const nettoCashflowJahr = nettoCashflowMonat * 12;
 
-  // Warmmiete-Hinweis (nur wenn Warmmiete eingegeben wurde)
-  let warmmieteUeberschuss: number | undefined;
-  if (data.warmmiete && data.warmmiete > 0) {
-    warmmieteUeberschuss = nettoCashflowMonat;
-  }
-
   // Empfehlung
   let empfehlung: 'sinnvoll' | 'kritisch' | 'pruefen';
   let empfehlungText: string;
@@ -336,7 +328,6 @@ export function berechneFreeResults(data: FormData): FreeResults {
     monatlicheKosten,
     nettoCashflowMonat,
     nettoCashflowJahr,
-    warmmieteUeberschuss,
     empfehlung,
     empfehlungText,
     szenarioVermietung: data.szenarioVermietung ? szenarioVermietung : undefined,
