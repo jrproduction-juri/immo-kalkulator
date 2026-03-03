@@ -156,33 +156,33 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-14">
             <h2 className="font-bold text-3xl text-gray-900 mb-3">Transparente Preise</h2>
-            <p className="text-gray-500 text-lg">Einmalzahlung oder Abo — du entscheidest.</p>
+            <p className="text-gray-500 text-lg">Monatlich, jährlich oder einmalig — du entscheidest. <a href="/pricing" className="text-blue-600 hover:underline font-medium">Alle Details ansehen →</a></p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
               {
                 name: 'Basic',
-                price: '49 €',
-                billing: 'Einmalzahlung',
-                desc: 'Perfekt für Einsteiger',
-                features: ['Bruttomietrendite', 'Netto-Cashflow', 'AfA & Steuer', 'Eigenkapitalrendite', 'Bis zu 10 Immobilien'],
+                price: 'ab 9 €',
+                billing: 'pro Monat · oder 79 €/Jahr · oder 149 € einmalig',
+                desc: 'Für Einsteiger und gelegentliche Analysen',
+                features: ['Bruttomietrendite', 'Netto-Cashflow', 'AfA & Steuerersparnis', 'Eigenkapitalrendite', 'Bis zu 10 Immobilien'],
                 cta: 'Basic wählen',
                 highlight: false,
               },
               {
                 name: 'Pro',
-                price: '99 €',
-                billing: 'Einmalig oder 19 €/Monat',
-                desc: 'Für aktive Investoren',
+                price: 'ab 19 €',
+                billing: 'pro Monat · oder 149 €/Jahr · oder 299 € einmalig',
+                desc: 'Für aktive Investoren mit mehreren Objekten',
                 features: ['Alle Basic-Features', 'Erweiterte Szenarien', 'PDF-Report', 'Exposé-Generator', 'Email-Generator', '14 Tage kostenlos testen'],
                 cta: 'Pro wählen',
                 highlight: true,
               },
               {
                 name: 'Investor',
-                price: '149 €',
-                billing: 'Einmalzahlung',
-                desc: 'Für Profi-Investoren',
+                price: 'ab 39 €',
+                billing: 'pro Monat · oder 299 €/Jahr · oder 499 € einmalig',
+                desc: 'Für Profi-Investoren und Portfolios',
                 features: ['Alle Pro-Features', 'Unbegrenzte Immobilien', 'Portfolio-Übersicht', 'Objekte vergleichen', 'Excel-Export'],
                 cta: 'Investor wählen',
                 highlight: false,
