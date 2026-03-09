@@ -38,6 +38,10 @@ const INFO: Record<string, string> = {
   indexmiete: 'Die Miete wird an den Verbraucherpreisindex (VPI) gekoppelt. Schützt vor Inflation.',
   tripleNet: 'Bei Triple-Net trägt der Mieter alle Nebenkosten (Steuern, Versicherungen, Instandhaltung). Vermieter hat nahezu keine laufenden Kosten.',
   eigennutzungMonate: 'Wie lange nutzt du die Immobilie selbst? Ab 24 Monaten Eigennutzung ist der Verkauf einer ETW steuerfrei (§ 23 EStG).',
+  grundstueckFlaeche: 'Die Grundstücksgröße in m². Relevant für die Bewertung und den Preis pro m² Grundstück.',
+  grundsteuer: 'Die monatliche Grundsteuer (Jahresbetrag / 12). Beim EFH typisch: 500–1.500 €/Jahr je nach Lage.',
+  versicherung: 'Monatliche Gebäudeversicherung (Jahresbetrag / 12). Beim EFH typisch: 400–1.000 €/Jahr.',
+  verwaltungEFH: 'Optionale monatliche Verwaltungskosten (z.B. Hausverwaltung). Beim selbstverwalteten EFH oft 0 €.',
 };
 
 function InfoButton({ field }: { field: string }) {
@@ -103,6 +107,7 @@ function NumberInput({
 
 const ART_OPTIONS: { value: ImmobilienArt; label: string; icon: React.ReactNode; proOnly: boolean; desc: string }[] = [
   { value: 'wohnung', label: 'Wohnung', icon: <Home className="w-4 h-4" />, proOnly: false, desc: 'ETW / Eigentumswohnung' },
+  { value: 'efh', label: 'Einfamilienhaus', icon: <Home className="w-4 h-4" />, proOnly: true, desc: 'EFH mit Grundstück' },
   { value: 'mfh', label: 'Mehrfamilienhaus', icon: <Building2 className="w-4 h-4" />, proOnly: true, desc: 'MFH mit mehreren Einheiten' },
   { value: 'neubau', label: 'Neubau', icon: <Building className="w-4 h-4" />, proOnly: true, desc: 'Neubau mit 3 % AfA' },
   { value: 'gewerbe', label: 'Gewerbe', icon: <Warehouse className="w-4 h-4" />, proOnly: true, desc: 'Büro, Laden, Lager' },
@@ -232,16 +237,37 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
           </div>
         </div>
 
-        <div>
-          <FieldLabel label="Standort (optional)" field="nichtUmlagefaehig" />
-          <Input
-            type="text"
-            value={data.standort ?? ''}
-            onChange={e => set('standort', e.target.value)}
-            placeholder="z.B. München, Schwabing"
-            className="h-9 text-sm"
-          />
-        </div>
+        {/* EFH: Grundstücksgröße */}
+        {art === 'efh' && (
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <FieldLabel label="Grundstücksgröße" field="grundstueckFlaeche" />
+              <NumberInput value={data.grundstueckFlaeche ?? 0} onChange={v => set('grundstueckFlaeche', v)} suffix="m²" placeholder="500" />
+            </div>
+            <div>
+              <FieldLabel label="Standort (optional)" field="nichtUmlagefaehig" />
+              <Input
+                type="text"
+                value={data.standort ?? ''}
+                onChange={e => set('standort', e.target.value)}
+                placeholder="z.B. Hamburg, Rahlstedt"
+                className="h-9 text-sm"
+              />
+            </div>
+          </div>
+        )}
+        {art !== 'efh' && (
+          <div>
+            <FieldLabel label="Standort (optional)" field="nichtUmlagefaehig" />
+            <Input
+              type="text"
+              value={data.standort ?? ''}
+              onChange={e => set('standort', e.target.value)}
+              placeholder="z.B. München, Schwabing"
+              className="h-9 text-sm"
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Miete / Einnahmen ──────────────────────────────────────────── */}
@@ -249,6 +275,14 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
         <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">
           {art === 'mfh' ? 'Einnahmen (MFH)' : 'Miete & Einnahmen'}
         </Label>
+
+        {/* EFH */}
+        {art === 'efh' && (
+          <div>
+            <FieldLabel label="Kaltmiete" field="kaltmiete" />
+            <NumberInput value={data.kaltmiete} onChange={v => set('kaltmiete', v)} suffix="€/Mo" placeholder="1400" />
+          </div>
+        )}
 
         {/* Wohnung / Neubau */}
         {(art === 'wohnung' || art === 'neubau') && (
@@ -333,26 +367,65 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
       <div className="space-y-3">
         <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">Kosten</Label>
 
-        <div className="grid grid-cols-2 gap-3">
-          {art !== 'mfh' && art !== 'gewerbe' && (
-            <div>
-              <FieldLabel label="Hausgeld" field="hausgeld" />
-              <NumberInput value={data.hausgeld} onChange={v => set('hausgeld', v)} suffix="€/Mo" placeholder="200" />
+        {/* EFH: Grundsteuer, Versicherung, Verwaltung (kein Hausgeld) */}
+        {art === 'efh' && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <FieldLabel label="Instandhaltungsrüklage" field="ruecklagen" />
+                <NumberInput value={data.ruecklagen} onChange={v => set('ruecklagen', v)} suffix="€/Mo" placeholder="150" />
+              </div>
+              <div>
+                <FieldLabel label="Grundsteuer" field="grundsteuer" />
+                <NumberInput value={data.grundsteuer ?? 0} onChange={v => set('grundsteuer', v)} suffix="€/Mo" placeholder="80" />
+              </div>
             </div>
-          )}
-          <div>
-            <FieldLabel label={art === 'neubau' ? 'Rücklage (reduziert)' : 'Rücklage'} field="ruecklagen" />
-            <NumberInput value={data.ruecklagen} onChange={v => set('ruecklagen', v)} suffix="€/Mo" placeholder={art === 'neubau' ? '20' : '50'} />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <FieldLabel label="Gebäudeversicherung" field="versicherung" />
+                <NumberInput value={data.versicherung ?? 0} onChange={v => set('versicherung', v)} suffix="€/Mo" placeholder="60" />
+              </div>
+              <div>
+                <FieldLabel label="Verwaltung (opt.)" field="verwaltungEFH" />
+                <NumberInput value={data.verwaltungEFH ?? 0} onChange={v => set('verwaltungEFH', v)} suffix="€/Mo" placeholder="0" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <FieldLabel label="Kreditrate (opt.)" field="kreditrate" />
+                <NumberInput value={data.kreditrate ?? 0} onChange={v => set('kreditrate', v > 0 ? v : undefined as unknown as number)} suffix="€/Mo" placeholder="auto" />
+              </div>
+              <div>
+                <FieldLabel label="Sonstige Ausgaben" field="nichtUmlagefaehig" />
+                <NumberInput value={data.sonstigeAusgaben} onChange={v => set('sonstigeAusgaben', v)} suffix="€/Mo" placeholder="0" />
+              </div>
+            </div>
           </div>
-          <div>
-            <FieldLabel label="Nicht umlagefähige Kosten" field="nichtUmlagefaehig" />
-            <NumberInput value={data.nichtUmlagefaehig} onChange={v => set('nichtUmlagefaehig', v)} suffix="€/Mo" placeholder="100" />
+        )}
+
+        {/* Alle anderen Arten: Standard-Kosten */}
+        {art !== 'efh' && (
+          <div className="grid grid-cols-2 gap-3">
+            {art !== 'mfh' && art !== 'gewerbe' && (
+              <div>
+                <FieldLabel label="Hausgeld" field="hausgeld" />
+                <NumberInput value={data.hausgeld} onChange={v => set('hausgeld', v)} suffix="€/Mo" placeholder="200" />
+              </div>
+            )}
+            <div>
+              <FieldLabel label={art === 'neubau' ? 'Rüklage (reduziert)' : 'Rüklage'} field="ruecklagen" />
+              <NumberInput value={data.ruecklagen} onChange={v => set('ruecklagen', v)} suffix="€/Mo" placeholder={art === 'neubau' ? '20' : '50'} />
+            </div>
+            <div>
+              <FieldLabel label="Nicht umlagefähige Kosten" field="nichtUmlagefaehig" />
+              <NumberInput value={data.nichtUmlagefaehig} onChange={v => set('nichtUmlagefaehig', v)} suffix="€/Mo" placeholder="100" />
+            </div>
+            <div>
+              <FieldLabel label="Sonstige Ausgaben" field="nichtUmlagefaehig" />
+              <NumberInput value={data.sonstigeAusgaben} onChange={v => set('sonstigeAusgaben', v)} suffix="€/Mo" placeholder="0" />
+            </div>
           </div>
-          <div>
-            <FieldLabel label="Sonstige Ausgaben" field="nichtUmlagefaehig" />
-            <NumberInput value={data.sonstigeAusgaben} onChange={v => set('sonstigeAusgaben', v)} suffix="€/Mo" placeholder="0" />
-          </div>
-        </div>
+        )}
 
         {/* Neubau: AfA-Satz */}
         {art === 'neubau' && (

@@ -104,3 +104,9 @@
 - [x] Cashflow-Bug: Netto-Cashflow wird mit Kaltmiete statt Warmmiete berechnet (sollte Warmmiete - Kosten sein) — BEHOBEN: monatlicheEinnahmen verwendet jetzt Warmmiete wenn vorhanden
 - [x] Redundante Warmmiete-Überschuss-Anzeige entfernen (identisch mit Netto-Cashflow) — BEHOBEN: aus FreeResults-Interface und Berechnung entfernt
 - [x] Preise auf Startseite mit Pricing-Seite synchronisieren — BEHOBEN: Basic ab 9€, Pro ab 19€, Investor ab 39€ mit allen Optionen (monatlich/jährlich/einmalig)
+- [x] EFH: Immobilienart "Einfamilienhaus" zu FormData-Typen hinzugefügt (isProArt = true)
+- [x] EFH: Neue Felder in FormData (grundstueckFlaeche, grundsteuer, versicherung, verwaltungEFH)
+- [x] EFH: InputForm angepasst (EFH-Felder zeigen, Hausgeld/WEG-Rücklagen ausgeblendet)
+- [x] EFH: Berechnungen für EFH (Jahreskaltmiete, BMR, Netto-Cashflow, EK-Rendite, Max-Kaufpreis)
+- [x] EFH: PDF-Export für EFH-spezifische Kennzahlen angepasst (Betriebskosten statt Nebenkosten)
+- [x] EFH: 6 Vitest-Tests für EFH-Berechnungen geschrieben und bestanden

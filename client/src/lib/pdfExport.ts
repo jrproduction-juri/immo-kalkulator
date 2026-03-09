@@ -644,10 +644,15 @@ export async function exportExposePDF(formData: FormData, results: ProResults): 
   doc.setLineWidth(0.2);
   y += 5;
 
+  // EFH hat kein Hausgeld, stattdessen Grundsteuer + Versicherung + Verwaltung
+  const nebenkostenPDF = formData.art === 'efh'
+    ? (formData.ruecklagen ?? 0) + (formData.grundsteuer ?? 0) + (formData.versicherung ?? 0) + (formData.verwaltungEFH ?? 0)
+    : formData.hausgeld + formData.ruecklagen;
+
   const barItems = [
     { label: 'Kaltmiete', value: formData.kaltmiete, color: [5, 150, 105] as [number, number, number] },
     { label: 'Kreditrate', value: results.monatlicheRate, color: [21, 101, 192] as [number, number, number] },
-    { label: 'Nebenkosten', value: formData.hausgeld + formData.ruecklagen, color: [124, 58, 237] as [number, number, number] },
+    { label: formData.art === 'efh' ? 'Betriebskosten' : 'Nebenkosten', value: nebenkostenPDF, color: [124, 58, 237] as [number, number, number] },
     { label: 'Cashflow', value: Math.abs(results.nettoCashflowMonat), color: (results.nettoCashflowMonat >= 0 ? [5, 150, 105] : [220, 38, 38]) as [number, number, number] },
   ];
 

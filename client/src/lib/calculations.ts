@@ -5,7 +5,7 @@
 
 // ─── Typen ─────────────────────────────────────────────────────────────────────
 
-export type ImmobilienArt = 'wohnung' | 'mfh' | 'neubau' | 'gewerbe';
+export type ImmobilienArt = 'wohnung' | 'mfh' | 'neubau' | 'gewerbe' | 'efh';
 
 export interface FormData {
   // ── Allgemein ──────────────────────────────────────────────────────────────
@@ -48,11 +48,17 @@ export interface FormData {
   kaufnebenkosten?: number;     // optional: manuelle Eingabe
   ruecklagenReduziert?: boolean; // Neubau: geringere Rücklage nötig
 
-  // ── Gewerbe-spezifisch ───────────────────────────────────────────────────
+  // ── Gewerbe-spezifisch ────────────────────────────────────────────────
   mietvertragslaufzeit?: number; // Jahre
   indexmiete?: boolean;
   tripleNet?: boolean;          // Mieter trägt alle Nebenkosten
   leerstandsquoteGewerbe?: number; // %
+
+  // ── EFH-spezifisch ───────────────────────────────────────────
+  grundstueckFlaeche?: number;  // Grundstücksgröße in m²
+  grundsteuer?: number;         // monatliche Grundsteuer in €
+  versicherung?: number;        // monatliche Gebäudeversicherung in €
+  verwaltungEFH?: number;       // monatliche Verwaltungskosten (optional)
 
   // ── Szenarien ────────────────────────────────────────────────────────────
   szenarioVermietung: boolean;
@@ -229,13 +235,16 @@ function berechneEffektiveKaltmiete(data: FormData): number {
       // Triple-Net: Mieter trägt alle NK → Kaltmiete = Nettomiete
       return data.kaltmiete * (1 - leerstand);
     }
+    case 'efh':
+      // EFH: direkte Kaltmiete (kein Hausgeld, keine WEG-Rücklagen)
+      return data.kaltmiete;
     default:
       return data.kaltmiete;
   }
 }
 
 /** Berechnet monatliche Kosten je nach Immobilienart
- *  Neue Formel: nicht umlagefähige Kosten + Kreditrate (+ Rücklage wenn nicht Triple-Net)
+ *  Neue Formel: nicht umlagefähige Kosten + Kreditrate (+ Rüklage wenn nicht Triple-Net)
  */
 function berechneMonatlicheKosten(
   data: FormData,
@@ -246,6 +255,14 @@ function berechneMonatlicheKosten(
 
   if (isTripleNet) {
     return monatlicheRate + data.nichtUmlagefaehig + data.sonstigeAusgaben;
+  }
+
+  // EFH: Grundsteuer + Versicherung + Verwaltung statt Hausgeld
+  if (data.art === 'efh') {
+    const grundsteuer = data.grundsteuer ?? 0;
+    const versicherung = data.versicherung ?? 0;
+    const verwaltung = data.verwaltungEFH ?? 0;
+    return monatlicheRate + data.ruecklagen + grundsteuer + versicherung + verwaltung + data.nichtUmlagefaehig + data.sonstigeAusgaben;
   }
 
   return monatlicheRate + data.nichtUmlagefaehig + data.ruecklagen + data.sonstigeAusgaben;
@@ -592,6 +609,23 @@ export function getDefaultFormData(art: ImmobilienArt = 'wohnung'): FormData {
         ruecklagen: 200,
         nichtUmlagefaehig: 150,
       };
+    case 'efh':
+      return {
+        ...base,
+        kaufpreis: 450000,
+        wohnflaeche: 140,
+        baujahr: 1990,
+        zustand: 'renoviert',
+        kaltmiete: 1400,
+        warmmiete: undefined,
+        hausgeld: 0,          // EFH hat kein Hausgeld
+        ruecklagen: 150,      // höhere Rücklagen beim EFH
+        nichtUmlagefaehig: 0,
+        grundstueckFlaeche: 500,
+        grundsteuer: 80,      // ca. 960 €/Jahr = 80 €/Mo
+        versicherung: 60,     // ca. 720 €/Jahr = 60 €/Mo
+        verwaltungEFH: 0,
+      };
     default:
       return base;
   }
@@ -625,5 +659,5 @@ export function formatZahl(value: number): string {
 
 /** Gibt zurück ob eine Immobilienart Pro-only ist */
 export function isProArt(art: ImmobilienArt): boolean {
-  return art === 'mfh' || art === 'neubau' || art === 'gewerbe';
+  return art === 'mfh' || art === 'neubau' || art === 'gewerbe' || art === 'efh';
 }
