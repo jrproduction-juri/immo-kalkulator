@@ -44,7 +44,7 @@ export default function Home() {
       </nav>
 
       {/* ── Hero ── */}
-      <section className="relative pt-16 overflow-hidden">
+      <section className="relative pt-16 overflow-hidden" aria-labelledby="hero-heading">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${HERO_IMG})` }} />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(10,37,64,0.92) 0%, rgba(13,110,253,0.80) 60%, rgba(10,37,64,0.85) 100%)' }} />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-24 md:py-32">
@@ -53,12 +53,12 @@ export default function Home() {
               <Star className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
               <span className="text-white/90 text-xs font-medium">Professionelle Investment-Analyse für Deutschland</span>
             </div>
-            <h1 className="font-bold text-4xl md:text-5xl text-white leading-tight mb-4">
-              Immobilien Investment<br />
+            <h1 id="hero-heading" className="font-bold text-4xl md:text-5xl text-white leading-tight mb-4">
+              Immobilien Rendite<br />
               <span className="text-blue-300">Kalkulator</span>
             </h1>
             <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-xl">
-              Berechne Cashflow, Rendite & Szenarien in wenigen Klicks. Fundierte Entscheidungsgrundlage für dein nächstes Investment — mit Steueroptimierung und 10-Jahres-Projektion.
+              Bruttomietrendite, Netto-Cashflow &amp; Eigenkapitalrendite berechnen — für ETW, EFH, MFH &amp; Neubau. Mit AfA-Berechnung, Steueroptimierung und 10-Jahres-Projektion.
             </p>
             <div className="flex flex-wrap gap-3 mb-8">
               {[
@@ -94,11 +94,11 @@ export default function Home() {
       </section>
 
       {/* ── Features ── */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50" aria-labelledby="features-heading">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-14">
-            <h2 className="font-bold text-3xl text-gray-900 mb-3">Alles was du für dein Investment brauchst</h2>
-            <p className="text-gray-500 text-lg max-w-xl mx-auto">Von der ersten Kalkulation bis zum professionellen Report — alles in einer App.</p>
+            <h2 id="features-heading" className="font-bold text-3xl text-gray-900 mb-3">Alles was du für dein Immobilien-Investment brauchst</h2>
+            <p className="text-gray-500 text-lg max-w-xl mx-auto">Von der ersten Rendite-Kalkulation bis zum professionellen Investment-Report — alles in einer App.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -152,10 +152,10 @@ export default function Home() {
       </section>
 
       {/* ── Pricing Preview ── */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white" aria-labelledby="pricing-heading">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-14">
-            <h2 className="font-bold text-3xl text-gray-900 mb-3">Transparente Preise</h2>
+            <h2 id="pricing-heading" className="font-bold text-3xl text-gray-900 mb-3">Transparente Preise für jeden Investor</h2>
             <p className="text-gray-500 text-lg">Monatlich, jährlich oder einmalig — du entscheidest. <a href="/pricing" className="text-blue-600 hover:underline font-medium">Alle Details ansehen →</a></p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -226,6 +226,60 @@ export default function Home() {
             <a href="/pricing" className="text-blue-600 hover:text-blue-700 text-sm font-medium inline-flex items-center gap-1">
               Alle Features vergleichen <ArrowRight className="w-3.5 h-3.5" />
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ (SEO) ── */}
+      <section className="py-20 bg-gray-50" aria-labelledby="faq-heading">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <h2 id="faq-heading" className="font-bold text-3xl text-gray-900 mb-3">Häufige Fragen zum Immobilien-Investment</h2>
+            <p className="text-gray-500 text-lg">Alles Wichtige rund um Rendite, Cashflow und Steueroptimierung.</p>
+          </div>
+          <div className="space-y-4">
+            {[
+              {
+                q: 'Wie berechne ich die Bruttomietrendite einer Immobilie?',
+                a: 'Die Bruttomietrendite berechnet sich als: (Jahreskaltmiete ÷ Kaufpreis) × 100. Beispiel: Bei 1.000 €/Monat Kaltmiete und 300.000 € Kaufpreis ergibt sich eine Bruttomietrendite von 4 %. Als Faustregel gilt: ab 4 % brutto ist eine Immobilie für Buy-and-Hold interessant.',
+              },
+              {
+                q: 'Was ist ein guter Netto-Cashflow bei einer Immobilie?',
+                a: 'Ein positiver Netto-Cashflow bedeutet, dass die Mieteinnahmen alle Kosten (Kreditrate, Hausgeld, Verwaltung, Rücklagen) übersteigen. Für Investoren gilt ein monatlicher Überschuss von 100–300 € als solide Basis. Negativer Cashflow ist nur dann tragbar, wenn die Steuerersparnis und Wertsteigerung dies ausgleichen.',
+              },
+              {
+                q: 'Was bedeutet AfA bei Immobilien und wie hoch ist sie?',
+                a: 'AfA steht für Absetzung für Abnutzung. Bei vermieteten Immobilien können Gebäudekosten steuerlich abgeschrieben werden: 2 % p.a. bei Baujahr nach 1924, 2,5 % bei älteren Gebäuden, 3 % bei Neubauten ab 2023. Das Grundstück ist nicht abschreibungsfähig.',
+              },
+              {
+                q: 'Welche Immobilienarten unterstützt das ImmoRenditeTool?',
+                a: 'Das ImmoRenditeTool unterstützt Eigentumswohnungen (ETW), Einfamilienhäuser (EFH), Mehrfamilienhäuser (MFH), Neubauten und Gewerbeimmobilien – jeweils mit spezifischen Berechnungsfeldern und Kennzahlen.',
+              },
+              {
+                q: 'Wie berechne ich den maximalen Kaufpreis für eine Zielrendite?',
+                a: 'Der maximale Kaufpreis für eine Zielrendite ergibt sich aus: Jahreskaltmiete ÷ (Zielrendite / 100). Bei 1.200 €/Monat Kaltmiete und 6 % Zielrendite wäre der maximale Kaufpreis 240.000 €. Das ImmoRenditeTool berechnet diesen Wert automatisch.',
+              },
+              {
+                q: 'Kann ich Immobilien nach 24 Monaten steuerfrei verkaufen?',
+                a: 'Ja, bei selbstgenutzten Eigentumswohnungen entfällt die Spekulationssteuer nach 24 Monaten Eigennutzung. Das ImmoRenditeTool berechnet dieses Szenario automatisch und zeigt den steuerfreien Verkaufsgewinn.',
+              },
+              {
+                q: 'Wie hoch sollte die Eigenkapitalrendite bei einer Immobilie sein?',
+                a: 'Eine Eigenkapitalrendite von 5–10 % gilt als attraktiv für Immobilien-Investments in Deutschland. Sie berechnet sich aus dem jährlichen Cashflow nach Steuern geteilt durch das eingesetzte Eigenkapital. Mit Hebeleffekt (Finanzierung) kann sie deutlich über der Bruttomietrendite liegen.',
+              },
+              {
+                q: 'Ist das ImmoRenditeTool kostenlos nutzbar?',
+                a: 'Ja, die Grundfunktionen sind kostenlos: Bruttomietrendite, Cashflow und Basisanalyse. Premium-Funktionen wie erweiterte Szenarien, PDF Investment-Report, Portfolio-Verwaltung und Excel-Export sind ab 9 €/Monat verfügbar.',
+              },
+            ].map(({ q, a }) => (
+              <details key={q} className="bg-white rounded-xl border border-gray-200 group">
+                <summary className="flex items-center justify-between p-5 cursor-pointer list-none">
+                  <h3 className="font-semibold text-gray-900 text-sm pr-4">{q}</h3>
+                  <span className="shrink-0 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 group-open:rotate-45 transition-transform text-lg leading-none">+</span>
+                </summary>
+                <p className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>

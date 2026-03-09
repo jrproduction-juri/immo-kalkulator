@@ -110,3 +110,10 @@
 - [x] EFH: Berechnungen für EFH (Jahreskaltmiete, BMR, Netto-Cashflow, EK-Rendite, Max-Kaufpreis)
 - [x] EFH: PDF-Export für EFH-spezifische Kennzahlen angepasst (Betriebskosten statt Nebenkosten)
 - [x] EFH: 6 Vitest-Tests für EFH-Berechnungen geschrieben und bestanden
+- [x] SEO: Keywords in index.html Meta-Tags (title, description, keywords, canonical)
+- [x] SEO: Open Graph Tags für Social Media (og:title, og:description, og:image)
+- [x] SEO: Twitter Card Tags
+- [x] SEO: Strukturierte Daten JSON-LD (WebApplication + FAQPage mit 8 Fragen)
+- [x] SEO: Semantisches HTML auf der Startseite (aria-labelledby, h1/h2/h3 Hierarchie)
+- [x] SEO: Keyword-reiche Texte auf der Startseite (Bruttomietrendite, Cashflow, AfA, ETW, EFH, MFH)
+- [x] SEO: FAQ-Sektion mit 8 keyword-reichen Fragen (Google Rich Snippets)
