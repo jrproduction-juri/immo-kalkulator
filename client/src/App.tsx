@@ -9,6 +9,9 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Kalkulator from "./pages/Kalkulator";
 import Pricing from "./pages/Pricing";
+import Impressum from "./pages/Impressum";
+import Datenschutz from "./pages/Datenschutz";
+import AGB from "./pages/AGB";
 import { useAuth } from "./_core/hooks/useAuth";
 import { getLoginUrl } from "./const";
 import { Loader2 } from "lucide-react";
@@ -49,6 +52,9 @@ function Router() {
       <Route path="/kalkulator/:id">
         {() => <ProtectedRoute component={Kalkulator} />}
       </Route>
+      <Route path="/impressum" component={Impressum} />
+      <Route path="/datenschutz" component={Datenschutz} />
+      <Route path="/agb" component={AGB} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

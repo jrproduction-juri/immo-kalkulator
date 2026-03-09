@@ -117,3 +117,7 @@
 - [x] SEO: Semantisches HTML auf der Startseite (aria-labelledby, h1/h2/h3 Hierarchie)
 - [x] SEO: Keyword-reiche Texte auf der Startseite (Bruttomietrendite, Cashflow, AfA, ETW, EFH, MFH)
 - [x] SEO: FAQ-Sektion mit 8 keyword-reichen Fragen (Google Rich Snippets)
+- [x] Impressum-Seite erstellt (Juri Telipko / JR Production, Einzelunternehmen, Bergheim, Kleinunternehmer)
+- [x] Datenschutzerklärung-Seite erstellt (DSGVO-konform, Stripe, Manus OAuth, Umami Analytics, LDI NRW)
+- [x] AGB-Seite erstellt (Stripe-Zahlungsbedingungen, Widerrufsrecht, Haftungsausschluss, Kleinunternehmer)
+- [x] Seiten in Router (App.tsx), Home-Footer und Dashboard-Footer eingebunden
