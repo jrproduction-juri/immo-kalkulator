@@ -121,3 +121,4 @@
 - [x] Datenschutzerklärung-Seite erstellt (DSGVO-konform, Stripe, Manus OAuth, Umami Analytics, LDI NRW)
 - [x] AGB-Seite erstellt (Stripe-Zahlungsbedingungen, Widerrufsrecht, Haftungsausschluss, Kleinunternehmer)
 - [x] Seiten in Router (App.tsx), Home-Footer und Dashboard-Footer eingebunden
+- [x] Footer mit Impressum/Datenschutz/AGB auf Pricing-Seite ergänzt

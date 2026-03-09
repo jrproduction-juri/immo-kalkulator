@@ -408,9 +408,12 @@ export default function Pricing() {
           <p className="text-xs text-gray-400 text-center">
             Alle Berechnungen ohne Gewähr · Keine Anlageberatung · © {new Date().getFullYear()} ImmoRenditeTool
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4 justify-center">
             <a href="/" className="text-xs text-gray-400 hover:text-gray-600">Startseite</a>
             <a href="/dashboard" className="text-xs text-gray-400 hover:text-gray-600">Dashboard</a>
+            <a href="/impressum" className="text-xs text-gray-400 hover:text-gray-600">Impressum</a>
+            <a href="/datenschutz" className="text-xs text-gray-400 hover:text-gray-600">Datenschutz</a>
+            <a href="/agb" className="text-xs text-gray-400 hover:text-gray-600">AGB</a>
           </div>
         </div>
       </footer>
