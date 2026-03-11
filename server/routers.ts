@@ -13,6 +13,10 @@ import {
   updateImmobilie,
   updateUserPlan,
 } from "./db";
+import { createCheckoutSession, createCustomerPortalSession, getOrCreateStripeCustomer } from "./stripe/stripeService";
+import { getDb } from "./db";
+import { users } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 const PLAN_LIMITS = {
   none: 1,   // Free: 1 Objekt speichern
@@ -66,6 +70,45 @@ export const appRouter = router({
       }),
 
     // Trial entfernt – keine kostenlose Testversion mehr
+
+    checkout: protectedProcedure
+      .input(z.object({
+        planId: z.enum(["basic", "pro", "investor"]),
+        billingType: z.enum(["monthly", "yearly", "lifetime"]),
+        origin: z.string().url(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const user = ctx.user;
+        const checkoutUrl = await createCheckoutSession({
+          userId: user.id,
+          email: user.email ?? "",
+          name: user.name ?? undefined,
+          stripeCustomerId: user.stripeCustomerId ?? null,
+          planId: input.planId,
+          billingType: input.billingType,
+          origin: input.origin,
+        });
+
+        // Stripe Customer ID sofort speichern (falls neu erstellt)
+        const db = await getDb();
+        if (db && !user.stripeCustomerId) {
+          const customerId = await getOrCreateStripeCustomer(user.id, user.email ?? "", user.name ?? undefined, null);
+          await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id));
+        }
+
+        return { checkoutUrl };
+      }),
+
+    portal: protectedProcedure
+      .input(z.object({ origin: z.string().url() }))
+      .mutation(async ({ ctx, input }) => {
+        const user = ctx.user;
+        if (!user.stripeCustomerId) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Kein aktives Abonnement gefunden." });
+        }
+        const portalUrl = await createCustomerPortalSession(user.stripeCustomerId, input.origin);
+        return { portalUrl };
+      }),
   }),
 
   immobilien: router({

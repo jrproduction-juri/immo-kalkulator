@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 type BillingType = "once" | "monthly" | "yearly";
+type StripeBillingType = "lifetime" | "monthly" | "yearly";
 type PaidPlanId = "basic" | "pro" | "investor";
 
 /* ─── Free Plan ─────────────────────────────────────────────────────── */
@@ -138,13 +139,13 @@ export default function Pricing() {
     investor: "monthly",
   });
 
-  const upgradeMutation = trpc.plan.upgrade.useMutation({
+  const checkoutMutation = trpc.plan.checkout.useMutation({
     onSuccess: (data) => {
-      toast.success(`${data.plan.charAt(0).toUpperCase() + data.plan.slice(1)}-Plan aktiviert!`);
-      navigate("/dashboard");
+      toast.success("Du wirst zu Stripe weitergeleitet…");
+      window.open(data.checkoutUrl, "_blank");
     },
     onError: (err: { message: string }) => {
-      toast.error("Fehler beim Upgrade: " + err.message);
+      toast.error("Fehler beim Checkout: " + err.message);
     },
   });
 
@@ -153,7 +154,13 @@ export default function Pricing() {
       window.location.href = getLoginUrl();
       return;
     }
-    upgradeMutation.mutate({ plan: planId, billingType: billing[planId] });
+    const currentBilling = billing[planId];
+    const stripeBillingType: StripeBillingType = currentBilling === "once" ? "lifetime" : currentBilling;
+    checkoutMutation.mutate({
+      planId,
+      billingType: stripeBillingType,
+      origin: window.location.origin,
+    });
   };
 
   return (
@@ -330,9 +337,9 @@ export default function Pricing() {
                     className={`w-full font-semibold ${plan.highlight ? "bg-white text-blue-900 hover:bg-blue-50" : ""}`}
                     variant={plan.highlight ? "default" : "outline"}
                     onClick={() => handleSelect(plan.id)}
-                    disabled={upgradeMutation.isPending}
+                    disabled={checkoutMutation.isPending}
                   >
-                    {upgradeMutation.isPending ? "Wird aktiviert…" : `${plan.name} wählen`}
+                    {checkoutMutation.isPending ? "Weiterleitung…" : `${plan.name} wählen`}
                   </Button>
                 </div>
               </div>

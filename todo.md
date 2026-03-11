@@ -122,3 +122,10 @@
 - [x] AGB-Seite erstellt (Stripe-Zahlungsbedingungen, Widerrufsrecht, Haftungsausschluss, Kleinunternehmer)
 - [x] Seiten in Router (App.tsx), Home-Footer und Dashboard-Footer eingebunden
 - [x] Footer mit Impressum/Datenschutz/AGB auf Pricing-Seite ergänzt
+- [x] Stripe: Feature aktiviert und API-Schlüssel automatisch konfiguriert
+- [x] Stripe: Checkout-Session für Abonnements (monatlich/jährlich) und Einmalkäufe (Lifetime)
+- [x] Stripe: Webhook für Abo-Status-Updates (checkout.session.completed, subscription.updated/deleted, payment_failed)
+- [x] Stripe: Datenbank-Schema erweitert (stripeSubscriptionId, stripePriceId, stripeCurrentPeriodEnd, billingType)
+- [x] Stripe: Pricing-Seite mit echten Checkout-Buttons verbunden (window.open in neuen Tab)
+- [x] Stripe: Kundenportal-Procedure (trpc.plan.portal) für Abo-Verwaltung
+- [x] Stripe: 8 Vitest-Tests für Produkt-Konfiguration und Preislogik
