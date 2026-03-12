@@ -16,16 +16,16 @@ const FREE_PLAN = {
   name: "Free",
   priceLabel: "0 €",
   billing: "Dauerhaft kostenlos",
-  desc: "Schnelle Ersteinschätzung – kein Upgrade nötig",
+  desc: "Schnelle Ersteinschätzung ohne Registrierung",
   features: [
-    { text: "1 Objekt speichern", included: true },
-    { text: "Bruttomietrendite", included: true },
+    { text: "Bruttomietrendite berechnen", included: true },
     { text: "Netto-Cashflow (vereinfacht)", included: true },
     { text: "Basis-Empfehlung (sinnvoll / prüfen / kritisch)", included: true },
+    { text: "Immobilien speichern", included: false },
     { text: "Erweiterte Kennzahlen (EK-Rendite, AfA …)", included: false },
     { text: "PDF-Export & Excel-Export", included: false },
     { text: "Szenarien & Vergleich", included: false },
-    { text: "Speichern & Report", included: false },
+    { text: "Investment-Report", included: false },
   ],
 };
 
@@ -206,7 +206,7 @@ export default function Pricing() {
         <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200">
           <Zap className="w-4 h-4 text-blue-600" />
           <span className="text-blue-700 text-sm font-medium">
-            Free: 1 Objekt speichern · Upgrade für mehr Objekte, PDF-Report & Szenarien
+            Free: Kostenlos kalkulieren · Upgrade für Speichern, PDF-Report & Szenarien
           </span>
         </div>
       </div>

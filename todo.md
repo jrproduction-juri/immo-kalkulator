@@ -130,3 +130,6 @@
 - [x] Stripe: Kundenportal-Procedure (trpc.plan.portal) für Abo-Verwaltung
 - [x] Stripe: 8 Vitest-Tests für Produkt-Konfiguration und Preislogik
 - [x] Pricing-Seite: Text korrigiert — "Free: 1 Objekt speichern" macht jetzt klar dass Free-Nutzer 1 Objekt speichern kÖnnen
+- [x] Free-Plan: Speichern komplett deaktiviert (Limit 0, kein Objekt speicherbar) — Backend + ProContext
+- [x] Free-Plan: Pricing-Seite Banner und Feature-Liste aktualisiert ("Immobilien speichern" = X)
+- [x] Free-Plan: Speichern-Button im Kalkulator sperrt mit Lock-Icon und öffnet Upgrade-Modal

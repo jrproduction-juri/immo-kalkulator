@@ -26,7 +26,7 @@ import { exportExcel } from '@/lib/excelExport';
 import { toast } from 'sonner';
 import {
   Building2, BarChart3, Mail, FileText, ChevronRight,
-  Zap, Calculator, TrendingUp, Save, ArrowLeft, Check, Table
+  Zap, Calculator, TrendingUp, Save, ArrowLeft, Check, Table, Lock
 } from 'lucide-react';
 import {
   Dialog,
@@ -56,7 +56,7 @@ function mapArtToBackend(art: string): 'etw' | 'mfh' | 'efh' | 'gewerbe' | 'neub
 export default function Kalkulator() {
   const params = useParams<{ id?: string }>();
   const [, navigate] = useLocation();
-  const { isPro, isBasic, isInvestor, setShowUpgradeModal } = usePro();
+  const { isPro, isBasic, isInvestor, isFree, setShowUpgradeModal } = usePro();
 
   // Formular-State (kontrolliert)
   const [formData, setFormData] = useState<FormData>(() => getDefaultFormData('wohnung'));
@@ -167,8 +167,11 @@ export default function Kalkulator() {
 
   const handleSave = () => {
     if (!lastFormData || !freeResults) return;
-    // Speichern ist fuer alle Plaene erlaubt (Free, Basic, Pro, Investor)
-    // Das Backend prueft die Limits
+    // Free-Nutzer können nicht speichern → Upgrade-Modal zeigen
+    if (isFree) {
+      setShowUpgradeModal(true);
+      return;
+    }
     if (savedId) {
       // Update
       updateMutation.mutate({
@@ -270,11 +273,12 @@ export default function Kalkulator() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-7 text-xs gap-1.5"
+                      className={`h-7 text-xs gap-1.5 ${isFree ? 'opacity-60' : ''}`}
                       onClick={handleSave}
                       disabled={createMutation.isPending || updateMutation.isPending}
+                      title={isFree ? 'Upgrade erforderlich zum Speichern' : undefined}
                     >
-                      <Save className="w-3 h-3" />
+                      {isFree ? <Lock className="w-3 h-3" /> : <Save className="w-3 h-3" />}
                       {savedId ? 'Aktualisieren' : 'Speichern'}
                     </Button>
                   )}

@@ -4,14 +4,14 @@ import { useAuth } from '@/_core/hooks/useAuth';
 
 /**
  * Plan-Hierarchie:
- *   none  → Free (1 Objekt, eingeschränkte Kennzahlen, kein PDF/Export)
+ *   none  → Free (kein Speichern, eingeschränkte Kennzahlen, kein PDF/Export)
  *   basic → Basic (10 Objekte, alle Kennzahlen, kein PDF/Exposé)
  *   pro   → Pro (50 Objekte, PDF, Exposé, Email, erweiterte Szenarien)
  *   investor → Investor (unbegrenzt, Excel, Portfolio)
  */
 
 export const FREE_LIMITS = {
-  maxObjekte: 1,
+  maxObjekte: 0,
   /** Nur Bruttomietrendite + Netto-Cashflow sichtbar (keine EK-Rendite, AfA, Steuer etc.) */
   eingeschraenkteKennzahlen: true,
   /** Kein PDF-Export */

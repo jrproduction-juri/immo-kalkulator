@@ -19,7 +19,7 @@ import { users } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 const PLAN_LIMITS = {
-  none: 1,   // Free: 1 Objekt speichern
+  none: 0,   // Free: kein Speichern erlaubt
   basic: 10,
   pro: 50,
   investor: 999999,
@@ -138,10 +138,10 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         const plan = ctx.user.plan;
         const count = await countImmobilienByUser(ctx.user.id);
-        const limit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS] ?? 1;
+        const limit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS] ?? 0;
         if (count >= limit) {
           const msg = plan === "none"
-            ? "Free-Limit erreicht (1 Objekt). Upgrade für mehr Speicherplätze."
+            ? "Speichern nicht verfügbar. Upgrade auf Basic oder höher um Immobilien zu speichern."
             : `Limit erreicht (${limit} Objekte). Upgrade auf Investor für unbegrenzte Speicherung.`;
           throw new TRPCError({ code: "FORBIDDEN", message: msg });
         }

@@ -55,17 +55,17 @@ describe("immobilien.list", () => {
 });
 
 describe("immobilien.create", () => {
-  it("wirft FORBIDDEN wenn Free-Plan-Limit erreicht ist (Mock gibt count=1 zurück)", async () => {
-    // Der DB-Mock gibt immer count=1 zurück, daher schlägt Free-Plan (Limit=1) fehl
+  it("wirft FORBIDDEN für Free-Plan-Nutzer (Limit=0, kein Speichern erlaubt)", async () => {
+    // Free-Plan hat Limit=0, daher wird sofort FORBIDDEN geworfen (count >= 0)
     const ctx = createUserContext({ plan: "none" });
     const caller = appRouter.createCaller(ctx);
     await expect(
       caller.immobilien.create({
-        name: "Zweites Objekt Free",
+        name: "Objekt Free",
         art: "etw",
         eingaben: { kaufpreis: 300000 },
       })
-    ).rejects.toThrow("Free-Limit");
+    ).rejects.toThrow("Speichern nicht verfügbar");
   });
 
   it("erlaubt Pro-Plan-Nutzer ein Objekt zu speichern", async () => {
