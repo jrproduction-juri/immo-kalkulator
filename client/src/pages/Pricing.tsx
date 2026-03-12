@@ -206,7 +206,7 @@ export default function Pricing() {
         <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200">
           <Zap className="w-4 h-4 text-blue-600" />
           <span className="text-blue-700 text-sm font-medium">
-            Free: 1 Objekt · Upgrade für Speichern, Vergleich, PDF &amp; Szenarien
+            Free: 1 Objekt speichern · Upgrade für mehr Objekte, PDF-Report & Szenarien
           </span>
         </div>
       </div>

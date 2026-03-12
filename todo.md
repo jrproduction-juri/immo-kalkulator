@@ -129,3 +129,4 @@
 - [x] Stripe: Pricing-Seite mit echten Checkout-Buttons verbunden (window.open in neuen Tab)
 - [x] Stripe: Kundenportal-Procedure (trpc.plan.portal) für Abo-Verwaltung
 - [x] Stripe: 8 Vitest-Tests für Produkt-Konfiguration und Preislogik
+- [x] Pricing-Seite: Text korrigiert — "Free: 1 Objekt speichern" macht jetzt klar dass Free-Nutzer 1 Objekt speichern kÖnnen
