@@ -1,15 +1,32 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { getLoginUrl } from "@/const";
-import { trpc } from "@/lib/trpc";
 import { Building2, CheckCircle2, X, ArrowLeft, Zap, Star, Infinity } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { useState } from "react";
 
 type BillingType = "once" | "monthly" | "yearly";
-type StripeBillingType = "lifetime" | "monthly" | "yearly";
 type PaidPlanId = "basic" | "pro" | "investor";
+
+/* ─── Stripe Payment-Links ──────────────────────────────────────────── */
+const STRIPE_LINKS: Record<PaidPlanId, Record<BillingType, string>> = {
+  basic: {
+    monthly: "https://buy.stripe.com/test_9B66ozeBjeLF7RMc0Xb3q00",
+    yearly:  "https://buy.stripe.com/test_bJe6ozal3avpc82d51b3q01",
+    once:    "https://buy.stripe.com/test_cNifZ950JcDx0pk7KHb3q02",
+  },
+  pro: {
+    monthly: "https://buy.stripe.com/test_6oU14f64N5b51toaWTb3q03",
+    yearly:  "https://buy.stripe.com/test_bJe4greBj9rlb3Y1mjb3q04",
+    once:    "https://buy.stripe.com/test_dRm00bfFn9rl5JEfd9b3q05",
+  },
+  investor: {
+    monthly: "https://buy.stripe.com/test_3cI4grdxf6f9fke8OLb3q06",
+    yearly:  "https://buy.stripe.com/test_aFa14fgJravpc82c0Xb3q07",
+    once:    "https://buy.stripe.com/test_14A28j0Kt4719ZU9SPb3q08",
+  },
+};
 
 /* ─── Free Plan ─────────────────────────────────────────────────────── */
 const FREE_PLAN = {
@@ -139,28 +156,15 @@ export default function Pricing() {
     investor: "monthly",
   });
 
-  const checkoutMutation = trpc.plan.checkout.useMutation({
-    onSuccess: (data) => {
-      toast.success("Du wirst zu Stripe weitergeleitet…");
-      window.open(data.checkoutUrl, "_blank");
-    },
-    onError: (err: { message: string }) => {
-      toast.error("Fehler beim Checkout: " + err.message);
-    },
-  });
-
   const handleSelect = (planId: PaidPlanId) => {
     if (!isAuthenticated) {
       window.location.href = getLoginUrl();
       return;
     }
     const currentBilling = billing[planId];
-    const stripeBillingType: StripeBillingType = currentBilling === "once" ? "lifetime" : currentBilling;
-    checkoutMutation.mutate({
-      planId,
-      billingType: stripeBillingType,
-      origin: window.location.origin,
-    });
+    const link = STRIPE_LINKS[planId][currentBilling];
+    toast.success("Du wirst zu Stripe weitergeleitet…");
+    window.open(link, "_blank");
   };
 
   return (
@@ -337,9 +341,8 @@ export default function Pricing() {
                     className={`w-full font-semibold ${plan.highlight ? "bg-white text-blue-900 hover:bg-blue-50" : ""}`}
                     variant={plan.highlight ? "default" : "outline"}
                     onClick={() => handleSelect(plan.id)}
-                    disabled={checkoutMutation.isPending}
                   >
-                    {checkoutMutation.isPending ? "Weiterleitung…" : `${plan.name} wählen`}
+                    {plan.name} wählen
                   </Button>
                 </div>
               </div>
@@ -373,7 +376,7 @@ export default function Pricing() {
             {[
               {
                 q: "Was kann ich mit der Free-Version?",
-                a: "Du kannst den Kalkulator vollständig nutzen und 1 Objekt speichern. Bruttomietrendite, Netto-Cashflow und Basis-Empfehlung sind immer kostenlos.",
+                a: "Du kannst den Kalkulator vollständig nutzen und alle Berechnungen durchführen. Bruttomietrendite, Netto-Cashflow und Basis-Empfehlung sind immer kostenlos. Zum Speichern von Objekten benötigst du mindestens den Basic-Plan.",
               },
               {
                 q: "Was ist der Unterschied zwischen monatlich, jährlich und einmalig?",
