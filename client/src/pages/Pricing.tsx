@@ -24,7 +24,7 @@ const STRIPE_LINKS: Record<PaidPlanId, Record<BillingType, string>> = {
   investor: {
     monthly: "https://buy.stripe.com/4gM5kv5cM5cqdUFenH87K08",
     yearly:  "https://buy.stripe.com/14A4gr6gQ20eaIt7Zj87K09",
-    once:    "https://buy.stripe.com/test_14A28j0Kt4719ZU9SPb3q08",
+    once:    "https://buy.stripe.com/3cI9AL8oYdIW03P3J387K0a",
   },
 };
 
