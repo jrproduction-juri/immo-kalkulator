@@ -12,19 +12,19 @@ type PaidPlanId = "basic" | "pro" | "investor";
 /* ─── Stripe Payment-Links ──────────────────────────────────────────── */
 const STRIPE_LINKS: Record<PaidPlanId, Record<BillingType, string>> = {
   basic: {
-    monthly: "https://buy.stripe.com/test_9B66ozeBjeLF7RMc0Xb3q00",
-    yearly:  "https://buy.stripe.com/test_bJe6ozal3avpc82d51b3q01",
-    once:    "https://buy.stripe.com/test_cNifZ950JcDx0pk7KHb3q02",
+    monthly: "https://buy.stripe.com/6oU00beNmfR403P7Zj87K02",
+    yearly:  "https://buy.stripe.com/dRm5kvfRq8oC5o93J387K03",
+    once:    "https://buy.stripe.com/6oUfZ9cFeawK3g1gvP87K04",
   },
   pro: {
-    monthly: "https://buy.stripe.com/test_6oU14f64N5b51toaWTb3q03",
-    yearly:  "https://buy.stripe.com/test_bJe4greBj9rlb3Y1mjb3q04",
-    once:    "https://buy.stripe.com/test_dRm00bfFn9rl5JEfd9b3q05",
+    monthly: "https://buy.stripe.com/6oUbIT48IdIWcQBcfz87K05",
+    yearly:  "https://buy.stripe.com/5kQcMXbBaawK8AlfrL87K06",
+    once:    "https://buy.stripe.com/dRm6ozeNm6gu7whbbv87K07",
   },
   investor: {
-    monthly: "https://buy.stripe.com/test_3cI4grdxf6f9fke8OLb3q06",
-    yearly:  "https://buy.stripe.com/test_aFa14fgJravpc82c0Xb3q07",
-    once:    "https://buy.stripe.com/test_14A28j0Kt4719ZU9SPb3q08",
+    monthly: "https://buy.stripe.com/4gM5kv5cM5cqdUFenH87K08",
+    yearly:  "https://buy.stripe.com/14A4gr6gQ20eaIt7Zj87K09",
+    once:    "https://buy.stripe.com/3cI9AL8oYdIW03P3J387K0a",
   },
 };
 

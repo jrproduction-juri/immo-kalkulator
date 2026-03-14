@@ -134,3 +134,4 @@
 - [x] Free-Plan: Pricing-Seite Banner und Feature-Liste aktualisiert ("Immobilien speichern" = X)
 - [x] Free-Plan: Speichern-Button im Kalkulator sperrt mit Lock-Icon und öffnet Upgrade-Modal
 - [x] Stripe Payment-Links direkt in Pricing-Seite eingebaut (alle 9 Links für Basic/Pro/Investor je monatlich/jährlich/einmalig)
+- [x] Stripe: Test-Links durch Live-Links ersetzt (alle 9 Produkte)
