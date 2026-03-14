@@ -1,0 +1,34 @@
+{
+  "query": "SELECT id, name, art, standort, JSON_KEYS(ergebnisse) as ergebnisse_keys, JSON_KEYS(eingaben) as eingaben_keys FROM immobilien LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, name, art, standort, JSON_KEYS(ergebnisse) as ergebnisse_keys, JSON_KEYS(eingaben) as eingaben_keys FROM immobilien LIMIT 5;",
+  "rows": [
+    {
+      "id": "150001",
+      "name": "jdnc",
+      "art": "etw",
+      "standort": "NULL",
+      "ergebnisse_keys": "[\"bruttomietrendite\", \"darlehenssumme\", \"empfehlung\", \"empfehlungText\", \"gesamtinvestition\", \"kaufnebenkosten\", \"monatlicheEinnahmen\", \"monatlicheKosten\", \"monatlicheRate\", \"nettoCashflowJahr\", \"nettoCashflowMonat\", \"nettomietrendite\", \"szenarioEigennutzung\", \"szenarioVermietung\"]",
+      "eingaben_keys": "[\"art\", \"baujahr\", \"eigenkapital\", \"hausgeld\", \"kaltmiete\", \"kaufpreis\", \"nettoEinkommen\", \"nichtUmlagefaehig\", \"ruecklagen\", \"sonstigeAusgaben\", \"steuerklasse\", \"szenarioEigennutzung\", \"szenarioFlipSanieren\", \"szenarioVerkauf24Monate\", \"szenarioVermietung\", \"tilgung\", \"warmmiete\", \"wohnflaeche\", \"zinssatz\", \"zustand\"]"
+    },
+    {
+      "id": "180001",
+      "name": "Pro Objekt",
+      "art": "mfh",
+      "standort": "NULL",
+      "ergebnisse_keys": "NULL",
+      "eingaben_keys": "[\"kaufpreis\"]"
+    },
+    {
+      "id": "180002",
+      "name": "Pro Objekt",
+      "art": "mfh",
+      "standort": "NULL",
+      "ergebnisse_keys": "NULL",
+      "eingaben_keys": "[\"kaufpreis\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tart\tstandort\tergebnisse_keys\teingaben_keys\n150001\tjdnc\tetw\tNULL\t[\"bruttomietrendite\", \"darlehenssumme\", \"empfehlung\", \"empfehlungText\", \"gesamtinvestition\", \"kaufnebenkosten\", \"monatlicheEinnahmen\", \"monatlicheKosten\", \"monatlicheRate\", \"nettoCashflowJahr\", \"nettoCashflowMonat\", \"nettomietrendite\", \"szenarioEigennutzung\", \"szenarioVermietung\"]\t[\"art\", \"baujahr\", \"eigenkapital\", \"hausgeld\", \"kaltmiete\", \"kaufpreis\", \"nettoEinkommen\", \"nichtUmlagefaehig\", \"ruecklagen\", \"sonstigeAusgaben\", \"steuerklasse\", \"szenarioEigennutzung\", \"szenarioFlipSanieren\", \"szenarioVerkauf24Monate\", \"szenarioVermietung\", \"tilgung\", \"warmmiete\", \"wohnflaeche\", \"zinssatz\", \"zustand\"]\n180001\tPro Objekt\tmfh\tNULL\tNULL\t[\"kaufpreis\"]\n180002\tPro Objekt\tmfh\tNULL\tNULL\t[\"kaufpreis\"]\n",
+  "stderr": "",
+  "execution_time_ms": 198
+}
