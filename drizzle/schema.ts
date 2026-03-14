@@ -27,6 +27,8 @@ export const users = mysqlTable("users", {
   stripePriceId: varchar("stripePriceId", { length: 128 }),
   stripeCurrentPeriodEnd: timestamp("stripeCurrentPeriodEnd"),
   billingType: mysqlEnum("billingType", ["monthly", "yearly", "lifetime"]),
+  stripeLastWebhookEventId: varchar("stripeLastWebhookEventId", { length: 128 }),
+  stripeWebhookProcessedAt: timestamp("stripeWebhookProcessedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
