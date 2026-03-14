@@ -136,3 +136,4 @@
 - [x] Stripe Payment-Links direkt in Pricing-Seite eingebaut (alle 9 Links für Basic/Pro/Investor je monatlich/jährlich/einmalig)
 - [x] Stripe: Test-Links durch Live-Links ersetzt (alle 9 Produkte)
 - [x] Webhook: invoice.payment_succeeded (Plan verlängern) und invoice.payment_failed (Plan deaktivieren) korrekt implementiert
+- [ ] Dashboard-Statistiken reparieren: Gesamtinvestition, Gesamt-Cashflow und Ø Rendite aus gespeicherten eingaben-Daten berechnen

@@ -1,0 +1,26 @@
+{
+  "query": "SELECT id, name, CAST(JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') AS DECIMAL(10,2)) as cashflow_monat, CAST(JSON_EXTRACT(ergebnisse, '$.bruttomietrendite') AS DECIMAL(10,4)) as rendite, CAST(JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') AS DECIMAL(15,2)) as investition, CAST(JSON_EXTRACT(eingaben, '$.kaufpreis') AS DECIMAL(15,2)) as kaufpreis FROM immobilien;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, name, CAST(JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') AS DECIMAL(10,2)) as cashflow_monat, CAST(JSON_EXTRACT(ergebnisse, '$.bruttomietrendite') AS DECIMAL(10,4)) as rendite, CAST(JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') AS DECIMAL(15,2)) as investition, CAST(JSON_EXTRACT(eingaben, '$.kaufpreis') AS DECIMAL(15,2)) as kaufpreis FROM immobilien;",
+  "rows": [
+    {
+      "id": "150001",
+      "name": "jdnc",
+      "cashflow_monat": "-295.34",
+      "rendite": "3.6000",
+      "investition": "331710.00",
+      "kaufpreis": "300000.00"
+    },
+    {
+      "id": "180001",
+      "name": "Pro Objekt",
+      "cashflow_monat": "NULL",
+      "rendite": "NULL",
+      "investition": "NULL",
+      "kaufpreis": "500000.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcashflow_monat\trendite\tinvestition\tkaufpreis\n150001\tjdnc\t-295.34\t3.6000\t331710.00\t300000.00\n180001\tPro Objekt\tNULL\tNULL\tNULL\t500000.00\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

@@ -1,0 +1,24 @@
+{
+  "query": "SELECT id, name, art, eingaben, ergebnisse FROM immobilien LIMIT 2;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, name, art, eingaben, ergebnisse FROM immobilien LIMIT 2;",
+  "rows": [
+    {
+      "id": "150001",
+      "name": "jdnc",
+      "art": "etw",
+      "eingaben": "{\"art\": \"wohnung\", \"baujahr\": 2000, \"eigenkapital\": 60000, \"hausgeld\": 200, \"kaltmiete\": 900, \"kaufpreis\": 300000, \"nettoEinkommen\": 3500, \"nichtUmlagefaehig\": 100, \"ruecklagen\": 50, \"sonstigeAusgaben\": 0, \"steuerklasse\": \"1\", \"szenarioEigennutzung\": true, \"szenarioFlipSanieren\": false, \"szenarioVerkauf24Monate\": false, \"szenarioVermietung\": true, \"tilgung\": 2, \"warmmiete\": 1100, \"wohnflaeche\": 75, \"zinssatz\": 3.5, \"zustand\": \"renoviert\"}",
+      "ergebnisse": "{\"bruttomietrendite\": 3.5999999999999996, \"darlehenssumme\": 271710, \"empfehlung\": \"pruefen\", \"empfehlungText\": \"Die Rendite von 3.6 % liegt im mittleren Bereich. Eine detaillierte Prüfung der Lage und Wertsteigerungspotenziale wird empfohlen.\", \"gesamtinvestition\": 331710, \"kaufnebenkosten\": 31710, \"monatlicheEinnahmen\": 1100, \"monatlicheKosten\": 1395.3374999999999, \"monatlicheRate\": 1245.3374999999999, \"nettoCashflowJahr\": -3544.0499999999984, \"nettoCashflowMonat\": -295.33749999999986, \"nettomietrendite\": 2.35145156914172, \"szenarioEigennutzung\": {\"beschreibung\": \"Selbst einziehen statt mieten\", \"bewertung\": \"neutral\", \"cashflowMonat\": -1345.3374999999999, \"dauer\": \"Unbegrenzt\", \"details\": \"Monatliche Belastung: 1345 € | Vergleichsmiete: 900 €\", \"name\": \"Eigennutzung\"}, \"szenarioVermietung\": {\"beschreibung\": \"Langfristige Vermietung\", \"bewertung\": \"negativ\", \"cashflowMonat\": -295.33749999999986, \"dauer\": \"Langfristig (10+ Jahre)\", \"details\": \"Monatlicher Cashflow: -295 € | Nettomietrendite: 2.35 %\", \"name\": \"Buy & Hold\", \"rendite\": 2.35145156914172}}"
+    },
+    {
+      "id": "180001",
+      "name": "Pro Objekt",
+      "art": "mfh",
+      "eingaben": "{\"kaufpreis\": 500000}",
+      "ergebnisse": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tart\teingaben\tergebnisse\n150001\tjdnc\tetw\t{\"art\": \"wohnung\", \"baujahr\": 2000, \"eigenkapital\": 60000, \"hausgeld\": 200, \"kaltmiete\": 900, \"kaufpreis\": 300000, \"nettoEinkommen\": 3500, \"nichtUmlagefaehig\": 100, \"ruecklagen\": 50, \"sonstigeAusgaben\": 0, \"steuerklasse\": \"1\", \"szenarioEigennutzung\": true, \"szenarioFlipSanieren\": false, \"szenarioVerkauf24Monate\": false, \"szenarioVermietung\": true, \"tilgung\": 2, \"warmmiete\": 1100, \"wohnflaeche\": 75, \"zinssatz\": 3.5, \"zustand\": \"renoviert\"}\t{\"bruttomietrendite\": 3.5999999999999996, \"darlehenssumme\": 271710, \"empfehlung\": \"pruefen\", \"empfehlungText\": \"Die Rendite von 3.6 % liegt im mittleren Bereich. Eine detaillierte Prüfung der Lage und Wertsteigerungspotenziale wird empfohlen.\", \"gesamtinvestition\": 331710, \"kaufnebenkosten\": 31710, \"monatlicheEinnahmen\": 1100, \"monatlicheKosten\": 1395.3374999999999, \"monatlicheRate\": 1245.3374999999999, \"nettoCashflowJahr\": -3544.0499999999984, \"nettoCashflowMonat\": -295.33749999999986, \"nettomietrendite\": 2.35145156914172, \"szenarioEigennutzung\": {\"beschreibung\": \"Selbst einziehen statt mieten\", \"bewertung\": \"neutral\", \"cashflowMonat\": -1345.3374999999999, \"dauer\": \"Unbegrenzt\", \"details\": \"Monatliche Belastung: 1345 € | Vergleichsmiete: 900 €\", \"name\": \"Eigennutzung\"}, \"szenarioVermietung\": {\"beschreibung\": \"Langfristige Vermietung\", \"bewertung\": \"negativ\", \"cashflowMonat\": -295.33749999999986, \"dauer\": \"Langfristig (10+ Jahre)\", \"details\": \"Monatlicher Cashflow: -295 € | Nettomietrendite: 2.35 %\", \"name\": \"Buy & Hold\", \"rendite\": 2.35145156914172}}\n180001\tPro Objekt\tmfh\t{\"kaufpreis\": 500000}\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 48
+}

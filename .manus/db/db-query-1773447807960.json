@@ -1,0 +1,28 @@
+{
+  "query": "SELECT id, name, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') as cashflow_monat, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonatlich') as cashflow_monatlich, JSON_EXTRACT(ergebnisse, '$.bruttomietrendite') as rendite, JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') as investition, JSON_EXTRACT(eingaben, '$.kaufpreis') as kaufpreis FROM immobilien LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, name, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') as cashflow_monat, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonatlich') as cashflow_monatlich, JSON_EXTRACT(ergebnisse, '$.bruttomietrendite') as rendite, JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') as investition, JSON_EXTRACT(eingaben, '$.kaufpreis') as kaufpreis FROM immobilien LIMIT 5;",
+  "rows": [
+    {
+      "id": "150001",
+      "name": "jdnc",
+      "cashflow_monat": "-295.33749999999986",
+      "cashflow_monatlich": "NULL",
+      "rendite": "3.5999999999999996",
+      "investition": "331710",
+      "kaufpreis": "300000"
+    },
+    {
+      "id": "180001",
+      "name": "Pro Objekt",
+      "cashflow_monat": "NULL",
+      "cashflow_monatlich": "NULL",
+      "rendite": "NULL",
+      "investition": "NULL",
+      "kaufpreis": "500000"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcashflow_monat\tcashflow_monatlich\trendite\tinvestition\tkaufpreis\n150001\tjdnc\t-295.33749999999986\tNULL\t3.5999999999999996\t331710\t300000\n180001\tPro Objekt\tNULL\tNULL\tNULL\tNULL\t500000\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}

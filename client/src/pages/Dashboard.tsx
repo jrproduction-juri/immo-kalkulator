@@ -75,9 +75,11 @@ export default function Dashboard() {
   // Portfolio-Summen für Investor
   const portfolioStats = immobilien.reduce((acc, immo) => {
     const e = immo.ergebnisse as any;
+    const inp = immo.eingaben as any;
     if (e) {
-      acc.gesamtKaufpreis += (e.kaufpreis as number) || 0;
-      acc.gesamtCashflow += (e.nettoCashflowMonatlich as number) || 0;
+      // kaufpreis ist in eingaben, gesamtinvestition in ergebnisse
+      acc.gesamtKaufpreis += (e.gesamtinvestition as number) || (inp?.kaufpreis as number) || 0;
+      acc.gesamtCashflow += (e.nettoCashflowMonat as number) || 0;
       acc.gesamtRendite += (e.bruttomietrendite as number) || 0;
     }
     return acc;
@@ -92,7 +94,7 @@ export default function Dashboard() {
     const e = immo.ergebnisse as any;
     return {
       name: immo.name.slice(0, 12),
-      cashflow: Math.round((e?.nettoCashflowMonatlich as number) || 0),
+      cashflow: Math.round((e?.nettoCashflowMonat as number) || 0),
       rendite: Math.round(((e?.bruttomietrendite as number) || 0) * 10) / 10,
     };
   });
@@ -235,10 +237,12 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {immobilien.map((immo) => {
               const e = immo.ergebnisse as any;
+              const inp = immo.eingaben as any;
               const artInfo = ART_LABELS[immo.art] ?? ART_LABELS.etw;
               const ArtIcon = artInfo.icon;
-              const cashflow = e?.nettoCashflowMonatlich as number | undefined;
+              const cashflow = e?.nettoCashflowMonat as number | undefined;
               const rendite = e?.bruttomietrendite as number | undefined;
+              const kaufpreis = (inp?.kaufpreis as number) || undefined;
 
               return (
                 <div key={immo.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
@@ -269,6 +273,9 @@ export default function Dashboard() {
                       </div>
                     </div>
 
+                    {kaufpreis && (
+                      <p className="text-sm font-semibold text-gray-700 mb-2">{kaufpreis.toLocaleString('de-DE')} €</p>
+                    )}
                     {e && (
                       <div className="grid grid-cols-2 gap-2 mb-3">
                         <div className="p-2.5 rounded-lg bg-gray-50">

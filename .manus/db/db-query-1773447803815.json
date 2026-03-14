@@ -1,0 +1,26 @@
+{
+  "query": "SELECT id, name, art, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') as cashflow, JSON_EXTRACT(ergebnisse, '$.bruttomietrendite') as rendite, JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') as investition FROM immobilien LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, name, art, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') as cashflow, JSON_EXTRACT(ergebnisse, '$.bruttomietrendite') as rendite, JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') as investition FROM immobilien LIMIT 5;",
+  "rows": [
+    {
+      "id": "150001",
+      "name": "jdnc",
+      "art": "etw",
+      "cashflow": "-295.33749999999986",
+      "rendite": "3.5999999999999996",
+      "investition": "331710"
+    },
+    {
+      "id": "180001",
+      "name": "Pro Objekt",
+      "art": "mfh",
+      "cashflow": "NULL",
+      "rendite": "NULL",
+      "investition": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tart\tcashflow\trendite\tinvestition\n150001\tjdnc\tetw\t-295.33749999999986\t3.5999999999999996\t331710\n180001\tPro Objekt\tmfh\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}
