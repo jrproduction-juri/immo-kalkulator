@@ -61,6 +61,12 @@ export async function handleStripeWebhook(req: Request, res: Response) {
         break;
       }
 
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
+        await handlePaymentSucceeded(invoice);
+        break;
+      }
+
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
         await handlePaymentFailed(invoice);
@@ -219,10 +225,78 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 }
 
 /**
- * Zahlung fehlgeschlagen
+ * Wiederkehrende Zahlung erfolgreich (monatlich/jährlich)
+ * Aktualisiert planExpiresAt auf das neue Periodenende
+ */
+async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
+  const customerId = invoice.customer as string;
+  const subscriptionId = (invoice as any).subscription as string | null;
+
+  if (!subscriptionId) {
+    // Einmalige Zahlung — wird bereits über checkout.session.completed behandelt
+    return;
+  }
+
+  try {
+    // Aktuelle Abo-Daten von Stripe holen um das neue Periodenende zu erhalten
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const currentPeriodEnd = new Date((subscription as any).current_period_end * 1000);
+    const priceId = subscription.items.data[0]?.price.id;
+    const planInfo = priceId ? getPlanFromPriceId(priceId) : null;
+
+    const db = await getDb();
+    if (!db) return;
+
+    const updateData: Record<string, any> = {
+      stripeCurrentPeriodEnd: currentPeriodEnd,
+      planExpiresAt: currentPeriodEnd,
+    };
+
+    // Plan und BillingType aktualisieren falls vorhanden
+    if (planInfo) {
+      updateData.plan = planInfo.plan;
+      updateData.billingType = planInfo.billingType;
+    }
+
+    await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.stripeCustomerId, customerId));
+
+    console.log(`[Webhook] Wiederkehrende Zahlung erfolgreich für Customer ${customerId} — Plan verlängert bis ${currentPeriodEnd.toISOString()}`);
+  } catch (err) {
+    console.error(`[Webhook] Fehler bei invoice.payment_succeeded für Customer ${customerId}:`, err);
+  }
+}
+
+/**
+ * Zahlung fehlgeschlagen (monatlich/jährlich)
+ * Setzt Plan auf 'none' nach fehlgeschlagener Zahlung
  */
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string;
+  const subscriptionId = (invoice as any).subscription as string | null;
+
   console.warn(`[Webhook] Zahlung fehlgeschlagen für Customer ${customerId}`);
-  // Optional: E-Mail-Benachrichtigung senden
+
+  if (!subscriptionId) return;
+
+  try {
+    const db = await getDb();
+    if (!db) return;
+
+    // Plan deaktivieren bei fehlgeschlagener Zahlung
+    await db
+      .update(users)
+      .set({
+        plan: "none",
+        stripeSubscriptionId: null,
+        stripePriceId: null,
+      })
+      .where(eq(users.stripeCustomerId, customerId));
+
+    console.warn(`[Webhook] Plan für Customer ${customerId} deaktiviert (Zahlung fehlgeschlagen)`);
+  } catch (err) {
+    console.error(`[Webhook] Fehler bei invoice.payment_failed für Customer ${customerId}:`, err);
+  }
 }
