@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, email, plan, billingType, stripeLastWebhookEventId FROM users WHERE id = 2640003;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, email, plan, billingType, stripeLastWebhookEventId FROM users WHERE id = 2640003;",
+  "rows": [
+    {
+      "id": "2640003",
+      "email": "nmvqc5g7rp@privaterelay.appleid.com",
+      "plan": "investor",
+      "billingType": "lifetime",
+      "stripeLastWebhookEventId": "evt_1TB0kJ1gELN6BLVo77Q8sZwa"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tplan\tbillingType\tstripeLastWebhookEventId\n2640003\tnmvqc5g7rp@privaterelay.appleid.com\tinvestor\tlifetime\tevt_1TB0kJ1gELN6BLVo77Q8sZwa\n",
+  "stderr": "",
+  "execution_time_ms": 183
+}

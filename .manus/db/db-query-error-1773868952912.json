@@ -1,0 +1,8 @@
+{
+  "query": "UPDATE users SET plan = 'investor', planActivatedAt = CURRENT_TIMESTAMP, planExpiresAt = DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 100 YEAR), stripeLastWebhookEventId = 'evt_1TB0kJ1gELN6BLVo77Q8sZwa', stripeWebhookProcessedAt = CURRENT_TIMESTAMP, billingType = 'lifetime' WHERE id = 2640003;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute UPDATE users SET plan = 'investor', planActivatedAt = CURRENT_TIMESTAMP, planExpiresAt = DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 100 YEAR), stripeLastWebhookEventId = 'evt_1TB0kJ1gELN6BLVo77Q8sZwa', stripeWebhookProcessedAt = CURRENT_TIMESTAMP, billingType = 'lifetime' WHERE id = 2640003;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1292 (22007) at line 1: Incorrect time value: '?'"
+  ]
+}

@@ -10,12 +10,12 @@ import { getPlanFromPriceId, PlanId } from "./products";
 /**
  * Stripe Webhook Handler
  * Route: POST /api/stripe/webhook
- * Muss mit express.raw() registriert werden (vor express.json())
  * 
  * Features:
+ * - Sichere User-Zuordnung: client_reference_id → customer_details.email (Fallback)
  * - Idempotenz: Verhindert Doppelverarbeitung durch Event-ID-Tracking
- * - Klare Fehlerbehandlung mit aussagekräftigen Logs
- * - Automatische Plan-Aktivierung nach erfolgreicher Zahlung
+ * - Aussagekräftiges Logging: Zeigt verwendete Identifikationsmethode
+ * - Fehlertoleranz: Antwortet immer mit 200 OK
  */
 export async function handleStripeWebhook(req: Request, res: Response) {
   const sig = req.headers["stripe-signature"];
@@ -82,41 +82,89 @@ export async function handleStripeWebhook(req: Request, res: Response) {
         console.log(`[Webhook] ⚠️ Unbehandeltes Event: ${event.type}`);
     }
 
+    // Immer 200 OK zurückgeben
     res.json({ received: true });
   } catch (err) {
     console.error(`[Webhook] ❌ Fehler bei Event ${event.type}:`, err);
-    res.status(500).json({ error: "Webhook-Verarbeitung fehlgeschlagen" });
+    // Auch bei Fehler 200 OK zurückgeben, damit Stripe nicht erneut sendet
+    res.json({ received: true, error: true });
   }
+}
+
+/**
+ * Findet einen User anhand von client_reference_id oder Email (Fallback)
+ */
+async function findUserForCheckout(
+  session: Stripe.Checkout.Session,
+  eventId: string
+): Promise<{ userId: number; identificationMethod: string } | null> {
+  const db = await getDb();
+  if (!db) {
+    console.error("[Webhook] ❌ Datenbankverbindung fehlgeschlagen");
+    return null;
+  }
+
+  // Priorität 1: client_reference_id (User-ID)
+  if (session.client_reference_id) {
+    const userId = parseInt(session.client_reference_id);
+    if (!isNaN(userId)) {
+      const result = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      if (result.length > 0) {
+        console.log(`[Webhook] ✅ User gefunden via client_reference_id: ${userId}`);
+        return { userId: result[0].id, identificationMethod: "client_reference_id" };
+      }
+    }
+  }
+
+  // Priorität 2: customer_details.email (Fallback)
+  const customerEmail = (session.customer_details as any)?.email;
+  if (customerEmail) {
+    const result = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, customerEmail))
+      .limit(1);
+
+    if (result.length > 0) {
+      console.log(`[Webhook] ✅ User gefunden via customer_details.email: ${customerEmail}`);
+      return { userId: result[0].id, identificationMethod: "customer_details.email" };
+    }
+  }
+
+  // Kein User gefunden - Fehler loggen
+  console.error(`[Webhook] ❌ User nicht gefunden!`);
+  console.error(`[Webhook]    client_reference_id: ${session.client_reference_id || "null"}`);
+  console.error(`[Webhook]    customer_details.email: ${customerEmail || "null"}`);
+  console.error(`[Webhook]    Event-ID: ${eventId}`);
+  console.error(`[Webhook]    Session-ID: ${session.id}`);
+
+  return null;
 }
 
 /**
  * Prüft ob ein Event bereits verarbeitet wurde (Idempotenz)
  */
 async function isEventAlreadyProcessed(
-  customerId: string,
+  userId: number,
   eventId: string
 ): Promise<boolean> {
   const db = await getDb();
   if (!db) return false;
 
   const result = await db
-    .select({ id: users.id })
+    .select()
     .from(users)
-    .where(eq(users.stripeCustomerId, customerId))
+    .where(eq(users.id, userId))
     .limit(1);
 
   if (result.length === 0) return false;
 
-  const user = result[0];
-  const userFull = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, user.id))
-    .limit(1);
-
-  if (userFull.length === 0) return false;
-
-  const lastEventId = (userFull[0] as any).stripeLastWebhookEventId;
+  const lastEventId = (result[0] as any).stripeLastWebhookEventId;
   return lastEventId === eventId;
 }
 
@@ -141,50 +189,51 @@ async function markEventAsProcessed(
 
 /**
  * Checkout abgeschlossen: Plan aktivieren
- * Idempotent: Verhindert Doppelaktivierung durch Event-ID-Tracking
+ * Mit Fallback-Logik für User-Zuordnung
  */
 async function handleCheckoutCompleted(
   session: Stripe.Checkout.Session,
   eventId: string
 ) {
-  const userId = session.client_reference_id
-    ? parseInt(session.client_reference_id)
-    : null;
+  console.log(`[Webhook] 💳 Checkout abgeschlossen: Session ${session.id}`);
 
-  if (!userId) {
-    console.error("[Webhook] ❌ Keine user_id in checkout.session.completed");
+  // Finde User mit Fallback-Logik
+  const userInfo = await findUserForCheckout(session, eventId);
+  if (!userInfo) {
+    console.error(`[Webhook] ❌ Checkout konnte nicht verarbeitet werden: User nicht gefunden`);
     return;
   }
 
-  const customerId = session.customer as string;
+  const { userId, identificationMethod } = userInfo;
 
   // Prüfe Idempotenz
-  if (await isEventAlreadyProcessed(customerId, eventId)) {
+  if (await isEventAlreadyProcessed(userId, eventId)) {
     console.log(`[Webhook] ⚠️ Event ${eventId} wurde bereits verarbeitet (Duplikat ignoriert)`);
     return;
   }
 
   const planId = session.metadata?.plan_id as PlanId | undefined;
   const billingType = session.metadata?.billing_type as string | undefined;
+  const customerId = session.customer as string;
 
   if (!planId) {
-    console.error("[Webhook] ❌ Kein plan_id in checkout.session.completed metadata");
+    console.error(`[Webhook] ❌ Kein plan_id in Metadata für User ${userId}`);
     return;
   }
 
-  console.log(`[Webhook] 💳 Checkout abgeschlossen: User ${userId} | Plan: ${planId} | Billing: ${billingType}`);
+  console.log(`[Webhook] 🔍 Identifikation: ${identificationMethod} | User: ${userId} | Plan: ${planId}`);
 
   try {
+    const db = await getDb();
+    if (!db) {
+      console.error("[Webhook] ❌ Datenbankverbindung fehlgeschlagen");
+      return;
+    }
+
     // Lifetime-Kauf (einmalig)
     if (session.mode === "payment") {
       const expiresAt = new Date();
       expiresAt.setFullYear(expiresAt.getFullYear() + 100); // 100 Jahre = "lifetime"
-
-      const db = await getDb();
-      if (!db) {
-        console.error("[Webhook] ❌ Datenbankverbindung fehlgeschlagen");
-        return;
-      }
 
       await db
         .update(users)
@@ -210,12 +259,6 @@ async function handleCheckoutCompleted(
       const currentPeriodEnd = new Date((subscription as any).current_period_end * 1000);
       const priceId = subscription.items.data[0]?.price.id;
 
-      const db = await getDb();
-      if (!db) {
-        console.error("[Webhook] ❌ Datenbankverbindung fehlgeschlagen");
-        return;
-      }
-
       await db
         .update(users)
         .set({
@@ -236,7 +279,6 @@ async function handleCheckoutCompleted(
     }
   } catch (err) {
     console.error(`[Webhook] ❌ Fehler beim Aktivieren des Plans für User ${userId}:`, err);
-    throw err;
   }
 }
 
@@ -303,7 +345,6 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 
 /**
  * Abonnement gekündigt
- * Idempotent: Verhindert Doppelverarbeitung durch Event-ID-Tracking
  */
 async function handleSubscriptionDeleted(
   subscription: Stripe.Subscription,
@@ -330,7 +371,7 @@ async function handleSubscriptionDeleted(
       const userId = userResult[0].id;
 
       // Prüfe Idempotenz
-      if (await isEventAlreadyProcessed(customerId, eventId)) {
+      if (await isEventAlreadyProcessed(userId, eventId)) {
         console.log(`[Webhook] ⚠️ Event ${eventId} wurde bereits verarbeitet (Duplikat ignoriert)`);
         return;
       }
@@ -357,14 +398,12 @@ async function handleSubscriptionDeleted(
 
 /**
  * Wiederkehrende Zahlung erfolgreich (monatlich/jährlich)
- * Aktualisiert planExpiresAt auf das neue Periodenende
  */
 async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string;
   const subscriptionId = (invoice as any).subscription as string | null;
 
   if (!subscriptionId) {
-    // Einmalige Zahlung — wird bereits über checkout.session.completed behandelt
     console.log(`[Webhook] ℹ️ Einmalige Zahlung für Customer ${customerId} (wird über checkout.session.completed behandelt)`);
     return;
   }
@@ -372,7 +411,6 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log(`[Webhook] 💰 Zahlung erfolgreich: Customer ${customerId} | Subscription ${subscriptionId}`);
 
   try {
-    // Aktuelle Abo-Daten von Stripe holen um das neue Periodenende zu erhalten
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
     const currentPeriodEnd = new Date((subscription as any).current_period_end * 1000);
     const priceId = subscription.items.data[0]?.price.id;
@@ -389,7 +427,6 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
       planExpiresAt: currentPeriodEnd,
     };
 
-    // Plan und BillingType aktualisieren falls vorhanden
     if (planInfo) {
       updateData.plan = planInfo.plan;
       updateData.billingType = planInfo.billingType;
@@ -407,8 +444,7 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
 }
 
 /**
- * Zahlung fehlgeschlagen (monatlich/jährlich)
- * Setzt Plan auf 'none' nach fehlgeschlagener Zahlung
+ * Zahlung fehlgeschlagen
  */
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string;
@@ -425,7 +461,6 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
       return;
     }
 
-    // Plan deaktivieren bei fehlgeschlagener Zahlung
     await db
       .update(users)
       .set({

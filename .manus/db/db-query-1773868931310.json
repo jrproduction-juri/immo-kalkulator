@@ -1,0 +1,28 @@
+{
+  "query": "SELECT id, email, plan, stripeCustomerId, stripeLastWebhookEventId, stripeWebhookProcessedAt, planActivatedAt FROM users WHERE stripeCustomerId IS NOT NULL ORDER BY updatedAt DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, email, plan, stripeCustomerId, stripeLastWebhookEventId, stripeWebhookProcessedAt, planActivatedAt FROM users WHERE stripeCustomerId IS NOT NULL ORDER BY updatedAt DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "email": "alextelipko1990@gmail.com",
+      "plan": "investor",
+      "stripeCustomerId": "cus_U8AIHK1BeJXYVu",
+      "stripeLastWebhookEventId": "NULL",
+      "stripeWebhookProcessedAt": "NULL",
+      "planActivatedAt": "2026-02-21 13:54:22"
+    },
+    {
+      "id": "2640003",
+      "email": "nmvqc5g7rp@privaterelay.appleid.com",
+      "plan": "none",
+      "stripeCustomerId": "cus_U8KGllgOKJuFr2",
+      "stripeLastWebhookEventId": "NULL",
+      "stripeWebhookProcessedAt": "NULL",
+      "planActivatedAt": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tplan\tstripeCustomerId\tstripeLastWebhookEventId\tstripeWebhookProcessedAt\tplanActivatedAt\n1\talextelipko1990@gmail.com\tinvestor\tcus_U8AIHK1BeJXYVu\tNULL\tNULL\t2026-02-21 13:54:22\n2640003\tnmvqc5g7rp@privaterelay.appleid.com\tnone\tcus_U8KGllgOKJuFr2\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}
