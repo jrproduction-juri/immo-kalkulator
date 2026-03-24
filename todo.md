@@ -137,3 +137,6 @@
 - [x] Stripe: Test-Links durch Live-Links ersetzt (alle 9 Produkte)
 - [x] Webhook: invoice.payment_succeeded (Plan verlängern) und invoice.payment_failed (Plan deaktivieren) korrekt implementiert
 - [ ] Dashboard-Statistiken reparieren: Gesamtinvestition, Gesamt-Cashflow und Ø Rendite aus gespeicherten eingaben-Daten berechnen
+- [x] Cashflow-Berechnung verbessern: Intelligente Fallback-Logik für Hausgeld/Rücklagen
+- [x] UI-Hinweis für automatische Schätzung hinzufügen
+- [x] Tests für neue Cashflow-Logik schreiben

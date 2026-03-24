@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO users (openId, email, plan, billingType, stripeLastWebhookEventId) VALUES (UUID(), 'rockyleept@outlook.de', 'investor', 'lifetime', 'evt_1TCm4p1gELN6BLVoktxDKnx3');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute INSERT INTO users (openId, email, plan, billingType, stripeLastWebhookEventId) VALUES (UUID(), 'rockyleept@outlook.de', 'investor', 'lifetime', 'evt_1TCm4p1gELN6BLVoktxDKnx3');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 56
+}

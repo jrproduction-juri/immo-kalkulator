@@ -88,6 +88,9 @@ export interface FreeResults {
   monatlicheKosten: number;
   nettoCashflowMonat: number;
   nettoCashflowJahr: number;
+  // Cashflow-Schätzung (wenn Rücklagen/nicht umlagefähig nicht eingegeben)
+  usesEstimate: boolean;
+  estimatedEigentuemerkosten: number;
   // Empfehlung
   empfehlung: 'sinnvoll' | 'kritisch' | 'pruefen';
   empfehlungText: string;
@@ -246,15 +249,28 @@ function berechneEffektiveKaltmiete(data: FormData): number {
 /** Berechnet monatliche Kosten je nach Immobilienart
  *  Neue Formel: nicht umlagefähige Kosten + Kreditrate (+ Rüklage wenn nicht Triple-Net)
  */
-function berechneMonatlicheKosten(
+/**
+ * Intelligente Cashflow-Berechnung mit Fallback-Logik
+ * 
+ * Logik:
+ * 1. Wenn Rücklage UND nicht umlagefähige Kosten eingetragen: nutze diese direkt
+ * 2. Wenn nicht: schätze aus Hausgeld (50% Eigentümerkosten)
+ * 
+ * Returns: { kosten, usesEstimate, estimatedEigentuemerkosten }
+ */
+function berechneMonatlicheKostenMitFallback(
   data: FormData,
   monatlicheRate: number
-): number {
+): { kosten: number; usesEstimate: boolean; estimatedEigentuemerkosten: number } {
   // Triple-Net: Mieter trägt alle Nebenkosten → keine Bewirtschaftungskosten für Vermieter
   const isTripleNet = data.art === 'gewerbe' && data.tripleNet;
 
   if (isTripleNet) {
-    return monatlicheRate + data.nichtUmlagefaehig + data.sonstigeAusgaben;
+    return {
+      kosten: monatlicheRate + data.nichtUmlagefaehig + data.sonstigeAusgaben,
+      usesEstimate: false,
+      estimatedEigentuemerkosten: 0,
+    };
   }
 
   // EFH: Grundsteuer + Versicherung + Verwaltung statt Hausgeld
@@ -262,10 +278,44 @@ function berechneMonatlicheKosten(
     const grundsteuer = data.grundsteuer ?? 0;
     const versicherung = data.versicherung ?? 0;
     const verwaltung = data.verwaltungEFH ?? 0;
-    return monatlicheRate + data.ruecklagen + grundsteuer + versicherung + verwaltung + data.nichtUmlagefaehig + data.sonstigeAusgaben;
+    return {
+      kosten: monatlicheRate + data.ruecklagen + grundsteuer + versicherung + verwaltung + data.nichtUmlagefaehig + data.sonstigeAusgaben,
+      usesEstimate: false,
+      estimatedEigentuemerkosten: 0,
+    };
   }
 
-  return monatlicheRate + data.nichtUmlagefaehig + data.ruecklagen + data.sonstigeAusgaben;
+  // Intelligente Fallback-Logik für Wohnungen/MFH/Neubau
+  const hasExactRuecklagen = data.ruecklagen && data.ruecklagen > 0;
+  const hasExactNichtUmlagefaehig = data.nichtUmlagefaehig && data.nichtUmlagefaehig > 0;
+
+  // Fall 1: Beide Werte vorhanden → nutze diese direkt
+  if (hasExactRuecklagen && hasExactNichtUmlagefaehig) {
+    return {
+      kosten: monatlicheRate + data.nichtUmlagefaehig + data.ruecklagen + data.sonstigeAusgaben,
+      usesEstimate: false,
+      estimatedEigentuemerkosten: 0,
+    };
+  }
+
+  // Fall 2: Mindestens einer fehlt → schätze aus Hausgeld (50%)
+  const estimatedEigentuemerkosten = (data.hausgeld ?? 0) * 0.5;
+  const finalRuecklagen = hasExactRuecklagen ? data.ruecklagen : estimatedEigentuemerkosten;
+  const finalNichtUmlagefaehig = hasExactNichtUmlagefaehig ? data.nichtUmlagefaehig : 0;
+
+  return {
+    kosten: monatlicheRate + finalNichtUmlagefaehig + finalRuecklagen + data.sonstigeAusgaben,
+    usesEstimate: !hasExactRuecklagen || !hasExactNichtUmlagefaehig,
+    estimatedEigentuemerkosten: !hasExactRuecklagen || !hasExactNichtUmlagefaehig ? estimatedEigentuemerkosten : 0,
+  };
+}
+
+// Alte Funktion für Rückwärtskompatibilität
+function berechneMonatlicheKosten(
+  data: FormData,
+  monatlicheRate: number
+): number {
+  return berechneMonatlicheKostenMitFallback(data, monatlicheRate).kosten;
 }
 
 // ─── Freie Berechnungen ────────────────────────────────────────────────────────
@@ -295,7 +345,10 @@ export function berechneFreeResults(data: FormData): FreeResults {
   // Cashflow: Warmmiete - Kreditrate - Hausgeld - Ruecklagen - nicht umlagefaehige Kosten
   // Die Warmmiete ist die tatsaechliche Einnahme vom Mieter
   const monatlicheEinnahmen = data.warmmiete && data.warmmiete > 0 ? data.warmmiete : effektiveKaltmiete;
-  const monatlicheKosten = berechneMonatlicheKosten(data, monatlicheRate);
+  const kostenResult = berechneMonatlicheKostenMitFallback(data, monatlicheRate);
+  const monatlicheKosten = kostenResult.kosten;
+  const usesEstimate = kostenResult.usesEstimate;
+  const estimatedEigentuemerkosten = kostenResult.estimatedEigentuemerkosten;
   const nettoCashflowMonat = monatlicheEinnahmen - monatlicheKosten;
   const nettoCashflowJahr = nettoCashflowMonat * 12;
 
@@ -345,6 +398,8 @@ export function berechneFreeResults(data: FormData): FreeResults {
     monatlicheKosten,
     nettoCashflowMonat,
     nettoCashflowJahr,
+    usesEstimate,
+    estimatedEigentuemerkosten,
     empfehlung,
     empfehlungText,
     szenarioVermietung: data.szenarioVermietung ? szenarioVermietung : undefined,

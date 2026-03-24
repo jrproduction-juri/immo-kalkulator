@@ -116,6 +116,16 @@ export function FreeResultsPanel({ results, onExportPDF }: FreeResultsProps) {
             highlight
             infoKuerzel="CF"
           />
+          {/* Hinweis für automatische Schätzung */}
+          {results.usesEstimate && (
+            <div className="col-span-full p-3 bg-blue-50 border border-blue-200 rounded-lg flex gap-2">
+              <AlertTriangle className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+              <div className="text-xs text-blue-800">
+                <p className="font-semibold">Automatische Schätzung</p>
+                <p className="mt-1 opacity-90">Da keine genauen Werte für Rücklagen und nicht umlagefähige Kosten angegeben wurden, nutzt das Tool eine automatische Schätzung von 50% des Hausgeldes (≈ {formatEuro(results.estimatedEigentuemerkosten)}/Monat).</p>
+              </div>
+            </div>
+          )}
           {/* Gesperrt für Free */}
           {isBasic ? (
             <>

@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, email, plan FROM users WHERE email = 'youngbaeriches@gmail.com' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, email, plan FROM users WHERE email = 'youngbaeriches@gmail.com' LIMIT 1;",
+  "rows": [
+    {
+      "id": "3870024",
+      "email": "youngbaeriches@gmail.com",
+      "plan": "none"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tplan\n3870024\tyoungbaeriches@gmail.com\tnone\n",
+  "stderr": "",
+  "execution_time_ms": 953
+}

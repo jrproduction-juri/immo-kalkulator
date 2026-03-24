@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, email, plan, billingType, stripeLastWebhookEventId FROM users WHERE id = 3870024;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, email, plan, billingType, stripeLastWebhookEventId FROM users WHERE id = 3870024;",
+  "rows": [
+    {
+      "id": "3870024",
+      "email": "youngbaeriches@gmail.com",
+      "plan": "investor",
+      "billingType": "lifetime",
+      "stripeLastWebhookEventId": "evt_1TCm4p1gELN6BLVoktxDKnx3"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tplan\tbillingType\tstripeLastWebhookEventId\n3870024\tyoungbaeriches@gmail.com\tinvestor\tlifetime\tevt_1TCm4p1gELN6BLVoktxDKnx3\n",
+  "stderr": "",
+  "execution_time_ms": 48
+}

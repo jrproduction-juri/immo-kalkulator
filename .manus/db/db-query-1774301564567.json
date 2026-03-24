@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE users SET plan = 'investor', billingType = 'lifetime', stripeLastWebhookEventId = 'evt_1TCm4p1gELN6BLVoktxDKnx3' WHERE id = 3870024;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute UPDATE users SET plan = 'investor', billingType = 'lifetime', stripeLastWebhookEventId = 'evt_1TCm4p1gELN6BLVoktxDKnx3' WHERE id = 3870024;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 151
+}
