@@ -342,9 +342,9 @@ export function berechneFreeResults(data: FormData): FreeResults {
     ? ((jaehrlicheKaltmiete - bewirtschaftungskosten) / gesamtinvestition) * 100
     : 0;
 
-  // Cashflow: Warmmiete - Kreditrate - Hausgeld - Ruecklagen - nicht umlagefaehige Kosten
-  // Die Warmmiete ist die tatsaechliche Einnahme vom Mieter
-  const monatlicheEinnahmen = data.warmmiete && data.warmmiete > 0 ? data.warmmiete : effektiveKaltmiete;
+  // Cashflow: Kaltmiete - Kreditrate - Hausgeld - Ruecklagen - nicht umlagefaehige Kosten
+  // Die Kaltmiete ist die tatsaechliche Einnahme vom Mieter (ohne Nebenkosten)
+  const monatlicheEinnahmen = effektiveKaltmiete;
   const kostenResult = berechneMonatlicheKostenMitFallback(data, monatlicheRate);
   const monatlicheKosten = kostenResult.kosten;
   const usesEstimate = kostenResult.usesEstimate;

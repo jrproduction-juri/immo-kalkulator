@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { berechneFreeResults } from '../client/src/lib/calculations';
 import type { FormData } from '../client/src/lib/calculations';
 
-describe('Cashflow-Berechnung mit Warmmiete', () => {
+describe('Cashflow-Berechnung mit Kaltmiete', () => {
   const baseData: FormData = {
     art: 'wohnung',
     kaufpreis: 300000,
@@ -26,53 +26,55 @@ describe('Cashflow-Berechnung mit Warmmiete', () => {
     szenarioFlipSanieren: false,
   };
 
-  it('sollte Cashflow mit Warmmiete berechnen wenn vorhanden', () => {
+  it('sollte Cashflow mit Kaltmiete berechnen', () => {
     const results = berechneFreeResults(baseData);
     
-    // Mit Warmmiete (1100 EUR) sollte der Cashflow berechnet werden
-    // nicht mit Kaltmiete (900 EUR)
-    // Der Cashflow sollte negativ sein, da Kosten > Warmmiete
-    expect(results.nettoCashflowMonat).toBeLessThan(0);
-  });
-
-  it('sollte Fallback auf Kaltmiete verwenden wenn Warmmiete nicht eingegeben', () => {
-    const dataOhneWarmmiete: FormData = {
-      ...baseData,
-      warmmiete: 0,
-    };
-
-    const results = berechneFreeResults(dataOhneWarmmiete);
-    
     // Mit Kaltmiete (900 EUR) sollte der Cashflow berechnet werden
-    // Der Cashflow sollte noch negativer sein als mit Warmmiete
+    // Warmmiete wird ignoriert
+    // Der Cashflow sollte negativ sein, da Kosten > Kaltmiete
     expect(results.nettoCashflowMonat).toBeLessThan(0);
   });
 
-  it('sollte Warmmiete-Cashflow besser sein als Kaltmiete-Cashflow', () => {
-    const resultsWithWarmmiete = berechneFreeResults(baseData);
-    
+  it('sollte immer Kaltmiete verwenden unabhängig von Warmmiete', () => {
     const dataOhneWarmmiete: FormData = {
       ...baseData,
       warmmiete: 0,
     };
+
+    const resultsWithWarmmiete = berechneFreeResults(baseData);
     const resultsWithoutWarmmiete = berechneFreeResults(dataOhneWarmmiete);
     
-    // Warmmiete-Cashflow sollte BESSER (hoher) sein als Kaltmiete-Cashflow
-    // weil Warmmiete (1100) > Kaltmiete (900)
-    expect(resultsWithWarmmiete.nettoCashflowMonat).toBeGreaterThan(
-      resultsWithoutWarmmiete.nettoCashflowMonat
+    // Beide sollten den gleichen Cashflow haben, da Warmmiete ignoriert wird
+    expect(resultsWithWarmmiete.nettoCashflowMonat).toBeCloseTo(
+      resultsWithoutWarmmiete.nettoCashflowMonat,
+      2
     );
   });
 
-  it('sollte positiven Cashflow mit hoher Warmmiete zeigen', () => {
-    const dataHoheWarmmiete: FormData = {
+  it('sollte Cashflow mit hoher Kaltmiete besser sein als mit niedriger Kaltmiete', () => {
+    const resultsNiedrig = berechneFreeResults(baseData);
+    
+    const dataHoch: FormData = {
       ...baseData,
-      warmmiete: 2000,
+      kaltmiete: 1200, // höhere Kaltmiete
+    };
+    const resultsHoch = berechneFreeResults(dataHoch);
+    
+    // Mit höherer Kaltmiete sollte der Cashflow besser sein
+    expect(resultsHoch.nettoCashflowMonat).toBeGreaterThan(
+      resultsNiedrig.nettoCashflowMonat
+    );
+  });
+
+  it('sollte positiven Cashflow mit hoher Kaltmiete zeigen', () => {
+    const dataHoheKaltmiete: FormData = {
+      ...baseData,
+      kaltmiete: 2000, // hohe Kaltmiete statt Warmmiete
     };
 
-    const results = berechneFreeResults(dataHoheWarmmiete);
+    const results = berechneFreeResults(dataHoheKaltmiete);
     
-    // Mit hoher Warmmiete (2000 EUR) sollte der Cashflow positiv sein
+    // Mit hoher Kaltmiete (2000 EUR) sollte der Cashflow positiv sein
     expect(results.nettoCashflowMonat).toBeGreaterThan(0);
   });
 
