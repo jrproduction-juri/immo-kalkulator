@@ -1,6 +1,6 @@
-import { ProResults as ProResultsType, formatEuro, formatProzent, formatZahl } from '@/lib/calculations';
+import { ProResults as ProResultsType, RisikoFaktor, formatEuro, formatProzent, formatZahl } from '@/lib/calculations';
 import { MetricCard, MetricGrid } from './MetricCard';
-import { Crown, TrendingUp, Shield, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
+import { Crown, TrendingUp, Shield, AlertTriangle, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell, AreaChart, Area
@@ -59,14 +59,69 @@ function SzenarioCard({ szenario }: { szenario: NonNullable<ProResultsType['szen
   );
 }
 
-function RisikoItem({ label, text, level }: { label: string; text: string; level?: string }) {
-  const color = level === 'niedrig' ? 'text-emerald-600' : level === 'mittel' ? 'text-amber-600' : 'text-red-600';
+/** Einzelner Risikofaktor mit Punktanzeige */
+function RisikoItem({ faktor }: { faktor: RisikoFaktor }) {
+  const colorMap = {
+    niedrig: { icon: 'text-emerald-600', bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Niedrig' },
+    mittel:  { icon: 'text-amber-600',   bg: 'bg-amber-100',   text: 'text-amber-700',   label: 'Mittel' },
+    hoch:    { icon: 'text-red-600',     bg: 'bg-red-100',     text: 'text-red-700',     label: 'Hoch' },
+  };
+  const c = colorMap[faktor.level];
+
   return (
     <div className="flex items-start gap-3 py-2.5 border-b border-border last:border-0">
-      <Shield className={cn('w-4 h-4 shrink-0 mt-0.5', color)} />
-      <div>
-        <p className="text-xs font-semibold text-foreground">{label}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">{text}</p>
+      <Shield className={cn('w-4 h-4 shrink-0 mt-0.5', c.icon)} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs font-semibold text-foreground">{faktor.label}</p>
+          <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0', c.bg, c.text)}>
+            {c.label} · {faktor.punkte}/3
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground mt-0.5">{faktor.text}</p>
+      </div>
+    </div>
+  );
+}
+
+/** Risiko-Gesamtbewertung mit Balken */
+function RisikoGesamtBewertung({ gesamt, gesamtPunkte }: { gesamt: 'niedrig' | 'mittel' | 'hoch'; gesamtPunkte: number }) {
+  const config = {
+    niedrig: { label: 'Niedriges Risiko', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200', bar: 'bg-emerald-500', icon: CheckCircle2 },
+    mittel:  { label: 'Mittleres Risiko', color: 'text-amber-700',   bg: 'bg-amber-50',   border: 'border-amber-200',   bar: 'bg-amber-500',   icon: AlertTriangle },
+    hoch:    { label: 'Hohes Risiko',     color: 'text-red-700',     bg: 'bg-red-50',     border: 'border-red-200',     bar: 'bg-red-500',     icon: AlertCircle },
+  };
+  const c = config[gesamt];
+  const Icon = c.icon;
+  // Balken: 1.0 = 0%, 3.0 = 100%
+  const barWidth = Math.round(((gesamtPunkte - 1) / 2) * 100);
+
+  return (
+    <div className={cn('p-4 rounded-xl border mb-4', c.bg, c.border)}>
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Icon className={cn('w-5 h-5', c.color)} />
+          <div>
+            <p className={cn('text-sm font-bold', c.color)}>{c.label}</p>
+            <p className="text-[11px] text-muted-foreground">Durchschnitt: {gesamtPunkte.toFixed(1)} / 3.0 Punkte</p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className={cn('text-2xl font-bold num-display', c.color)}>{gesamtPunkte.toFixed(1)}</p>
+          <p className="text-[10px] text-muted-foreground">von 3.0</p>
+        </div>
+      </div>
+      {/* Risiko-Balken */}
+      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          className={cn('h-full rounded-full transition-all duration-500', c.bar)}
+          style={{ width: `${barWidth}%` }}
+        />
+      </div>
+      <div className="flex justify-between mt-1">
+        <span className="text-[10px] text-emerald-600 font-medium">Niedrig ≤ 1.5</span>
+        <span className="text-[10px] text-amber-600 font-medium">Mittel 1.5–2.3</span>
+        <span className="text-[10px] text-red-600 font-medium">Hoch &gt; 2.3</span>
       </div>
     </div>
   );
@@ -272,20 +327,28 @@ export function ProResultsPanel({ results }: ProResultsProps) {
         </ResponsiveContainer>
       </div>
 
-      {/* Risiko-Analyse */}
+      {/* ── Risiko-Analyse (neues Durchschnitts-Modell) ─────────────────────── */}
       <div className="bg-card border border-border rounded-xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Risiko-Analyse</p>
-          <span className={cn('text-xs font-semibold px-2 py-0.5 rounded-full border', risikoColor[results.risikoBewertung.gesamt])}>
-            {results.risikoBewertung.gesamt === 'niedrig' ? 'Niedriges Risiko' :
-             results.risikoBewertung.gesamt === 'mittel' ? 'Mittleres Risiko' : 'Hohes Risiko'}
-          </span>
-        </div>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Risiko-Analyse</p>
+
+        {/* Gesamtbewertung mit Balken */}
+        <RisikoGesamtBewertung
+          gesamt={results.risikoBewertung.gesamt}
+          gesamtPunkte={results.risikoBewertung.gesamtPunkte}
+        />
+
+        {/* Einzelne Faktoren */}
         <div>
-          <RisikoItem label="Zinsänderungsrisiko" text={results.risikoBewertung.zinsaenderung} />
-          <RisikoItem label="Mietausfallrisiko" text={results.risikoBewertung.mietausfall} />
-          <RisikoItem label="Sanierungsrisiko" text={results.risikoBewertung.sanierungsrisiko} />
-          <RisikoItem label="Lageentwicklung" text={results.risikoBewertung.lage} />
+          {results.risikoBewertung.faktoren?.map((f, i) => (
+            <RisikoItem key={i} faktor={f} />
+          )) ?? (
+            <>
+              <RisikoItem faktor={{ label: 'Zinsänderungsrisiko', text: results.risikoBewertung.zinsaenderung, level: 'mittel', punkte: 2 }} />
+              <RisikoItem faktor={{ label: 'Mietausfallrisiko', text: results.risikoBewertung.mietausfall, level: 'mittel', punkte: 2 }} />
+              <RisikoItem faktor={{ label: 'Sanierungsrisiko', text: results.risikoBewertung.sanierungsrisiko, level: 'mittel', punkte: 2 }} />
+              <RisikoItem faktor={{ label: 'Lageentwicklung', text: results.risikoBewertung.lage, level: 'mittel', punkte: 2 }} />
+            </>
+          )}
         </div>
       </div>
     </div>

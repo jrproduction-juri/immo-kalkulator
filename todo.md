@@ -154,3 +154,16 @@
 - [x] InfoModal: zentriert auf Mobile, 90% Breite, kein Abschneiden
 - [x] InfoModal: schließt bei Außerhalb-Klick, OK-Button und erneutem i-Klick
 - [x] Tests für InfoModal aktualisieren
+
+## Neue Features (Batch 2)
+- [x] PLZ-Feld im Kalkulator: Ort erkennen + Ø Kaltmiete/m² ermitteln (KI)
+- [x] PLZ: Empfohlene Kaltmiete berechnen und anzeigen (Wohnfläche × Ø Miete/m²)
+- [x] PLZ: "Vorschlag übernehmen"-Button befüllt Kaltmiete-Feld
+- [x] Risikoanalyse: Durchschnitts-Modell (1=niedrig, 2=mittel, 3=hoch), Gesamtbewertung
+- [x] Risikoanalyse: Gesamtbewertung sichtbar im Risiko-Reiter
+- [x] Neuer Tab "Investment Bewertung": Ampelsystem (grün/gelb/rot)
+- [x] Investment Bewertung: Stärken-Liste + Risiken-Liste + Verbesserungspotenzial
+- [x] Exposé-Upload: Drag & Drop (PDF, JPG, PNG) oberhalb der Analyse
+- [x] Exposé-Upload: KI analysiert Dokument und extrahiert Immobilien-Daten
+- [x] Exposé-Upload: Bestätigungs-Dialog "Folgende Daten wurden erkannt" mit Bearbeitung
+- [x] Tests für alle neuen Features schreiben

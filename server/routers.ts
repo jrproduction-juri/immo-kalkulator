@@ -4,6 +4,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { invokeLLM } from "./_core/llm";
 import {
   countImmobilienByUser,
   createImmobilie,
@@ -108,6 +109,146 @@ export const appRouter = router({
         }
         const portalUrl = await createCustomerPortalSession(user.stripeCustomerId, input.origin);
         return { portalUrl };
+      }),
+  }),
+
+  // ─── PLZ-Mietpreisempfehlung ─────────────────────────────────────────────
+  plz: router({
+    getMietempfehlung: publicProcedure
+      .input(z.object({
+        plz: z.string().min(4).max(6),
+        wohnflaeche: z.number().positive().optional(),
+      }))
+      .query(async ({ input }) => {
+        const { plz, wohnflaeche = 70 } = input;
+        try {
+          const response = await invokeLLM({
+            messages: [
+              {
+                role: "system",
+                content: `Du bist ein Immobilien-Experte für den deutschen Markt. 
+Antworte NUR mit einem validen JSON-Objekt, ohne Markdown, ohne Codeblöcke.
+Format: {"ort": "Stadtname", "bundesland": "Bundesland", "mietpreisProQm": 10.5, "quelle": "Marktdaten 2024", "preisspanne": {"min": 8.0, "max": 13.0}}`,
+              },
+              {
+                role: "user",
+                content: `Gib mir den durchschnittlichen Nettokaltmietpreis pro m² für die deutsche Postleitzahl ${plz}. Nutze aktuelle Marktdaten (2023/2024). Antworte nur mit dem JSON-Objekt.`,
+              },
+            ],
+          });
+
+          const rawContent = response.choices?.[0]?.message?.content ?? "";
+          const content = typeof rawContent === "string" ? rawContent : JSON.stringify(rawContent);
+          // JSON extrahieren (auch wenn Markdown-Codeblock vorhanden)
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (!jsonMatch) throw new Error("Kein JSON in Antwort");
+          const data = JSON.parse(jsonMatch[0]);
+
+          const mietpreisProQm = Number(data.mietpreisProQm);
+          if (!mietpreisProQm || mietpreisProQm <= 0) throw new Error("Ungültiger Mietpreis");
+
+          const empfohleneKaltmiete = Math.round(mietpreisProQm * wohnflaeche);
+
+          return {
+            plz,
+            ort: data.ort ?? "Unbekannt",
+            bundesland: data.bundesland ?? "",
+            mietpreisProQm: Math.round(mietpreisProQm * 100) / 100,
+            empfohleneKaltmiete,
+            preisspanne: data.preisspanne ?? null,
+            quelle: data.quelle ?? "KI-Marktdaten",
+          };
+        } catch (e) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "PLZ-Abfrage fehlgeschlagen. Bitte erneut versuchen.",
+          });
+        }
+      }),
+  }),
+
+  // ─── Exposé-KI-Extraktion ─────────────────────────────────────────────────
+  expose: router({
+    extractData: publicProcedure
+      .input(z.object({
+        fileUrl: z.string().url(),
+        mimeType: z.enum(["application/pdf", "image/jpeg", "image/png", "image/webp"]),
+      }))
+      .mutation(async ({ input }) => {
+        const { fileUrl, mimeType } = input;
+
+        const isImage = mimeType.startsWith("image/");
+        const isPdf = mimeType === "application/pdf";
+
+        const messages: any[] = [
+          {
+            role: "system",
+            content: `Du bist ein KI-Assistent der Immobilien-Exposés analysiert und strukturierte Daten extrahiert.
+Antworte NUR mit einem validen JSON-Objekt ohne Markdown oder Codeblöcke.
+Format: {
+  "kaufpreis": number | null,
+  "wohnflaeche": number | null,
+  "zimmeranzahl": number | null,
+  "baujahr": number | null,
+  "hausgeld": number | null,
+  "kaltmiete": number | null,
+  "adresse": string | null,
+  "ort": string | null,
+  "plz": string | null,
+  "energieklasse": string | null,
+  "stellplaetze": number | null,
+  "grundstueckFlaeche": number | null,
+  "beschreibung": string | null
+}`,
+          },
+        ];
+
+        if (isImage) {
+          messages.push({
+            role: "user",
+            content: [
+              {
+                type: "image_url",
+                image_url: { url: fileUrl, detail: "high" },
+              },
+              {
+                type: "text",
+                text: "Analysiere dieses Immobilien-Exposé und extrahiere alle verfügbaren Daten als JSON.",
+              },
+            ],
+          });
+        } else if (isPdf) {
+          messages.push({
+            role: "user",
+            content: [
+              {
+                type: "file_url",
+                file_url: { url: fileUrl, mime_type: "application/pdf" },
+              },
+              {
+                type: "text",
+                text: "Analysiere dieses Immobilien-Exposé (PDF) und extrahiere alle verfügbaren Daten als JSON.",
+              },
+            ],
+          });
+        } else {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Nicht unterstütztes Format" });
+        }
+
+        try {
+          const response = await invokeLLM({ messages });
+          const rawContent2 = response.choices?.[0]?.message?.content ?? "";
+          const content = typeof rawContent2 === "string" ? rawContent2 : JSON.stringify(rawContent2);
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (!jsonMatch) throw new Error("Kein JSON");
+          const data = JSON.parse(jsonMatch[0]);
+          return { success: true, data };
+        } catch (e) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Exposé-Analyse fehlgeschlagen. Bitte erneut versuchen.",
+          });
+        }
       }),
   }),
 

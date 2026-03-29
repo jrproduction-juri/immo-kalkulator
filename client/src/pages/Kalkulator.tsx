@@ -26,7 +26,7 @@ import { exportExcel } from '@/lib/excelExport';
 import { toast } from 'sonner';
 import {
   Building2, BarChart3, Mail, FileText, ChevronRight,
-  Zap, Calculator, TrendingUp, Save, ArrowLeft, Check, Table, Lock
+  Zap, Calculator, TrendingUp, Save, ArrowLeft, Check, Table, Lock, Star
 } from 'lucide-react';
 import {
   Dialog,
@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/dialog';
 import { KennzahlenLegende } from '@/components/KennzahlenLegende';
 import { parseImmobilienSaveError } from '@/lib/saveErrorHandler';
+import { InvestmentBewertungPanel } from '@/components/InvestmentBewertung';
 
 const PRO_BG = 'https://private-us-east-1.manuscdn.com/sessionFile/d1B7vnkB4jEDrlWUS8LSxe/sandbox/l45cXWfOMIxTINpDvpvKli-img-3_1771591078000_na1fn_cHJvLWZlYXR1cmUtYmc.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZDFCN3Zua0I0akVEcmxXVVM4TFN4ZS9zYW5kYm94L2w0NWNYV2ZPTUl4VElOcER2cHZLbGktaW1nLTNfMTc3MTU5MTA3ODAwMF9uYTFmbl9jSEp2TFdabFlYUjFjbVV0WW1jLnBuZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE5MjAsaF8xOTIwL2Zvcm1hdCx3ZWJwL3F1YWxpdHkscV84MCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=RS28g3EBd~EPunsFekybwqu0aewP6mf6XXvu~lIQY-XO6erJwjZE-lLUq-7obXeGI7veSrx4-bYpOdlfTLQxODG582opb5OkUrIjVfj58PZd12-P6t5DePbVzCojt54FxqypRFznXYvEtaMlr-Bm5Z1xesSahyigYdQdVojFmDZekY1sxoJ5XF6~OVd9DvAyPrAxfPfKmPSzM2N2Ksk7mxJACOeYmwtCrieVYda19p1t9O8qWCXAkaYsCOwR4KcGoQ-tZEUCbVMzVlhHV52kJi106sBQEWOx8QYvzynvGP7sPW3-b8cjP5KfjGGL~pZmZfGYfnyF2t1WdeF21e~JqQ__';
 
@@ -354,6 +355,12 @@ export default function Kalkulator() {
                           Email
                         </TabsTrigger>
                       )}
+                      {isPro && proResults && (
+                        <TabsTrigger value="bewertung" className="text-xs">
+                          <Star className="w-3.5 h-3.5 mr-1.5" />
+                          Bewertung
+                        </TabsTrigger>
+                      )}
                       {isPro && proResults && lastFormData && (
                         <TabsTrigger value="expose" className="text-xs">
                           <Building2 className="w-3.5 h-3.5 mr-1.5" />
@@ -443,6 +450,12 @@ export default function Kalkulator() {
                     {isPro && lastFormData && (
                       <TabsContent value="email" className="mt-0">
                         <EmailGenerator formData={lastFormData} />
+                      </TabsContent>
+                    )}
+
+                    {isPro && proResults && (
+                      <TabsContent value="bewertung" className="mt-0">
+                        <InvestmentBewertungPanel bewertung={proResults.investmentBewertung} />
                       </TabsContent>
                     )}
 

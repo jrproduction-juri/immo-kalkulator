@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { InfoModal } from '@/components/InfoModal';
+import { PlzMietempfehlung } from '@/components/PlzMietempfehlung';
+import { ExposeUpload } from '@/components/ExposeUpload';
 import { Badge } from '@/components/ui/badge';
 import { Lock, Building2, Home, Warehouse, Building, Calculator, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -271,7 +273,24 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
         )}
       </div>
 
-      {/* ── Objekt-Grunddaten ──────────────────────────────────────────── */}
+      {/* ── Exposé-Upload ─────────────────────────────────────────────── */}
+      <div className="space-y-2">
+        <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">Exposé hochladen (optional)</Label>
+        <ExposeUpload
+          onDataExtracted={extracted => {
+            const updates: Partial<FormData> = {};
+            if (extracted.kaufpreis != null) updates.kaufpreis = extracted.kaufpreis;
+            if (extracted.wohnflaeche != null) updates.wohnflaeche = extracted.wohnflaeche;
+            if (extracted.baujahr != null) updates.baujahr = extracted.baujahr;
+            if (extracted.hausgeld != null) updates.hausgeld = extracted.hausgeld;
+            if (extracted.kaltmiete != null) updates.kaltmiete = extracted.kaltmiete;
+            if (extracted.grundstueckFlaeche != null) updates.grundstueckFlaeche = extracted.grundstueckFlaeche;
+            onChange({ ...data, ...updates });
+          }}
+        />
+      </div>
+
+      {/* ── Objekt-Grunddaten ────────────────────────────────────────── */}
       <div className="space-y-3">
         <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">Objektdaten</Label>
 
@@ -355,15 +374,21 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
 
         {/* Wohnung / Neubau */}
         {(art === 'wohnung' || art === 'neubau') && (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <FieldLabel label="Kaltmiete" field="kaltmiete" />
-              <NumberInput value={data.kaltmiete} onChange={v => set('kaltmiete', v)} suffix="€/Mo" placeholder="900" />
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <FieldLabel label="Kaltmiete" field="kaltmiete" />
+                <NumberInput value={data.kaltmiete} onChange={v => set('kaltmiete', v)} suffix="€/Mo" placeholder="900" />
+              </div>
+              <div>
+                <FieldLabel label="Warmmiete" field="warmmiete" />
+                <NumberInput value={data.warmmiete ?? 0} onChange={v => set('warmmiete', v > 0 ? v : undefined as unknown as number)} suffix="€/Mo" placeholder="1100" />
+              </div>
             </div>
-            <div>
-              <FieldLabel label="Warmmiete" field="warmmiete" />
-              <NumberInput value={data.warmmiete ?? 0} onChange={v => set('warmmiete', v > 0 ? v : undefined as unknown as number)} suffix="€/Mo" placeholder="1100" />
-            </div>
+            <PlzMietempfehlung
+              wohnflaeche={data.wohnflaeche}
+              onVorschlagUebernehmen={v => set('kaltmiete', v)}
+            />
           </div>
         )}
 

@@ -116,6 +116,22 @@ export interface ZielrenditeAnalyse {
   bewertungstext: string;
 }
 
+export interface InvestmentBewertungPunkt {
+  text: string;
+  typ: 'staerke' | 'risiko' | 'potenzial';
+}
+
+export interface InvestmentBewertung {
+  ampel: 'gruen' | 'gelb' | 'rot';
+  ampelText: string;
+  ampelBeschreibung: string;
+  gesamtScore: number;   // 0–100
+  staerken: string[];
+  risiken: string[];
+  potenziale: string[];
+  empfehlungKurz: string;
+}
+
 export interface ProResults extends FreeResults {
   // Eigennutzung Steuerfreiheit
   steuerfreierVerkaufMoeglich: boolean;
@@ -142,6 +158,8 @@ export interface ProResults extends FreeResults {
   risikoBewertung: RisikoBewertung;
   // Zielrendite-Analyse (Pro)
   zielrenditeAnalyse: ZielrenditeAnalyse;
+  // Investment-Bewertung (Ampelsystem)
+  investmentBewertung: InvestmentBewertung;
 }
 
 export interface SzenarioResult {
@@ -164,12 +182,21 @@ export interface JahresProjektion {
   gesamtrendite: number;
 }
 
+export interface RisikoFaktor {
+  label: string;
+  text: string;
+  level: 'niedrig' | 'mittel' | 'hoch';
+  punkte: 1 | 2 | 3; // 1=niedrig, 2=mittel, 3=hoch
+}
+
 export interface RisikoBewertung {
   gesamt: 'niedrig' | 'mittel' | 'hoch';
+  gesamtPunkte: number;    // Durchschnittswert (1.0 – 3.0)
   zinsaenderung: string;
   mietausfall: string;
   sanierungsrisiko: string;
   lage: string;
+  faktoren: RisikoFaktor[]; // strukturierte Faktoren mit Punkten
 }
 
 // ─── Hilfsfunktionen ───────────────────────────────────────────────────────────
@@ -518,20 +545,55 @@ export function berechneProResults(data: FormData): ProResults {
     });
   }
 
-  // Risikobewertung
+  // ─── Risikobewertung: Durchschnitts-Modell (1=niedrig, 2=mittel, 3=hoch) ────────────────
+  const risikoFaktor_Zinsen: RisikoFaktor = data.zinssatz <= 3
+    ? { label: 'Zinsänderungsrisiko', text: 'Günstiger Zinssatz. Anschlussfinanzierung rechtzeitig planen.', level: 'niedrig', punkte: 1 }
+    : data.zinssatz <= 4.5
+    ? { label: 'Zinsänderungsrisiko', text: 'Erhöhter Zinssatz. Zinsbindung sichern, Puffer einkalkulieren.', level: 'mittel', punkte: 2 }
+    : { label: 'Zinsänderungsrisiko', text: 'Hoher Zinssatz. Cashflow unter Druck, Refinanzierungsrisiko beachten.', level: 'hoch', punkte: 3 };
+
+  const pmv = data.kaufpreis > 0 ? (data.kaltmiete * 12) / data.kaufpreis * 100 : 0;
+  const risikoFaktor_Mietausfall: RisikoFaktor = pmv >= 5
+    ? { label: 'Mietausfallrisiko', text: 'Gutes Preis-Miete-Verhältnis. Hohe Nachfrage wahrscheinlich.', level: 'niedrig', punkte: 1 }
+    : pmv >= 3.5
+    ? { label: 'Mietausfallrisiko', text: 'Mittleres Preis-Miete-Verhältnis. Rücklagen für Leerstand bilden.', level: 'mittel', punkte: 2 }
+    : { label: 'Mietausfallrisiko', text: 'Schwaches Preis-Miete-Verhältnis. Leerstandsrisiko erhöht.', level: 'hoch', punkte: 3 };
+
+  const risikoFaktor_Sanierung: RisikoFaktor = data.zustand === 'neu'
+    ? { label: 'Sanierungsrisiko', text: 'Neubauzustand. Kein kurzfristiger Sanierungsbedarf.', level: 'niedrig', punkte: 1 }
+    : data.zustand === 'renoviert'
+    ? { label: 'Sanierungsrisiko', text: 'Renovierter Zustand. Regelmäßige Instandhaltung einplanen.', level: 'mittel', punkte: 2 }
+    : { label: 'Sanierungsrisiko', text: 'Sanierungsbedarf vorhanden. Kosten detailliert kalkulieren.', level: 'hoch', punkte: 3 };
+
+  const risikoFaktor_Lage: RisikoFaktor = { label: 'Lageentwicklung', text: 'Lageanalyse anhand lokaler Marktdaten empfohlen.', level: 'mittel', punkte: 2 };
+
+  const risikoFaktor_Cashflow: RisikoFaktor = freeResults.nettoCashflowMonat >= 100
+    ? { label: 'Cashflow-Risiko', text: `Positiver Cashflow (+${Math.round(freeResults.nettoCashflowMonat)} €/Mo). Immobilie trägt sich selbst.`, level: 'niedrig', punkte: 1 }
+    : freeResults.nettoCashflowMonat >= -100
+    ? { label: 'Cashflow-Risiko', text: `Cashflow nahe Null (${Math.round(freeResults.nettoCashflowMonat)} €/Mo). Puffer empfohlen.`, level: 'mittel', punkte: 2 }
+    : { label: 'Cashflow-Risiko', text: `Negativer Cashflow (${Math.round(freeResults.nettoCashflowMonat)} €/Mo). Monatliche Zuzahlung erforderlich.`, level: 'hoch', punkte: 3 };
+
+  const alleFaktoren: RisikoFaktor[] = [
+    risikoFaktor_Zinsen,
+    risikoFaktor_Mietausfall,
+    risikoFaktor_Sanierung,
+    risikoFaktor_Lage,
+    risikoFaktor_Cashflow,
+  ];
+
+  const gesamtPunkte = alleFaktoren.reduce((sum, f) => sum + f.punkte, 0) / alleFaktoren.length;
+  const gesamtRisiko: 'niedrig' | 'mittel' | 'hoch' =
+    gesamtPunkte <= 1.5 ? 'niedrig' :
+    gesamtPunkte <= 2.3 ? 'mittel' : 'hoch';
+
   const risikoBewertung: RisikoBewertung = {
-    gesamt: freeResults.bruttomietrendite >= 5 && freeResults.nettoCashflowMonat >= 0 ? 'niedrig' :
-      freeResults.bruttomietrendite >= 3.5 ? 'mittel' : 'hoch',
-    zinsaenderung: data.zinssatz <= 3
-      ? 'Niedrig: Aktuell günstiger Zinssatz, Anschlussfinanzierung beobachten'
-      : 'Mittel: Zinssatz bereits erhöht, Zinsbindung sichern',
-    mietausfall: data.kaltmiete / (data.kaufpreis / 1000) >= 8
-      ? 'Niedrig: Gutes Preis-Miete-Verhältnis, hohe Nachfrage wahrscheinlich'
-      : 'Mittel: Mietausfallrisiko durch Rücklagen absichern',
-    sanierungsrisiko: data.zustand === 'neu' ? 'Niedrig: Neubauzustand' :
-      data.zustand === 'renoviert' ? 'Mittel: Regelmäßige Instandhaltung einplanen' :
-        'Hoch: Erheblicher Sanierungsbedarf, Kosten detailliert kalkulieren',
-    lage: 'Mittel: Lageanalyse anhand lokaler Marktdaten empfohlen',
+    gesamt: gesamtRisiko,
+    gesamtPunkte: Math.round(gesamtPunkte * 10) / 10,
+    zinsaenderung: risikoFaktor_Zinsen.text,
+    mietausfall: risikoFaktor_Mietausfall.text,
+    sanierungsrisiko: risikoFaktor_Sanierung.text,
+    lage: risikoFaktor_Lage.text,
+    faktoren: alleFaktoren,
   };
 
   // Eigennutzung Steuerfreiheit: mind. 24 Monate = steuerfrei
@@ -565,6 +627,78 @@ export function berechneProResults(data: FormData): ProResults {
     bewertungstext,
   };
 
+  // ─── Investment-Bewertung (Ampelsystem) ───────────────────────────────────────────────
+  const staerken: string[] = [];
+  const risiken: string[] = [];
+  const potenziale: string[] = [];
+
+  // Rendite-Analyse
+  if (freeResults.bruttomietrendite >= 6) staerken.push(`Starke Bruttomietrendite von ${freeResults.bruttomietrendite.toFixed(1)} % (Ziel: ≥6 %)`);
+  else if (freeResults.bruttomietrendite >= 4) potenziale.push(`Bruttomietrendite ${freeResults.bruttomietrendite.toFixed(1)} % – Verhandlungspotenzial beim Kaufpreis vorhanden`);
+  else risiken.push(`Niedrige Bruttomietrendite von ${freeResults.bruttomietrendite.toFixed(1)} % (unter 4 %)`);
+
+  // Cashflow
+  if (freeResults.nettoCashflowMonat >= 200) staerken.push(`Sehr positiver Cashflow: +${Math.round(freeResults.nettoCashflowMonat)} €/Monat`);
+  else if (freeResults.nettoCashflowMonat >= 0) staerken.push(`Positiver Cashflow: +${Math.round(freeResults.nettoCashflowMonat)} €/Monat`);
+  else if (freeResults.nettoCashflowMonat >= -200) risiken.push(`Leicht negativer Cashflow: ${Math.round(freeResults.nettoCashflowMonat)} €/Monat`);
+  else risiken.push(`Stark negativer Cashflow: ${Math.round(freeResults.nettoCashflowMonat)} €/Monat – hohe monatliche Zuzahlung`);
+
+  // Eigenkapitalrendite
+  if (eigenkapitalrendite >= 10) staerken.push(`Hohe Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
+  else if (eigenkapitalrendite >= 5) potenziale.push(`Solide Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
+  else risiken.push(`Niedrige Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
+
+  // Vervielfältiger
+  if (vervielfaeltiger <= 20) staerken.push(`Günstiger Vervielfältiger: ${vervielfaeltiger.toFixed(1)}x (unter 20)`);
+  else if (vervielfaeltiger <= 28) potenziale.push(`Vervielfältiger ${vervielfaeltiger.toFixed(1)}x – marktüblich, Verhandlung möglich`);
+  else risiken.push(`Hoher Vervielfältiger: ${vervielfaeltiger.toFixed(1)}x (Kaufpreis im Verhältnis zur Miete hoch)`);
+
+  // Zinssatz
+  if (data.zinssatz <= 3) staerken.push('Günstiger Zinssatz – niedrige Finanzierungskosten');
+  else if (data.zinssatz >= 5) risiken.push(`Hoher Zinssatz (${data.zinssatz} %) – Refinanzierungsrisiko bei Anschlussfinanzierung`);
+
+  // Zustand
+  if (data.zustand === 'neu') staerken.push('Neubauzustand – kein kurzfristiger Sanierungsbedarf');
+  else if (data.zustand === 'renovierungsbeduerftig') risiken.push('Sanierungsbedarf – Renovierungskosten einkalkulieren');
+
+  // Steuer
+  if (steuerersparnis > 0) potenziale.push(`Steuerlicher Vorteil durch AfA: ${Math.round(steuerersparnis)} €/Jahr`);
+  if (steuerfreierVerkaufMoeglich) potenziale.push('Steuerfreier Verkauf möglich (Eigennutzung ≥24 Monate)');
+
+  // Gesamtscore berechnen (0–100)
+  let score = 50;
+  score += Math.min(20, (freeResults.bruttomietrendite - 4) * 5);
+  score += Math.min(15, freeResults.nettoCashflowMonat / 20);
+  score += Math.min(10, (eigenkapitalrendite - 5) * 2);
+  score -= Math.max(0, (vervielfaeltiger - 20) * 1.5);
+  score -= Math.max(0, (data.zinssatz - 3) * 3);
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  const ampel: InvestmentBewertung['ampel'] = score >= 65 ? 'gruen' : score >= 40 ? 'gelb' : 'rot';
+  const ampelText = ampel === 'gruen' ? 'Gutes Investment' : ampel === 'gelb' ? 'Prüfen' : 'Kritisch';
+  const ampelBeschreibung = ampel === 'gruen'
+    ? 'Die Kennzahlen sprechen für dieses Investment. Rendite, Cashflow und Risiko sind in einem guten Verhältnis.'
+    : ampel === 'gelb'
+    ? 'Das Investment hat Potenzial, aber auch Risiken. Eine detaillierte Prüfung und ggf. Nachverhandlung ist empfohlen.'
+    : 'Die aktuellen Kennzahlen sind kritisch. Überprüfe Kaufpreis, Finanzierung und Mietansatz.';
+
+  const empfehlungKurz = ampel === 'gruen'
+    ? `Score ${score}/100 – Investition empfehlenswert`
+    : ampel === 'gelb'
+    ? `Score ${score}/100 – Investition prüfen`
+    : `Score ${score}/100 – Investition kritisch`;
+
+  const investmentBewertung: InvestmentBewertung = {
+    ampel,
+    ampelText,
+    ampelBeschreibung,
+    gesamtScore: score,
+    staerken,
+    risiken,
+    potenziale,
+    empfehlungKurz,
+  };
+
   return {
     ...freeResults,
     steuerfreierVerkaufMoeglich,
@@ -583,6 +717,7 @@ export function berechneProResults(data: FormData): ProResults {
     projektion10J,
     risikoBewertung,
     zielrenditeAnalyse,
+    investmentBewertung,
   };
 }
 
