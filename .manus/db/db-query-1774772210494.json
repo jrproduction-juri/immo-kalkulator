@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, name, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') as cashflow, JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') as gesamtinvestition FROM immobilien WHERE userId = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, name, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') as cashflow, JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') as gesamtinvestition FROM immobilien WHERE userId = 1;",
+  "rows": [
+    {
+      "id": "420001",
+      "name": "etw1",
+      "cashflow": "97",
+      "gesamtinvestition": "158115.1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcashflow\tgesamtinvestition\n420001\tetw1\t97\t158115.1\n",
+  "stderr": "",
+  "execution_time_ms": 187
+}

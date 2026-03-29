@@ -1,0 +1,28 @@
+{
+  "query": "SELECT i.userId, COUNT(*) as count, u.email, u.plan FROM immobilien i LEFT JOIN users u ON i.userId = u.id GROUP BY i.userId;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT i.userId, COUNT(*) as count, u.email, u.plan FROM immobilien i LEFT JOIN users u ON i.userId = u.id GROUP BY i.userId;",
+  "rows": [
+    {
+      "userId": "2640003",
+      "count": "3",
+      "email": "nmvqc5g7rp@privaterelay.appleid.com",
+      "plan": "investor"
+    },
+    {
+      "userId": "240010",
+      "count": "4",
+      "email": "juri.cutter@outlook.com",
+      "plan": "investor"
+    },
+    {
+      "userId": "1",
+      "count": "1",
+      "email": "alextelipko1990@gmail.com",
+      "plan": "investor"
+    }
+  ],
+  "messages": [],
+  "stdout": "userId\tcount\temail\tplan\n2640003\t3\tnmvqc5g7rp@privaterelay.appleid.com\tinvestor\n240010\t4\tjuri.cutter@outlook.com\tinvestor\n1\t1\talextelipko1990@gmail.com\tinvestor\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

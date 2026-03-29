@@ -141,3 +141,4 @@
 - [x] UI-Hinweis für automatische Schätzung hinzufügen
 - [x] Tests für neue Cashflow-Logik schreiben
 - [x] Cashflow-Berechnung korrigieren: Nutze Kaltmiete statt Warmmiete als Einnahmen
+- [x] Webhook-Handler: Plan-Ermittlung aus Stripe-Produkt-ID für externe Payment-Links

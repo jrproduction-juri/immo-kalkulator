@@ -1,0 +1,58 @@
+{
+  "query": "SELECT id, name, ergebnisse IS NULL as ergebnisse_null, eingaben IS NULL as eingaben_null FROM immobilien LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, name, ergebnisse IS NULL as ergebnisse_null, eingaben IS NULL as eingaben_null FROM immobilien LIMIT 10;",
+  "rows": [
+    {
+      "id": "240001",
+      "name": "sfef",
+      "ergebnisse_null": "0",
+      "eingaben_null": "0"
+    },
+    {
+      "id": "240002",
+      "name": "efew",
+      "ergebnisse_null": "0",
+      "eingaben_null": "0"
+    },
+    {
+      "id": "300001",
+      "name": "iqwfjosdg",
+      "ergebnisse_null": "0",
+      "eingaben_null": "0"
+    },
+    {
+      "id": "420001",
+      "name": "etw1",
+      "ergebnisse_null": "0",
+      "eingaben_null": "0"
+    },
+    {
+      "id": "450001",
+      "name": "ETW1 Mönchengladbach",
+      "ergebnisse_null": "0",
+      "eingaben_null": "0"
+    },
+    {
+      "id": "480001",
+      "name": "Barbaraviertel Neuss",
+      "ergebnisse_null": "0",
+      "eingaben_null": "0"
+    },
+    {
+      "id": "480002",
+      "name": "Lürrip, Mönchengladbach (41065)",
+      "ergebnisse_null": "0",
+      "eingaben_null": "0"
+    },
+    {
+      "id": "510001",
+      "name": "Stadtmitte, Krefeld (47798)",
+      "ergebnisse_null": "0",
+      "eingaben_null": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tergebnisse_null\teingaben_null\n240001\tsfef\t0\t0\n240002\tefew\t0\t0\n300001\tiqwfjosdg\t0\t0\n420001\tetw1\t0\t0\n450001\tETW1 Mönchengladbach\t0\t0\n480001\tBarbaraviertel Neuss\t0\t0\n480002\tLürrip, Mönchengladbach (41065)\t0\t0\n510001\tStadtmitte, Krefeld (47798)\t0\t0\n",
+  "stderr": "",
+  "execution_time_ms": 206
+}

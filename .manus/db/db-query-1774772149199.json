@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, name, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') as cashflow, JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') as gesamtinvestition, JSON_EXTRACT(ergebnisse, '$.bruttomietrendite') as rendite FROM immobilien LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3U7RdwAyRatrHfM.d220373967d3 --database 2xBzhMzezF48tjxTsZ5x2y --execute SELECT id, name, JSON_EXTRACT(ergebnisse, '$.nettoCashflowMonat') as cashflow, JSON_EXTRACT(ergebnisse, '$.gesamtinvestition') as gesamtinvestition, JSON_EXTRACT(ergebnisse, '$.bruttomietrendite') as rendite FROM immobilien LIMIT 5;",
+  "rows": [
+    {
+      "id": "240001",
+      "name": "sfef",
+      "cashflow": "-295.33749999999986",
+      "gesamtinvestition": "331710",
+      "rendite": "3.5999999999999996"
+    },
+    {
+      "id": "240002",
+      "name": "efew",
+      "cashflow": "-895.5062500000004",
+      "gesamtinvestition": "497565",
+      "rendite": "3.733333333333334"
+    },
+    {
+      "id": "300001",
+      "name": "iqwfjosdg",
+      "cashflow": "-295.33749999999986",
+      "gesamtinvestition": "331710",
+      "rendite": "3.5999999999999996"
+    },
+    {
+      "id": "420001",
+      "name": "etw1",
+      "cashflow": "97",
+      "gesamtinvestition": "158115.1",
+      "rendite": "7.2503496503496505"
+    },
+    {
+      "id": "450001",
+      "name": "ETW1 Mönchengladbach",
+      "cashflow": "-176.58062083333334",
+      "gesamtinvestition": "164417.59",
+      "rendite": "5.971755211835911"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcashflow\tgesamtinvestition\trendite\n240001\tsfef\t-295.33749999999986\t331710\t3.5999999999999996\n240002\tefew\t-895.5062500000004\t497565\t3.733333333333334\n300001\tiqwfjosdg\t-295.33749999999986\t331710\t3.5999999999999996\n420001\tetw1\t97\t158115.1\t7.2503496503496505\n450001\tETW1 Mönchengladbach\t-176.58062083333334\t164417.59\t5.971755211835911\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}
