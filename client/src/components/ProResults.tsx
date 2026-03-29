@@ -151,8 +151,8 @@ export function ProResultsPanel({ results }: ProResultsProps) {
           <MetricCard
             label="Eigenkapitalrendite"
             value={formatProzent(results.eigenkapitalrendite)}
-            trend={results.eigenkapitalrendite >= 8 ? 'up' : results.eigenkapitalrendite >= 4 ? 'neutral' : 'down'}
-            color={results.eigenkapitalrendite >= 8 ? 'success' : results.eigenkapitalrendite >= 4 ? 'warning' : 'danger'}
+            trend={(results.eigenkapitalrendite ?? 0) >= 8 ? 'up' : (results.eigenkapitalrendite ?? 0) >= 4 ? 'neutral' : 'down'}
+            color={(results.eigenkapitalrendite ?? 0) >= 8 ? 'success' : (results.eigenkapitalrendite ?? 0) >= 4 ? 'warning' : 'danger'}
             highlight
             infoKuerzel="EKR"
           />

@@ -28,10 +28,10 @@ export const KENNZAHLEN: KennzahlInfo[] = [
   {
     kuerzel: 'NMR',
     name: 'Nettomietrendite',
-    formel: '(Jahreskaltmiete − Bewirtschaftungskosten) / Gesamtinvestition × 100',
-    erklaerung: 'Realistischere Rendite nach Abzug von Hausgeld, Rücklagen und Verwaltungskosten. Gibt an, was nach laufenden Kosten tatsächlich übrig bleibt.',
-    beispiel: 'BMR 4 %, nach Abzug Hausgeld & Rücklagen → NMR ≈ 2,8 %',
-    bewertung: 'Gut: ≥ 3 % · Akzeptabel: 2–3 % · Kritisch: < 2 %',
+    formel: '(Jahreskaltmiete − nicht-umlagefähige Kosten − Rücklagen) / Gesamtinvestition × 100',
+    erklaerung: 'Rendite nach Abzug der echten Eigentümerkosten: nicht-umlagefähige Kosten (Verwaltung, Versicherung, Reparaturen) und Instandhaltungsrücklagen. Das umlagefähige Hausgeld wird NICHT abgezogen, da es der Mieter über die Nebenkostenabrechnung zurückzahlt.',
+    beispiel: 'Miete 600 €/Mo., nicht-umlagef. 50 €, Rückl. 0 €, GI 107.000 € → NMR = 6,6 %',
+    bewertung: 'Gut: ≥ 5 % · Akzeptabel: 3–5 % · Kritisch: < 3 %',
   },
   {
     kuerzel: 'CF',
@@ -44,10 +44,10 @@ export const KENNZAHLEN: KennzahlInfo[] = [
   {
     kuerzel: 'EKR',
     name: 'Eigenkapitalrendite',
-    formel: '(Jahres-CF + Tilgung) / eingesetztes Eigenkapital × 100',
-    erklaerung: 'Zeigt, wie effizient dein eingesetztes Eigenkapital arbeitet – unter Berücksichtigung des Leverage-Effekts durch Fremdfinanzierung.',
-    beispiel: 'EK 60.000 €, CF + Tilgung 3.600 €/J. → EKR = 6 %',
-    bewertung: 'Gut: ≥ 6 % · Akzeptabel: 3–6 % · Kritisch: < 3 %',
+    formel: '(Jahres-Cashflow + Tilgung + Wertsteigerung) / eingesetztes Eigenkapital × 100',
+    erklaerung: 'Vollständige Rendite auf das eingesetzte Eigenkapital. Berücksichtigt drei Komponenten: (1) laufender Cashflow, (2) Tilgung als Vermögensaufbau durch Schuldenabbau, (3) Wertsteigerung (3 % p.a. konservativ). Bei Vollfinanzierung (EK = 0) ist die EKR mathematisch nicht definiert und wird als „n/a“ angezeigt.',
+    beispiel: 'EK 30.000 €, CF 600 €/J., Tilgung 1.800 €/J., Wertsteigerung 3.000 €/J. → EKR = 18 %',
+    bewertung: 'Gut: ≥ 10 % · Akzeptabel: 5–10 % · Kritisch: < 5 % · Vollfinanzierung: n/a',
   },
   {
     kuerzel: 'AfA',

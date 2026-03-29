@@ -695,7 +695,7 @@ export async function exportExposePDF(formData: FormData, results: ProResults): 
   const renditeItems = [
     { label: 'Bruttomietrendite', value: results.bruttomietrendite, color: [21, 101, 192] as [number, number, number] },
     { label: 'Nettomietrendite', value: results.nettomietrendite, color: [5, 150, 105] as [number, number, number] },
-    { label: 'Eigenkapitalrendite', value: Math.max(0, results.eigenkapitalrendite), color: [124, 58, 237] as [number, number, number] },
+    { label: 'Eigenkapitalrendite', value: Math.max(0, results.eigenkapitalrendite ?? 0), color: [124, 58, 237] as [number, number, number] },
   ];
 
   const maxRendite = Math.max(...renditeItems.map(r => r.value), 1);

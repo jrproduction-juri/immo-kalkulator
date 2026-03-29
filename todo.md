@@ -167,3 +167,12 @@
 - [x] Exposé-Upload: KI analysiert Dokument und extrahiert Immobilien-Daten
 - [x] Exposé-Upload: Bestätigungs-Dialog "Folgende Daten wurden erkannt" mit Bearbeitung
 - [x] Tests für alle neuen Features schreiben
+
+## Berechnungskorrekturen (Batch 3)
+- [x] NMR-Formel: nur nicht-umlagefähige Kosten + Rücklagen abziehen (nicht Gesamt-Hausgeld)
+- [x] EKR-Formel: Tilgung + Wertsteigerung einbeziehen (vollständige EKR)
+- [x] EKR bei EK=0: "n/a" anzeigen statt 0 %
+- [x] PDF-Export: korrigierte NMR und EKR übernehmen
+- [x] Exposé-Generator: korrigierte Kennzahlen übernehmen
+- [x] UI-Komponenten (ProResults, FreeResults, KennzahlenLegende): Tooltips/Labels anpassen
+- [x] Tests für korrigierte Formeln aktualisieren

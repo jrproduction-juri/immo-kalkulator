@@ -68,7 +68,7 @@ export function exportExcel(formData: FormData, freeResults: FreeResults, proRes
     const proData = [
       ['KENNZAHLEN (PRO)', ''],
       ['', ''],
-      ['Eigenkapitalrendite', formatProzent(proResults.eigenkapitalrendite)],
+      ['Eigenkapitalrendite', proResults.eigenkapitalrenditeText],
       ['Cashflow nach Steuer / Monat', formatEuro(proResults.cashflowNachSteuer)],
       ['Preis / m²', formatEuro(proResults.preisProQm)],
       ['Vervielfältiger', `${proResults.vervielfaeltiger.toFixed(1)}x`],

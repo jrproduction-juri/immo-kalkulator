@@ -34,7 +34,7 @@ export function ExposeGenerator({ formData, results }: ExposeGeneratorProps) {
   const renditeData = [
     { name: 'Brutto', value: results.bruttomietrendite, fill: '#1565C0' },
     { name: 'Netto', value: results.nettomietrendite, fill: '#059669' },
-    { name: 'EK-Rendite', value: Math.max(0, results.eigenkapitalrendite), fill: '#7C3AED' },
+    { name: 'EK-Rendite', value: Math.max(0, results.eigenkapitalrendite ?? 0), fill: '#7C3AED' },
   ];
 
   const [isExporting, setIsExporting] = useState(false);

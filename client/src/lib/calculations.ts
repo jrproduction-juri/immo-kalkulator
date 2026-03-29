@@ -136,7 +136,8 @@ export interface ProResults extends FreeResults {
   // Eigennutzung Steuerfreiheit
   steuerfreierVerkaufMoeglich: boolean;
   // Erweiterte Kennzahlen
-  eigenkapitalrendite: number;
+  eigenkapitalrendite: number | null; // null = Vollfinanzierung (EK=0)
+  eigenkapitalrenditeText: string;   // Anzeigetext: "n/a" oder "X,XX %"
   preisProQm: number;
   vervielfaeltiger: number;
   // MFH: Gesamtmiete nach Leerstand
@@ -350,9 +351,11 @@ export function berechneFreeResults(data: FormData): FreeResults {
   // Rendite
   const jaehrlicheKaltmiete = effektiveKaltmiete * 12;
   const bruttomietrendite = data.kaufpreis > 0 ? (jaehrlicheKaltmiete / data.kaufpreis) * 100 : 0;
-  const bewirtschaftungskosten = (data.hausgeld + data.ruecklagen) * 12;
+  // NMR-Korrektur: Nur Eigentümerkosten abziehen (nicht-umlagefähig + Rücklagen).
+  // Das Hausgeld enthält umlagefähige Kosten, die der Mieter erstattet → dürfen NICHT abgezogen werden.
+  const nmrEigentuemerkosten = (data.nichtUmlagefaehig + data.ruecklagen) * 12;
   const nettomietrendite = gesamtinvestition > 0
-    ? ((jaehrlicheKaltmiete - bewirtschaftungskosten) / gesamtinvestition) * 100
+    ? ((jaehrlicheKaltmiete - nmrEigentuemerkosten) / gesamtinvestition) * 100
     : 0;
 
   // Cashflow: Kaltmiete - Kreditrate - Hausgeld - Ruecklagen - nicht umlagefaehige Kosten
@@ -427,9 +430,17 @@ export function berechneProResults(data: FormData): ProResults {
   const { kaufnebenkosten, gesamtinvestition, darlehenssumme, monatlicheRate } = freeResults;
 
   // Erweiterte Kennzahlen
-  const eigenkapitalrendite = data.eigenkapital > 0
-    ? (freeResults.nettoCashflowJahr / data.eigenkapital) * 100
-    : 0;
+  // EKR-Korrektur: Vollständige EKR = (Cashflow + Tilgung + Wertsteigerung) / EK
+  // Tilgung: Darlehen × Tilgungssatz (Vermögensaufbau durch Schuldenabbau)
+  // Wertsteigerung: 3 % p.a. auf Kaufpreis (konservative Marktannahme)
+  const tilgungJaehrlich = darlehenssumme * (data.tilgung / 100);
+  const wertsteigerungJaehrlich = data.kaufpreis * 0.03;
+  const eigenkapitalrendite: number | null = data.eigenkapital > 0
+    ? ((freeResults.nettoCashflowJahr + tilgungJaehrlich + wertsteigerungJaehrlich) / data.eigenkapital) * 100
+    : null; // Vollfinanzierung: EKR mathematisch undefiniert
+  const eigenkapitalrenditeText = eigenkapitalrendite === null
+    ? 'n/a (Vollfinanzierung)'
+    : `${eigenkapitalrendite.toFixed(2)} %`;
   const preisProQm = data.wohnflaeche > 0 ? data.kaufpreis / data.wohnflaeche : 0;
   const vervielfaeltiger = freeResults.monatlicheEinnahmen > 0
     ? data.kaufpreis / (freeResults.monatlicheEinnahmen * 12)
@@ -644,9 +655,15 @@ export function berechneProResults(data: FormData): ProResults {
   else risiken.push(`Stark negativer Cashflow: ${Math.round(freeResults.nettoCashflowMonat)} €/Monat – hohe monatliche Zuzahlung`);
 
   // Eigenkapitalrendite
-  if (eigenkapitalrendite >= 10) staerken.push(`Hohe Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
-  else if (eigenkapitalrendite >= 5) potenziale.push(`Solide Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
-  else risiken.push(`Niedrige Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
+  if (eigenkapitalrendite === null) {
+    potenziale.push('Vollfinanzierung: EKR nicht berechenbar (Eigenkapital = 0)');
+  } else if (eigenkapitalrendite >= 10) {
+    staerken.push(`Hohe Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
+  } else if (eigenkapitalrendite >= 5) {
+    potenziale.push(`Solide Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
+  } else {
+    risiken.push(`Niedrige Eigenkapitalrendite: ${eigenkapitalrendite.toFixed(1)} %`);
+  }
 
   // Vervielfältiger
   if (vervielfaeltiger <= 20) staerken.push(`Günstiger Vervielfältiger: ${vervielfaeltiger.toFixed(1)}x (unter 20)`);
@@ -669,7 +686,7 @@ export function berechneProResults(data: FormData): ProResults {
   let score = 50;
   score += Math.min(20, (freeResults.bruttomietrendite - 4) * 5);
   score += Math.min(15, freeResults.nettoCashflowMonat / 20);
-  score += Math.min(10, (eigenkapitalrendite - 5) * 2);
+  score += eigenkapitalrendite !== null ? Math.min(10, (eigenkapitalrendite - 5) * 2) : 0;
   score -= Math.max(0, (vervielfaeltiger - 20) * 1.5);
   score -= Math.max(0, (data.zinssatz - 3) * 3);
   score = Math.max(0, Math.min(100, Math.round(score)));
@@ -703,6 +720,7 @@ export function berechneProResults(data: FormData): ProResults {
     ...freeResults,
     steuerfreierVerkaufMoeglich,
     eigenkapitalrendite,
+    eigenkapitalrenditeText,
     preisProQm,
     vervielfaeltiger,
     mfhGesamtmiete,
@@ -830,7 +848,8 @@ export function formatEuro(value: number, compact = false): string {
   }).format(value);
 }
 
-export function formatProzent(value: number, digits = 2): string {
+export function formatProzent(value: number | null, digits = 2): string {
+  if (value === null) return 'n/a';
   return `${value.toFixed(digits)} %`;
 }
 
