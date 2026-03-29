@@ -9,9 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { InfoTooltip } from '@/components/InfoTooltip';
 import { Badge } from '@/components/ui/badge';
-import { Info, Lock, Building2, Home, Warehouse, Building, Calculator, ChevronDown, ChevronUp } from 'lucide-react';
+import { Lock, Building2, Home, Warehouse, Building, Calculator, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // ─── Info-Texte ────────────────────────────────────────────────────────────────
@@ -46,16 +46,7 @@ const INFO: Record<string, string> = {
 
 function InfoButton({ field }: { field: string }) {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button type="button" className="inline-flex items-center justify-center w-4 h-4 rounded-full text-muted-foreground hover:text-foreground transition-colors">
-          <Info className="w-3.5 h-3.5" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="right" className="max-w-xs text-xs">
-        {INFO[field] ?? 'Keine Erklärung verfügbar.'}
-      </TooltipContent>
-    </Tooltip>
+    <InfoTooltip text={INFO[field] ?? 'Keine Erklärung verfügbar.'} />
   );
 }
 
@@ -491,19 +482,9 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
             <div>
               <div className="flex items-center gap-1.5 mb-1">
                 <Label className="text-xs font-medium text-gray-700">Persönlicher Steuersatz (%)</Label>
-                <div className="relative group">
-                  <button
-                    type="button"
-                    className="w-4 h-4 rounded-full bg-gray-200 text-gray-500 text-xs flex items-center justify-center hover:bg-gray-300 focus:outline-none"
-                    aria-label="Info zum Steuersatz"
-                  >
-                    i
-                  </button>
-                  <div className="absolute left-6 top-0 z-50 hidden group-hover:block group-focus-within:block w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg">
-                    <p className="font-semibold mb-1">Persönlicher Grenzsteuersatz</p>
-                    <p>Der Steuersatz entspricht Ihrem persönlichen Grenzsteuersatz aus der Einkommensteuer. Falls Sie Ihren Steuersatz nicht kennen, können Sie den Standardwert von 35 % verwenden.</p>
-                  </div>
-                </div>
+                <InfoTooltip
+                  text="Persönlicher Grenzsteuersatz: Der Steuersatz entspricht Ihrem persönlichen Grenzsteuersatz aus der Einkommensteuer. Falls Sie Ihren Steuersatz nicht kennen, können Sie den Standardwert von 35 % verwenden."
+                />
               </div>
               <NumberInput
                 value={data.persönlicherSteuersatz}
@@ -552,14 +533,10 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
               <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 border border-gray-100">
                 <div className="flex items-center gap-1.5">
                   <Label className="text-sm text-gray-700 cursor-pointer">Verkauf nach 24 Monaten</Label>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs text-xs">
-                      Bei mind. 24 Monaten Eigennutzung ist der Verkauf einer Eigentumswohnung steuerfrei (§ 23 EStG).
-                    </TooltipContent>
-                  </Tooltip>
+                  <InfoTooltip
+                    text="Bei mind. 24 Monaten Eigennutzung ist der Verkauf einer Eigentumswohnung steuerfrei (§ 23 EStG)."
+                    preferSide="top"
+                  />
                 </div>
                 <Switch checked={data.szenarioVerkauf24Monate} onCheckedChange={v => set('szenarioVerkauf24Monate', v)} />
               </div>
@@ -586,14 +563,9 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
         <div className="space-y-2">
           <div className="flex items-center gap-1.5">
             <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">Zielrendite-Analyse</Label>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
-              </TooltipTrigger>
-              <TooltipContent side="right" className="max-w-xs text-xs">
-                Gibt an, welche Bruttomietrendite du anstrebst. Daraus wird der maximale Kaufpreis berechnet, den du zahlen solltest.
-              </TooltipContent>
-            </Tooltip>
+            <InfoTooltip
+              text="Gibt an, welche Bruttomietrendite du anstrebst. Daraus wird der maximale Kaufpreis berechnet, den du zahlen solltest."
+            />
           </div>
           <div>
             <FieldLabel label="Ziel-Bruttomietrendite" field="kaltmiete" />

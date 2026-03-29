@@ -147,3 +147,5 @@
 - [x] Neues Feld "Persönlicher Steuersatz (%)" mit Standardwert 35% und Info-Tooltip hinzufügen
 - [x] Cashflow-nach-Steuern-Berechnung nach Immobilien-Steuerlogik implementieren
 - [x] Tests für alle Steuerszenarien (35%, 25%, 42%, negativer Gewinn) schreiben
+- [x] InfoTooltip-Komponente: Hover (Desktop) + Click/Tap (Mobile), auto-Positionierung, kein Abschneiden
+- [x] Alle Info-Icons im Kalkulator auf neue InfoTooltip-Komponente umstellen

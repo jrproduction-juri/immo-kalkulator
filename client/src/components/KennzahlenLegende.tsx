@@ -5,11 +5,7 @@
 
 import { useState } from 'react';
 import { Info, ChevronDown, ChevronUp } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { InfoTooltip } from '@/components/InfoTooltip';
 
 export interface KennzahlInfo {
   kuerzel: string;
@@ -108,30 +104,15 @@ export function KennzahlInfoButton({ kuerzel }: { kuerzel: string }) {
   const info = KENNZAHLEN.find(k => k.kuerzel === kuerzel);
   if (!info) return null;
 
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors ml-1 shrink-0">
-          <Info className="w-2.5 h-2.5 text-blue-600" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="top" className="max-w-xs p-3 text-left">
-        <p className="font-bold text-sm mb-1">{info.name}</p>
-        {info.formel && (
-          <p className="text-xs text-muted-foreground font-mono bg-secondary/50 px-1.5 py-0.5 rounded mb-1.5">
-            {info.formel}
-          </p>
-        )}
-        <p className="text-xs leading-relaxed mb-1.5">{info.erklaerung}</p>
-        {info.beispiel && (
-          <p className="text-xs text-muted-foreground italic">{info.beispiel}</p>
-        )}
-        {info.bewertung && (
-          <p className="text-xs text-blue-600 font-medium mt-1">{info.bewertung}</p>
-        )}
-      </TooltipContent>
-    </Tooltip>
-  );
+  const tooltipText = [
+    info.name,
+    info.formel ? `Formel: ${info.formel}` : '',
+    info.erklaerung,
+    info.beispiel ? `Beispiel: ${info.beispiel}` : '',
+    info.bewertung ? `Bewertung: ${info.bewertung}` : '',
+  ].filter(Boolean).join(' | ');
+
+  return <InfoTooltip text={tooltipText} preferSide="top" />;
 }
 
 /** Ausklappbare Legende mit allen Kennzahlen */

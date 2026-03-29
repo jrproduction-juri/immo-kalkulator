@@ -1,9 +1,8 @@
-import { Info } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+/**
+ * InfoButton – Wrapper um InfoTooltip für Rückwärtskompatibilität.
+ * Nutzt die neue InfoTooltip-Komponente mit Hover+Tap-Support.
+ */
+import { InfoTooltip } from '@/components/InfoTooltip';
 
 interface InfoButtonProps {
   text: string;
@@ -11,20 +10,5 @@ interface InfoButtonProps {
 }
 
 export function InfoButton({ text, side = 'top' }: InfoButtonProps) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button
-          type="button"
-          className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors ml-1 shrink-0"
-          aria-label="Info"
-        >
-          <Info className="w-2.5 h-2.5" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side={side} className="max-w-xs text-sm">
-        {text}
-      </TooltipContent>
-    </Tooltip>
-  );
+  return <InfoTooltip text={text} preferSide={side} />;
 }
