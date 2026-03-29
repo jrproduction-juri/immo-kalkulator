@@ -279,6 +279,12 @@ async function handleCheckoutCompleted(
 ) {
   console.log(`[Webhook] 💳 Checkout abgeschlossen: Session ${session.id}`);
 
+  // Sicherheitsprüfung: Nur bei erfolgreicher Zahlung fortfahren
+  if (session.payment_status !== "paid") {
+    console.warn(`[Webhook] ⚠️ Zahlung nicht abgeschlossen (payment_status=${session.payment_status}) – Plan wird nicht aktiviert`);
+    return;
+  }
+
   // Finde User mit Fallback-Logik
   const userInfo = await findUserForCheckout(session, eventId);
   if (!userInfo) {

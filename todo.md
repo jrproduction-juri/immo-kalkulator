@@ -176,3 +176,12 @@
 - [x] Exposé-Generator: korrigierte Kennzahlen übernehmen
 - [x] UI-Komponenten (ProResults, FreeResults, KennzahlenLegende): Tooltips/Labels anpassen
 - [x] Tests für korrigierte Formeln aktualisieren
+
+## Stripe-Stabilisierung (Batch 4)
+- [x] products.ts: feste STRIPE_PRODUCTS-Konfiguration mit echten IDs
+- [x] stripeService.ts: getOrCreateStripePrice + dynamische Erstellung entfernen
+- [x] stripeService.ts: Checkout nur mit fester Price-ID, gibt { url } zurück
+- [x] routers.ts: Checkout-Endpunkt auf { url } anpassen
+- [x] Pricing.tsx: window.location.href statt window.open
+- [x] webhook.ts: payment_status !== "paid" → return (Sicherheitsprüfung)
+- [x] Tests für stabile Stripe-Integration aktualisieren

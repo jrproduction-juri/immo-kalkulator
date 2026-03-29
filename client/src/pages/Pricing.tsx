@@ -146,9 +146,9 @@ export default function Pricing() {
   });
 
   const checkoutMutation = trpc.plan.checkout.useMutation({
-    onSuccess: ({ checkoutUrl }) => {
+    onSuccess: ({ url }) => {
       toast.success("Du wirst zu Stripe weitergeleitet…");
-      window.open(checkoutUrl, "_blank");
+      window.location.href = url;
     },
     onError: (err) => {
       toast.error(`Fehler beim Checkout: ${err.message}`);

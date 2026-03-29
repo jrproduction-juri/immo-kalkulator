@@ -14,7 +14,7 @@ import {
   updateImmobilie,
   updateUserPlan,
 } from "./db";
-import { createCheckoutSession, createCustomerPortalSession, getOrCreateStripeCustomer } from "./stripe/stripeService";
+import { createCheckoutSession, createCustomerPortalSession } from "./stripe/stripeService";
 import { getDb } from "./db";
 import { users } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -80,7 +80,7 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         const user = ctx.user;
-        const checkoutUrl = await createCheckoutSession({
+        const { url } = await createCheckoutSession({
           userId: user.id,
           email: user.email ?? "",
           name: user.name ?? undefined,
@@ -90,14 +90,7 @@ export const appRouter = router({
           origin: input.origin,
         });
 
-        // Stripe Customer ID sofort speichern (falls neu erstellt)
-        const db = await getDb();
-        if (db && !user.stripeCustomerId) {
-          const customerId = await getOrCreateStripeCustomer(user.id, user.email ?? "", user.name ?? undefined, null);
-          await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id));
-        }
-
-        return { checkoutUrl };
+        return { url };
       }),
 
     portal: protectedProcedure

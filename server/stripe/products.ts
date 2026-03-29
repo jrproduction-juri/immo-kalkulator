@@ -1,6 +1,9 @@
 /**
  * Stripe Produkte und Preise für ImmoRenditeTool
- * 
+ *
+ * WICHTIG: Diese IDs sind fest und dürfen nicht dynamisch erstellt werden.
+ * Alle IDs stammen direkt aus dem Stripe Dashboard.
+ *
  * Preisstruktur:
  * - Basic:    9€/Mo · 79€/Jahr · 149€ einmalig
  * - Pro:     19€/Mo · 149€/Jahr · 299€ einmalig
@@ -10,120 +13,64 @@
 export type PlanId = "basic" | "pro" | "investor";
 export type BillingType = "monthly" | "yearly" | "lifetime";
 
-export interface PriceConfig {
-  priceId: string; // Stripe Price ID (wird beim ersten Checkout erstellt)
-  amount: number;  // in Cent
-  interval?: "month" | "year";
-  type: "recurring" | "one_time";
-  billingType: BillingType;
-}
-
-export interface ProductConfig {
-  planId: PlanId;
-  name: string;
-  description: string;
-  prices: {
-    monthly: PriceConfig;
-    yearly: PriceConfig;
-    lifetime: PriceConfig;
-  };
-}
-
-// Stripe Price IDs werden zur Laufzeit über die Stripe API erstellt
-// und dann im Speicher gecacht. Alternativ können sie im Stripe Dashboard
-// manuell erstellt und hier als Konstanten eingetragen werden.
-export const PRODUCTS: Record<PlanId, ProductConfig> = {
+/**
+ * Feste Stripe Produkt- und Price-IDs aus dem Stripe Dashboard.
+ * Niemals dynamisch erstellen – nur diese IDs verwenden.
+ */
+export const STRIPE_PRODUCTS: Record<PlanId, {
+  productId: string;
+  prices: Record<BillingType, string>;
+}> = {
   basic: {
-    planId: "basic",
-    name: "ImmoRenditeTool Basic",
-    description: "Grundlegende Immobilienanalyse für Einsteiger",
+    productId: "prod_U8vwCCaDeWzD23",
     prices: {
-      monthly: {
-        priceId: "", // wird dynamisch erstellt
-        amount: 900, // 9,00 €
-        interval: "month",
-        type: "recurring",
-        billingType: "monthly",
-      },
-      yearly: {
-        priceId: "",
-        amount: 7900, // 79,00 €
-        interval: "year",
-        type: "recurring",
-        billingType: "yearly",
-      },
-      lifetime: {
-        priceId: "",
-        amount: 14900, // 149,00 €
-        type: "one_time",
-        billingType: "lifetime",
-      },
+      monthly:  "price_1TAe4u1gELN6BLVoZyOdkAhM",
+      yearly:   "price_1TAe4t1gELN6BLVoN88V8t27",
+      lifetime: "price_1TAe4t1gELN6BLVoBnL6Lxye",
     },
   },
   pro: {
-    planId: "pro",
-    name: "ImmoRenditeTool Pro",
-    description: "Professionelle Analyse mit PDF-Reports und Steueroptimierung",
+    productId: "prod_U8vwRr2e3YkoIb",
     prices: {
-      monthly: {
-        priceId: "",
-        amount: 1900, // 19,00 €
-        interval: "month",
-        type: "recurring",
-        billingType: "monthly",
-      },
-      yearly: {
-        priceId: "",
-        amount: 14900, // 149,00 €
-        interval: "year",
-        type: "recurring",
-        billingType: "yearly",
-      },
-      lifetime: {
-        priceId: "",
-        amount: 29900, // 299,00 €
-        type: "one_time",
-        billingType: "lifetime",
-      },
+      monthly:  "price_1TAe4r1gELN6BLVokYMcuPMo",
+      yearly:   "price_1TAe4q1gELN6BLVo0800caN4",
+      lifetime: "price_1TAe4q1gELN6BLVoKnxFzblm",
     },
   },
   investor: {
-    planId: "investor",
-    name: "ImmoRenditeTool Investor",
-    description: "Vollständige Portfolio-Verwaltung für professionelle Investoren",
+    productId: "prod_U8vwCmT3Cre8Up",
     prices: {
-      monthly: {
-        priceId: "",
-        amount: 3900, // 39,00 €
-        interval: "month",
-        type: "recurring",
-        billingType: "monthly",
-      },
-      yearly: {
-        priceId: "",
-        amount: 29900, // 299,00 €
-        interval: "year",
-        type: "recurring",
-        billingType: "yearly",
-      },
-      lifetime: {
-        priceId: "",
-        amount: 49900, // 499,00 €
-        type: "one_time",
-        billingType: "lifetime",
-      },
+      monthly:  "price_1TAe4t1gELN6BLVoKFR8EZDi",
+      yearly:   "price_1TAe4s1gELN6BLVoy2sPqurf",
+      lifetime: "price_1TAe4s1gELN6BLVoB3BE1lda",
     },
   },
 };
+
+/**
+ * Gibt die Price ID für einen Plan und Abrechnungstyp zurück.
+ * Wirft einen Fehler wenn Plan oder BillingType unbekannt.
+ */
+export function getPriceId(planId: PlanId, billingType: BillingType): string {
+  const product = STRIPE_PRODUCTS[planId];
+  if (!product) {
+    throw new Error(`Unbekannter Plan: ${planId}`);
+  }
+  const priceId = product.prices[billingType];
+  if (!priceId) {
+    throw new Error(`Unbekannter Abrechnungstyp: ${billingType} für Plan ${planId}`);
+  }
+  return priceId;
+}
 
 /**
  * Gibt den Plan-Namen aus einer Stripe Price ID zurück.
  * Wird im Webhook verwendet, um den Plan des Nutzers zu aktualisieren.
  */
 export function getPlanFromPriceId(priceId: string): { plan: PlanId; billingType: BillingType } | null {
-  for (const [planId, product] of Object.entries(PRODUCTS)) {
-    for (const [billingType, price] of Object.entries(product.prices)) {
-      if (price.priceId === priceId) {
+  for (const [planId, product] of Object.entries(STRIPE_PRODUCTS)) {
+    for (const [billingType, pid] of Object.entries(product.prices)) {
+      if (pid === priceId) {
         return { plan: planId as PlanId, billingType: billingType as BillingType };
       }
     }
