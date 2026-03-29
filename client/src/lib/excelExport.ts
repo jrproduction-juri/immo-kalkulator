@@ -33,8 +33,7 @@ export function exportExcel(formData: FormData, freeResults: FreeResults, proRes
     ['Tilgung', formatProzent(formData.tilgung)],
     ['', ''],
     ['PERSÖNLICH', ''],
-    ['Netto-Einkommen', formatEuro(formData.nettoEinkommen) + ' / Monat'],
-    ['Steuerklasse', formData.steuerklasse],
+    ['Persönlicher Steuersatz', formatProzent(formData.persönlicherSteuersatz)],
     ['Standort', formData.standort || '–'],
     ['Eigennutzung', `${formData.eigennutzungMonate ?? 0} Monate`],
   ];

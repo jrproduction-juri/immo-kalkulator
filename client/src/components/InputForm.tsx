@@ -143,8 +143,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
       zinssatz: data.zinssatz,
       tilgung: data.tilgung,
       kreditrate: data.kreditrate,
-      nettoEinkommen: data.nettoEinkommen,
-      steuerklasse: data.steuerklasse,
+      persönlicherSteuersatz: data.persönlicherSteuersatz,
       standort: data.standort,
       highlights: data.highlights,
     });
@@ -489,24 +488,31 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
 
         {showPersonal && (
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <FieldLabel label="Nettoeinkommen" field="nettoEinkommen" />
-                <NumberInput value={data.nettoEinkommen} onChange={v => set('nettoEinkommen', v)} suffix="€/Mo" placeholder="3500" />
+            <div>
+              <div className="flex items-center gap-1.5 mb-1">
+                <Label className="text-xs font-medium text-gray-700">Persönlicher Steuersatz (%)</Label>
+                <div className="relative group">
+                  <button
+                    type="button"
+                    className="w-4 h-4 rounded-full bg-gray-200 text-gray-500 text-xs flex items-center justify-center hover:bg-gray-300 focus:outline-none"
+                    aria-label="Info zum Steuersatz"
+                  >
+                    i
+                  </button>
+                  <div className="absolute left-6 top-0 z-50 hidden group-hover:block group-focus-within:block w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg">
+                    <p className="font-semibold mb-1">Persönlicher Grenzsteuersatz</p>
+                    <p>Der Steuersatz entspricht Ihrem persönlichen Grenzsteuersatz aus der Einkommensteuer. Falls Sie Ihren Steuersatz nicht kennen, können Sie den Standardwert von 35 % verwenden.</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <FieldLabel label="Steuerklasse" field="nettoEinkommen" />
-                <Select value={data.steuerklasse} onValueChange={v => set('steuerklasse', v)}>
-                  <SelectTrigger className="text-sm h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {['1', '2', '3', '4', '5', '6'].map(k => (
-                      <SelectItem key={k} value={k}>Klasse {k}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <NumberInput
+                value={data.persönlicherSteuersatz}
+                onChange={v => set('persönlicherSteuersatz', v)}
+                suffix="%"
+                placeholder="35"
+                step={1}
+              />
+              <p className="text-xs text-gray-400 mt-1">Falls unbekannt, wird ein durchschnittlicher Steuersatz von 35 % angenommen.</p>
             </div>
             <div>
               <FieldLabel label="Eigennutzung (Monate)" field="eigennutzungMonate" />

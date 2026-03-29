@@ -104,7 +104,7 @@ export function ProResultsPanel({ results }: ProResultsProps) {
           <MetricCard
             label="Cashflow nach Steuer"
             value={formatEuro(results.cashflowNachSteuer)}
-            subValue="inkl. AfA-Ersparnis"
+            subValue={results.cashflowNachSteuer < results.nettoCashflowMonat ? `Steuerlast: ${formatEuro((results.nettoCashflowMonat - results.cashflowNachSteuer))} / Mo` : `Steuervorteil: +${formatEuro((results.cashflowNachSteuer - results.nettoCashflowMonat))} / Mo`}
             trend={results.cashflowNachSteuer >= 0 ? 'up' : 'down'}
             color={results.cashflowNachSteuer >= 0 ? 'success' : 'warning'}
             highlight
@@ -140,12 +140,12 @@ export function ProResultsPanel({ results }: ProResultsProps) {
             infoKuerzel="AfA"
           />
           <MetricCard
-            label="Steuerersparnis / Jahr"
-            value={formatEuro(results.steuerersparnis)}
-            subValue={`= ${formatEuro(results.steuerersparnis / 12)} / Monat`}
+            label={results.steuerersparnis >= 0 ? 'Steuervorteil / Jahr' : 'Steuerlast / Jahr'}
+            value={formatEuro(Math.abs(results.steuerersparnis))}
+            subValue={`= ${formatEuro(Math.abs(results.steuerersparnis / 12))} / Monat`}
             size="sm"
-            color="success"
-            trend="up"
+            color={results.steuerersparnis >= 0 ? 'success' : 'warning'}
+            trend={results.steuerersparnis >= 0 ? 'up' : 'down'}
             infoKuerzel="SE"
           />
         </MetricGrid>

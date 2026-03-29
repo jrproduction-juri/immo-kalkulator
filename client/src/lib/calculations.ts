@@ -34,8 +34,8 @@ export interface FormData {
   kreditrate?: number;          // optional: direkte Eingabe statt Berechnung
 
   // ── Persönlich (für Steuerberechnung) ────────────────────────────────────
-  nettoEinkommen: number;
-  steuerklasse: string;
+  /** Persönlicher Grenzsteuersatz in % (Standard: 35) */
+  persönlicherSteuersatz: number;
 
   // ── MFH-spezifisch ────────────────────────────────────────────────────────
   anzahlEinheiten?: number;
@@ -203,25 +203,11 @@ export function berechneSteuerersparnis(
   afaJaehrlich: number,
   zinsenJaehrlich: number,
   bewirtschaftungJaehrlich: number,
-  nettoEinkommen: number,
-  steuerklasse: string
+  steuersatz: number
 ): number {
-  const grenzsteuersatz = berechneGrenzsteuersatz(nettoEinkommen, steuerklasse);
+  const grenzsteuersatz = steuersatz / 100;
   const abzugsfaehig = afaJaehrlich + zinsenJaehrlich + bewirtschaftungJaehrlich;
   return abzugsfaehig * grenzsteuersatz;
-}
-
-function berechneGrenzsteuersatz(nettoEinkommen: number, steuerklasse: string): number {
-  // nettoEinkommen ist monatlich, muss zu jährlich konvertiert werden
-  const nettoJaehrlich = nettoEinkommen * 12;
-  const bruttoFaktor = steuerklasse === '1' || steuerklasse === '4' ? 1.35 :
-    steuerklasse === '3' ? 1.2 : 1.4;
-  const bruttoJaehrlich = nettoJaehrlich * bruttoFaktor;
-  if (bruttoJaehrlich <= 11604) return 0;
-  if (bruttoJaehrlich <= 17005) return 0.14;
-  if (bruttoJaehrlich <= 66760) return 0.24;
-  if (bruttoJaehrlich <= 277825) return 0.42;
-  return 0.45;
 }
 
 /** Berechnet die effektive monatliche Kaltmiete je nach Immobilienart */
@@ -444,16 +430,22 @@ export function berechneProResults(data: FormData): ProResults {
   const zinsenJaehrlich = darlehenssumme * (data.zinssatz / 100);
   const afaJaehrlich = berechneAfA(data.kaufpreis, data.baujahr, data.afaSatz);
   const bewirtschaftungJaehrlich = (data.hausgeld + data.ruecklagen + data.nichtUmlagefaehig + data.sonstigeAusgaben) * 12;
-  const steuerersparnis = berechneSteuerersparnis(
-    afaJaehrlich,
-    zinsenJaehrlich,
-    bewirtschaftungJaehrlich,
-    data.nettoEinkommen,
-    data.steuerklasse
-  );
-  console.log('[DEBUG Steuerersparnis]', { afaJaehrlich, zinsenJaehrlich, bewirtschaftungJaehrlich, nettoEinkommen: data.nettoEinkommen, steuerklasse: data.steuerklasse, steuerersparnis });
-  const cashflowNachSteuer = freeResults.nettoCashflowMonat + (steuerersparnis / 12);
-  console.log('[DEBUG Cashflow nach Steuer]', { nettoCashflowMonat: freeResults.nettoCashflowMonat, steuerersparnis, cashflowNachSteuer });
+  const steuersatz = data.persönlicherSteuersatz ?? 35;
+
+  // Steuerlicher Gewinn = Kaltmiete - nicht umlagefähige Kosten - Zinsen - AfA - sonstige
+  const kaltmieteJaehrlich = freeResults.monatlicheEinnahmen * 12;
+  const nichtUmlagefaehigJaehrlich = data.nichtUmlagefaehig * 12;
+  const sonstigeJaehrlich = data.sonstigeAusgaben * 12;
+  const steuerlicheGewinn = kaltmieteJaehrlich - nichtUmlagefaehigJaehrlich - zinsenJaehrlich - afaJaehrlich - sonstigeJaehrlich;
+
+  // Steuerlast (kann negativ sein = Steuervorteil)
+  const steuerlast = steuerlicheGewinn * (steuersatz / 100);
+
+  // Steuerersparnis (positiv wenn Steuervorteil, negativ wenn Steuerlast)
+  const steuerersparnis = -steuerlast;
+
+  // Cashflow nach Steuern = Cashflow vor Steuern - Steuerlast pro Monat
+  const cashflowNachSteuer = freeResults.nettoCashflowMonat - (steuerlast / 12);
 
   // Szenario: Fix & Flip
   const sanierungskosten = data.zustand === 'renovierungsbeduerftig'
@@ -612,8 +604,7 @@ export function getDefaultFormData(art: ImmobilienArt = 'wohnung'): FormData {
     eigenkapital: 60000,
     zinssatz: 3.5,
     tilgung: 2.0,
-    nettoEinkommen: 3500,
-    steuerklasse: '1',
+    persönlicherSteuersatz: 35,
     szenarioVermietung: true,
     szenarioEigennutzung: false,
     szenarioVerkauf24Monate: false,

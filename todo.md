@@ -143,3 +143,7 @@
 - [x] Cashflow-Berechnung korrigieren: Nutze Kaltmiete statt Warmmiete als Einnahmen
 - [x] Webhook-Handler: Plan-Ermittlung aus Stripe-Produkt-ID für externe Payment-Links
 - [x] Pricing-Seite: Alle externen Payment-Links durch internen tRPC-Checkout ersetzen (User-ID-basiert)
+- [x] Netto-Einkommen Feld aus UI und Berechnung entfernen
+- [x] Neues Feld "Persönlicher Steuersatz (%)" mit Standardwert 35% und Info-Tooltip hinzufügen
+- [x] Cashflow-nach-Steuern-Berechnung nach Immobilien-Steuerlogik implementieren
+- [x] Tests für alle Steuerszenarien (35%, 25%, 42%, negativer Gewinn) schreiben
