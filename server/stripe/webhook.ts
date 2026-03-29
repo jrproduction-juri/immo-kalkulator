@@ -279,10 +279,18 @@ async function handleCheckoutCompleted(
 ) {
   console.log(`[Webhook] 💳 Checkout abgeschlossen: Session ${session.id}`);
 
-  // Sicherheitsprüfung: Nur bei erfolgreicher Zahlung fortfahren
-  if (session.payment_status !== "paid") {
-    console.warn(`[Webhook] ⚠️ Zahlung nicht abgeschlossen (payment_status=${session.payment_status}) – Plan wird nicht aktiviert`);
+  // Sicherheitsprüfung: Zahlung muss erfolgreich sein ODER Betrag ist 0 € (Rabattcode / 100% Rabatt)
+  // Stripe setzt payment_status bei 0 € Checkouts auf "no_payment_required" statt "paid"
+  const isFreePurchase = session.amount_total === 0;
+  const isPaid = session.payment_status === "paid";
+
+  if (!isPaid && !isFreePurchase) {
+    console.warn(`[Webhook] ⚠️ Zahlung nicht abgeschlossen (payment_status=${session.payment_status}, amount_total=${session.amount_total}) – Plan wird nicht aktiviert`);
     return;
+  }
+
+  if (isFreePurchase) {
+    console.log(`[Webhook] 🎟️ 0 € Zahlung erkannt (Rabattcode oder kostenlos) – Plan wird aktiviert`);
   }
 
   // Finde User mit Fallback-Logik
@@ -499,7 +507,14 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
     return;
   }
 
-  console.log(`[Webhook] 💰 Zahlung erfolgreich: Customer ${customerId} | Subscription ${subscriptionId}`);
+  // 0 € Rechnungen (z. B. durch 100% Rabattcode) ebenfalls als erfolgreich behandeln
+  const invoiceAmountDue = (invoice as any).amount_due ?? null;
+  const isZeroInvoice = invoiceAmountDue === 0;
+  if (isZeroInvoice) {
+    console.log(`[Webhook] 🎟️ 0 € Rechnung erkannt (Rabattcode) – Plan wird verlängert`);
+  }
+
+  console.log(`[Webhook] 💰 Zahlung erfolgreich: Customer ${customerId} | Subscription ${subscriptionId} | Betrag: ${invoiceAmountDue ?? "unbekannt"} Cent`);
 
   try {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);

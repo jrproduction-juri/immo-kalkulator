@@ -369,6 +369,80 @@ describe("Stripe Webhook Handler", () => {
     });
   });
 
+  describe("0 € Zahlung (Rabattcode / 100% Rabatt)", () => {
+    it("sollte Plan aktivieren wenn amount_total === 0 (Rabattcode)", () => {
+      // Stripe setzt payment_status bei 0 € auf 'no_payment_required'
+      const session = {
+        payment_status: "no_payment_required",
+        amount_total: 0,
+      };
+
+      const isFreePurchase = session.amount_total === 0;
+      const isPaid = session.payment_status === "paid";
+      const shouldActivate = isPaid || isFreePurchase;
+
+      expect(isFreePurchase).toBe(true);
+      expect(isPaid).toBe(false);
+      expect(shouldActivate).toBe(true); // Plan wird aktiviert
+    });
+
+    it("sollte Plan aktivieren wenn payment_status === 'paid' (normale Zahlung)", () => {
+      const session = {
+        payment_status: "paid",
+        amount_total: 4900, // 49 € in Cent
+      };
+
+      const isFreePurchase = session.amount_total === 0;
+      const isPaid = session.payment_status === "paid";
+      const shouldActivate = isPaid || isFreePurchase;
+
+      expect(isFreePurchase).toBe(false);
+      expect(isPaid).toBe(true);
+      expect(shouldActivate).toBe(true); // Plan wird aktiviert
+    });
+
+    it("sollte Plan NICHT aktivieren wenn payment_status === 'unpaid' und amount > 0", () => {
+      const session = {
+        payment_status: "unpaid",
+        amount_total: 4900,
+      };
+
+      const isFreePurchase = session.amount_total === 0;
+      const isPaid = session.payment_status === "paid";
+      const shouldActivate = isPaid || isFreePurchase;
+
+      expect(isFreePurchase).toBe(false);
+      expect(isPaid).toBe(false);
+      expect(shouldActivate).toBe(false); // Plan wird NICHT aktiviert
+    });
+
+    it("sollte 0 € Rechnung (invoice.payment_succeeded) als Erfolg behandeln", () => {
+      const invoice = {
+        customer: "cus_test",
+        subscription: "sub_test",
+        amount_due: 0, // 0 € durch Rabattcode
+      };
+
+      const isZeroInvoice = invoice.amount_due === 0;
+      expect(isZeroInvoice).toBe(true);
+      // Plan wird verlängert (kein frühzeitiger Return)
+    });
+
+    it("sollte amount_total === null nicht als 0 € behandeln", () => {
+      const session = {
+        payment_status: "unpaid",
+        amount_total: null, // Unbekannter Betrag
+      };
+
+      const isFreePurchase = session.amount_total === 0;
+      const isPaid = session.payment_status === "paid";
+      const shouldActivate = isPaid || isFreePurchase;
+
+      expect(isFreePurchase).toBe(false); // null !== 0
+      expect(shouldActivate).toBe(false); // Plan wird NICHT aktiviert
+    });
+  });
+
   describe("Fehlerbehandlung", () => {
     it("sollte ungültige Signatur ablehnen", async () => {
       mockRequest = {

@@ -185,3 +185,8 @@
 - [x] Pricing.tsx: window.location.href statt window.open
 - [x] webhook.ts: payment_status !== "paid" → return (Sicherheitsprüfung)
 - [x] Tests für stabile Stripe-Integration aktualisieren
+
+## Stripe 0€-Zahlung Fix (Batch 5)
+- [x] webhook.ts: checkout.session.completed – 0 € Zahlung (amount_total === 0) akzeptieren
+- [x] webhook.ts: invoice.payment_succeeded – 0 € Rechnung akzeptieren
+- [x] Tests für 0 € Zahlung schreiben
