@@ -1,14 +1,16 @@
 /**
- * InfoButton – Wrapper um InfoTooltip für Rückwärtskompatibilität.
- * Nutzt die neue InfoTooltip-Komponente mit Hover+Tap-Support.
+ * InfoButton – Wrapper um InfoModal für Rückwärtskompatibilität.
+ * Nutzt die neue InfoModal-Komponente (Klick/Tap öffnet Mini-Modal).
  */
-import { InfoTooltip } from '@/components/InfoTooltip';
+import { InfoModal } from '@/components/InfoModal';
 
 interface InfoButtonProps {
   text: string;
+  title?: string;
+  /** side-Parameter wird nicht mehr benötigt, aber für Kompatibilität beibehalten */
   side?: 'top' | 'bottom' | 'left' | 'right';
 }
 
-export function InfoButton({ text, side = 'top' }: InfoButtonProps) {
-  return <InfoTooltip text={text} preferSide={side} />;
+export function InfoButton({ text, title, side: _side }: InfoButtonProps) {
+  return <InfoModal text={text} title={title} />;
 }

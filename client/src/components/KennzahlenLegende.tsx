@@ -1,11 +1,11 @@
 /**
  * KennzahlenLegende – erklärt alle wichtigen Immobilien-Kennzahlen
- * Kann als ausklappbarer Bereich oder als Tooltip-Quelle genutzt werden.
+ * Kann als ausklappbarer Bereich oder als Modal-Quelle genutzt werden.
  */
 
 import { useState } from 'react';
 import { Info, ChevronDown, ChevronUp } from 'lucide-react';
-import { InfoTooltip } from '@/components/InfoTooltip';
+import { KennzahlInfoModal } from '@/components/InfoModal';
 
 export interface KennzahlInfo {
   kuerzel: string;
@@ -99,20 +99,20 @@ export const KENNZAHLEN: KennzahlInfo[] = [
   },
 ];
 
-/** Inline Info-Button mit Tooltip für einzelne Kennzahl */
+/** Inline Info-Button mit Modal für einzelne Kennzahl */
 export function KennzahlInfoButton({ kuerzel }: { kuerzel: string }) {
   const info = KENNZAHLEN.find(k => k.kuerzel === kuerzel);
   if (!info) return null;
 
-  const tooltipText = [
-    info.name,
-    info.formel ? `Formel: ${info.formel}` : '',
-    info.erklaerung,
-    info.beispiel ? `Beispiel: ${info.beispiel}` : '',
-    info.bewertung ? `Bewertung: ${info.bewertung}` : '',
-  ].filter(Boolean).join(' | ');
-
-  return <InfoTooltip text={tooltipText} preferSide="top" />;
+  return (
+    <KennzahlInfoModal
+      name={info.name}
+      formel={info.formel}
+      erklaerung={info.erklaerung}
+      beispiel={info.beispiel}
+      bewertung={info.bewertung}
+    />
+  );
 }
 
 /** Ausklappbare Legende mit allen Kennzahlen */

@@ -149,3 +149,8 @@
 - [x] Tests für alle Steuerszenarien (35%, 25%, 42%, negativer Gewinn) schreiben
 - [x] InfoTooltip-Komponente: Hover (Desktop) + Click/Tap (Mobile), auto-Positionierung, kein Abschneiden
 - [x] Alle Info-Icons im Kalkulator auf neue InfoTooltip-Komponente umstellen
+- [x] InfoModal-Komponente erstellen (Dialog mit OK-Button, Desktop+Mobile)
+- [x] Alle Info-Icons im Kalkulator auf InfoModal umstellen
+- [x] InfoModal: zentriert auf Mobile, 90% Breite, kein Abschneiden
+- [x] InfoModal: schließt bei Außerhalb-Klick, OK-Button und erneutem i-Klick
+- [x] Tests für InfoModal aktualisieren

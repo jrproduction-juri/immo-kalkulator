@@ -9,52 +9,131 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { InfoTooltip } from '@/components/InfoTooltip';
+import { InfoModal } from '@/components/InfoModal';
 import { Badge } from '@/components/ui/badge';
 import { Lock, Building2, Home, Warehouse, Building, Calculator, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // ─── Info-Texte ────────────────────────────────────────────────────────────────
 
-const INFO: Record<string, string> = {
-  kaufpreis: 'Der Kaufpreis ist der vereinbarte Preis ohne Kaufnebenkosten (Notar, Grunderwerbsteuer, Makler).',
-  wohnflaeche: 'Die Wohnfläche in m² laut Grundriss oder Exposé. Wird für Preis/m² und AfA-Berechnung verwendet.',
-  kaltmiete: 'Die monatliche Kaltmiete ohne Nebenkosten. Basis für die Renditeberechnung.',
-  warmmiete: 'Die monatliche Warmmiete inkl. Nebenkosten. Wird für den Hinweis "Von der Warmmiete bleiben X € übrig" verwendet.',
-  hausgeld: 'Das monatliche Hausgeld umfasst Verwaltungskosten, Versicherungen und Instandhaltungsrücklage. Teilweise umlagefähig.',
-  ruecklagen: 'Monatliche Instandhaltungsrücklage für Reparaturen und Modernisierungen. Empfehlung: 1–2 % des Kaufpreises p.a.',
-  nichtUmlagefaehig: 'Kosten, die nicht auf den Mieter umgelegt werden können (z.B. Verwaltungskosten, nicht umlagefähige Reparaturen). Direkt cashflow-wirksam.',
-  eigenkapital: 'Das eingesetzte Eigenkapital inkl. Kaufnebenkosten. Mindestens 10–20 % des Kaufpreises empfohlen.',
-  zinssatz: 'Der jährliche Zinssatz des Darlehens in %. Aktuell typisch: 3,5–4,5 % für 10 Jahre Zinsbindung.',
-  tilgung: 'Der jährliche Tilgungssatz in %. Empfehlung: mind. 2 % für angemessene Entschuldung.',
-  kreditrate: 'Die monatliche Kreditrate (Zins + Tilgung). Wenn angegeben, wird die automatische Berechnung überschrieben.',
-  nettoEinkommen: 'Dein monatliches Nettoeinkommen. Wird für die Steuerersparnis-Berechnung (Grenzsteuersatz) benötigt.',
-  anzahlEinheiten: 'Anzahl der vermietbaren Wohneinheiten im Mehrfamilienhaus.',
-  durchschnittsMieteProEinheit: 'Durchschnittliche monatliche Kaltmiete pro Wohneinheit.',
-  leerstandsquote: 'Erwarteter prozentualer Leerstand pro Jahr. Empfehlung: 5–10 % als Puffer einkalkulieren.',
-  afaSatz: 'Abschreibungssatz für Neubau: 3 % p.a. (ab 2023), Altbau: 2 % p.a. Basis: 80 % des Kaufpreises.',
-  erstvermietung: 'Bei Erstvermietung gelten besondere steuerliche Regelungen. Kaufnebenkosten sind voll absetzbar.',
-  mietvertragslaufzeit: 'Laufzeit des Gewerbemietvertrags in Jahren. Längere Laufzeiten erhöhen die Planungssicherheit.',
-  indexmiete: 'Die Miete wird an den Verbraucherpreisindex (VPI) gekoppelt. Schützt vor Inflation.',
-  tripleNet: 'Bei Triple-Net trägt der Mieter alle Nebenkosten (Steuern, Versicherungen, Instandhaltung). Vermieter hat nahezu keine laufenden Kosten.',
-  eigennutzungMonate: 'Wie lange nutzt du die Immobilie selbst? Ab 24 Monaten Eigennutzung ist der Verkauf einer ETW steuerfrei (§ 23 EStG).',
-  grundstueckFlaeche: 'Die Grundstücksgröße in m². Relevant für die Bewertung und den Preis pro m² Grundstück.',
-  grundsteuer: 'Die monatliche Grundsteuer (Jahresbetrag / 12). Beim EFH typisch: 500–1.500 €/Jahr je nach Lage.',
-  versicherung: 'Monatliche Gebäudeversicherung (Jahresbetrag / 12). Beim EFH typisch: 400–1.000 €/Jahr.',
-  verwaltungEFH: 'Optionale monatliche Verwaltungskosten (z.B. Hausverwaltung). Beim selbstverwalteten EFH oft 0 €.',
+const INFO: Record<string, { title: string; text: string }> = {
+  kaufpreis: {
+    title: 'Kaufpreis',
+    text: 'Der Kaufpreis ist der vereinbarte Preis ohne Kaufnebenkosten (Notar, Grunderwerbsteuer, Makler).',
+  },
+  wohnflaeche: {
+    title: 'Wohnfläche',
+    text: 'Die Wohnfläche in m² laut Grundriss oder Exposé. Wird für Preis/m² und AfA-Berechnung verwendet.',
+  },
+  kaltmiete: {
+    title: 'Kaltmiete',
+    text: 'Die monatliche Kaltmiete ohne Nebenkosten. Basis für die Renditeberechnung.',
+  },
+  warmmiete: {
+    title: 'Warmmiete',
+    text: 'Die monatliche Warmmiete inkl. Nebenkosten. Wird für den Hinweis „Von der Warmmiete bleiben X € übrig" verwendet.',
+  },
+  hausgeld: {
+    title: 'Hausgeld',
+    text: 'Das monatliche Hausgeld umfasst Verwaltungskosten, Versicherungen und Instandhaltungsrücklage. Teilweise umlagefähig.',
+  },
+  ruecklagen: {
+    title: 'Instandhaltungsrücklage',
+    text: 'Monatliche Instandhaltungsrücklage für Reparaturen und Modernisierungen. Empfehlung: 1–2 % des Kaufpreises p.a.',
+  },
+  nichtUmlagefaehig: {
+    title: 'Nicht umlagefähige Kosten',
+    text: 'Kosten, die nicht auf den Mieter umgelegt werden können (z.B. Verwaltungskosten, nicht umlagefähige Reparaturen). Direkt cashflow-wirksam.',
+  },
+  eigenkapital: {
+    title: 'Eigenkapital',
+    text: 'Das eingesetzte Eigenkapital inkl. Kaufnebenkosten. Mindestens 10–20 % des Kaufpreises empfohlen.',
+  },
+  zinssatz: {
+    title: 'Zinssatz',
+    text: 'Der jährliche Zinssatz des Darlehens in %. Aktuell typisch: 3,5–4,5 % für 10 Jahre Zinsbindung.',
+  },
+  tilgung: {
+    title: 'Tilgung',
+    text: 'Der jährliche Tilgungssatz in %. Empfehlung: mind. 2 % für angemessene Entschuldung.',
+  },
+  kreditrate: {
+    title: 'Kreditrate (optional)',
+    text: 'Die monatliche Kreditrate (Zins + Tilgung). Wenn angegeben, wird die automatische Berechnung überschrieben.',
+  },
+  anzahlEinheiten: {
+    title: 'Anzahl Einheiten',
+    text: 'Anzahl der vermietbaren Wohneinheiten im Mehrfamilienhaus.',
+  },
+  durchschnittsMieteProEinheit: {
+    title: 'Ø Miete pro Einheit',
+    text: 'Durchschnittliche monatliche Kaltmiete pro Wohneinheit.',
+  },
+  leerstandsquote: {
+    title: 'Leerstandsquote',
+    text: 'Erwarteter prozentualer Leerstand pro Jahr. Empfehlung: 5–10 % als Puffer einkalkulieren.',
+  },
+  afaSatz: {
+    title: 'AfA-Satz',
+    text: 'Abschreibungssatz für Neubau: 3 % p.a. (ab 2023), Altbau: 2 % p.a. Basis: 80 % des Kaufpreises.',
+  },
+  erstvermietung: {
+    title: 'Erstvermietung',
+    text: 'Bei Erstvermietung gelten besondere steuerliche Regelungen. Kaufnebenkosten sind voll absetzbar.',
+  },
+  mietvertragslaufzeit: {
+    title: 'Mietvertragslaufzeit',
+    text: 'Laufzeit des Gewerbemietvertrags in Jahren. Längere Laufzeiten erhöhen die Planungssicherheit.',
+  },
+  indexmiete: {
+    title: 'Indexmiete',
+    text: 'Die Miete wird an den Verbraucherpreisindex (VPI) gekoppelt. Schützt vor Inflation.',
+  },
+  tripleNet: {
+    title: 'Triple-Net',
+    text: 'Bei Triple-Net trägt der Mieter alle Nebenkosten (Steuern, Versicherungen, Instandhaltung). Vermieter hat nahezu keine laufenden Kosten.',
+  },
+  eigennutzungMonate: {
+    title: 'Eigennutzung (Monate)',
+    text: 'Wie lange nutzt du die Immobilie selbst? Ab 24 Monaten Eigennutzung ist der Verkauf einer ETW steuerfrei (§ 23 EStG).',
+  },
+  grundstueckFlaeche: {
+    title: 'Grundstücksgröße',
+    text: 'Die Grundstücksgröße in m². Relevant für die Bewertung und den Preis pro m² Grundstück.',
+  },
+  grundsteuer: {
+    title: 'Grundsteuer',
+    text: 'Die monatliche Grundsteuer (Jahresbetrag / 12). Beim EFH typisch: 500–1.500 €/Jahr je nach Lage.',
+  },
+  versicherung: {
+    title: 'Gebäudeversicherung',
+    text: 'Monatliche Gebäudeversicherung (Jahresbetrag / 12). Beim EFH typisch: 400–1.000 €/Jahr.',
+  },
+  verwaltungEFH: {
+    title: 'Verwaltungskosten',
+    text: 'Optionale monatliche Verwaltungskosten (z.B. Hausverwaltung). Beim selbstverwalteten EFH oft 0 €.',
+  },
+  persönlicherSteuersatz: {
+    title: 'Persönlicher Steuersatz',
+    text: 'Persönlicher Grenzsteuersatz aus der Einkommensteuer. Falls unbekannt, kann der Standardwert von 35 % verwendet werden. Der Steuersatz beeinflusst die Steuerersparnis durch AfA und negative Einkünfte aus Vermietung.',
+  },
+  verkauf24Monate: {
+    title: 'Steuerfreier Verkauf',
+    text: 'Bei mind. 24 Monaten Eigennutzung ist der Verkauf einer Eigentumswohnung steuerfrei (§ 23 EStG). Diese Regelung gilt nur für Eigentumswohnungen, nicht für Mehrfamilienhäuser.',
+  },
 };
 
-function InfoButton({ field }: { field: string }) {
-  return (
-    <InfoTooltip text={INFO[field] ?? 'Keine Erklärung verfügbar.'} />
-  );
+function InfoBtn({ field }: { field: string }) {
+  const info = INFO[field];
+  if (!info) return null;
+  return <InfoModal text={info.text} title={info.title} />;
 }
 
 function FieldLabel({ label, field }: { label: string; field: string }) {
   return (
     <div className="flex items-center gap-1.5 mb-1">
       <Label className="text-xs font-medium text-gray-700">{label}</Label>
-      <InfoButton field={field} />
+      <InfoBtn field={field} />
     </div>
   );
 }
@@ -336,14 +415,14 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <Label className="text-xs text-gray-700">Indexmiete</Label>
-                    <InfoButton field="indexmiete" />
+                    <InfoBtn field="indexmiete" />
                   </div>
                   <Switch checked={data.indexmiete ?? false} onCheckedChange={v => set('indexmiete', v)} />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <Label className="text-xs text-gray-700">Triple-Net</Label>
-                    <InfoButton field="tripleNet" />
+                    <InfoBtn field="tripleNet" />
                   </div>
                   <Switch checked={data.tripleNet ?? false} onCheckedChange={v => set('tripleNet', v)} />
                 </div>
@@ -362,7 +441,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <FieldLabel label="Instandhaltungsrüklage" field="ruecklagen" />
+                <FieldLabel label="Instandhaltungsrücklage" field="ruecklagen" />
                 <NumberInput value={data.ruecklagen} onChange={v => set('ruecklagen', v)} suffix="€/Mo" placeholder="150" />
               </div>
               <div>
@@ -403,7 +482,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
               </div>
             )}
             <div>
-              <FieldLabel label={art === 'neubau' ? 'Rüklage (reduziert)' : 'Rüklage'} field="ruecklagen" />
+              <FieldLabel label={art === 'neubau' ? 'Rücklage (reduziert)' : 'Rücklage'} field="ruecklagen" />
               <NumberInput value={data.ruecklagen} onChange={v => set('ruecklagen', v)} suffix="€/Mo" placeholder={art === 'neubau' ? '20' : '50'} />
             </div>
             <div>
@@ -427,7 +506,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
             <div className="flex items-center justify-between pt-5">
               <div className="flex items-center gap-1">
                 <Label className="text-xs text-gray-700">Erstvermietung</Label>
-                <InfoButton field="erstvermietung" />
+                <InfoBtn field="erstvermietung" />
               </div>
               <Switch checked={data.erstvermietung ?? false} onCheckedChange={v => set('erstvermietung', v)} />
             </div>
@@ -482,9 +561,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
             <div>
               <div className="flex items-center gap-1.5 mb-1">
                 <Label className="text-xs font-medium text-gray-700">Persönlicher Steuersatz (%)</Label>
-                <InfoTooltip
-                  text="Persönlicher Grenzsteuersatz: Der Steuersatz entspricht Ihrem persönlichen Grenzsteuersatz aus der Einkommensteuer. Falls Sie Ihren Steuersatz nicht kennen, können Sie den Standardwert von 35 % verwenden."
-                />
+                <InfoBtn field="persönlicherSteuersatz" />
               </div>
               <NumberInput
                 value={data.persönlicherSteuersatz}
@@ -493,7 +570,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
                 placeholder="35"
                 step={1}
               />
-              <p className="text-xs text-gray-400 mt-1">Falls unbekannt, wird ein durchschnittlicher Steuersatz von 35 % angenommen.</p>
+              <p className="text-xs text-gray-400 mt-1">Falls unbekannt, wird ein durchschnittlicher Steuersatz von 35 % angenommen.</p>
             </div>
             <div>
               <FieldLabel label="Eigennutzung (Monate)" field="eigennutzungMonate" />
@@ -533,10 +610,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
               <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 border border-gray-100">
                 <div className="flex items-center gap-1.5">
                   <Label className="text-sm text-gray-700 cursor-pointer">Verkauf nach 24 Monaten</Label>
-                  <InfoTooltip
-                    text="Bei mind. 24 Monaten Eigennutzung ist der Verkauf einer Eigentumswohnung steuerfrei (§ 23 EStG)."
-                    preferSide="top"
-                  />
+                  <InfoBtn field="verkauf24Monate" />
                 </div>
                 <Switch checked={data.szenarioVerkauf24Monate} onCheckedChange={v => set('szenarioVerkauf24Monate', v)} />
               </div>
@@ -548,57 +622,34 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
           ) : (
             <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 border border-gray-100 opacity-70">
               <div className="flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-gray-400" />
-                <Label className="text-sm text-gray-400">Weitere Szenarien (Pro)</Label>
+                <Lock className="w-3 h-3 text-gray-400" />
+                <Label className="text-sm text-gray-400">Verkauf nach 24 Monaten</Label>
+                <InfoBtn field="verkauf24Monate" />
               </div>
-              <button type="button" onClick={onUpgrade} className="text-xs text-blue-600 hover:underline font-medium">
-                Freischalten
-              </button>
+              <Badge variant="secondary" className="text-[10px] bg-blue-100 text-blue-700 cursor-pointer" onClick={onUpgrade}>Pro</Badge>
             </div>
           )}
         </div>
       </div>
-      {/* ── Zielrendite (Pro-only) ───────────────────────────────────── */}
-      {isPro ? (
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5">
-            <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">Zielrendite-Analyse</Label>
-            <InfoTooltip
-              text="Gibt an, welche Bruttomietrendite du anstrebst. Daraus wird der maximale Kaufpreis berechnet, den du zahlen solltest."
-            />
-          </div>
-          <div>
-            <FieldLabel label="Ziel-Bruttomietrendite" field="kaltmiete" />
-            <NumberInput
-              value={data.zielRendite ?? 6}
-              onChange={v => set('zielRendite', v)}
-              suffix="%"
-              placeholder="6"
-              step={0.1}
-              min={0.1}
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 border border-gray-100 opacity-70">
-          <div className="flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-gray-400" />
-            <Label className="text-xs text-gray-500">Zielrendite-Analyse (Pro)</Label>
-          </div>
-          <button type="button" onClick={onUpgrade} className="text-xs text-blue-600 hover:underline font-medium">
-            Freischalten
-          </button>
-        </div>
-      )}
 
-      {/* ── Berechnen-Button ─────────────────────────────────────────────── */}
+      {/* ── Berechnen-Button ─────────────────────────────────────────── */}
       <Button
+        type="button"
         onClick={onCalculate}
         disabled={isLoading}
-        className="w-full h-11 text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold h-11 text-base rounded-xl shadow-md shadow-blue-200 transition-all"
       >
-        <Calculator className="w-4 h-4 mr-2" />
-        {isLoading ? 'Berechne…' : 'Berechnung starten'}
+        {isLoading ? (
+          <span className="flex items-center gap-2">
+            <Calculator className="w-4 h-4 animate-pulse" />
+            Berechne…
+          </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            <Calculator className="w-4 h-4" />
+            Jetzt berechnen
+          </span>
+        )}
       </Button>
     </div>
   );
