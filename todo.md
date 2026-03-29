@@ -142,3 +142,4 @@
 - [x] Tests für neue Cashflow-Logik schreiben
 - [x] Cashflow-Berechnung korrigieren: Nutze Kaltmiete statt Warmmiete als Einnahmen
 - [x] Webhook-Handler: Plan-Ermittlung aus Stripe-Produkt-ID für externe Payment-Links
+- [x] Pricing-Seite: Alle externen Payment-Links durch internen tRPC-Checkout ersetzen (User-ID-basiert)

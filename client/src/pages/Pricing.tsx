@@ -1,31 +1,20 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { getLoginUrl } from "@/const";
-import { Building2, CheckCircle2, X, ArrowLeft, Zap, Star, Infinity } from "lucide-react";
+import { CheckCircle2, X, ArrowLeft, Zap, Star, Infinity, Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
 
 type BillingType = "once" | "monthly" | "yearly";
 type PaidPlanId = "basic" | "pro" | "investor";
 
-/* ─── Stripe Payment-Links ──────────────────────────────────────────── */
-const STRIPE_LINKS: Record<PaidPlanId, Record<BillingType, string>> = {
-  basic: {
-    monthly: "https://buy.stripe.com/6oU00beNmfR403P7Zj87K02",
-    yearly:  "https://buy.stripe.com/dRm5kvfRq8oC5o93J387K03",
-    once:    "https://buy.stripe.com/6oUfZ9cFeawK3g1gvP87K04",
-  },
-  pro: {
-    monthly: "https://buy.stripe.com/6oUbIT48IdIWcQBcfz87K05",
-    yearly:  "https://buy.stripe.com/5kQcMXbBaawK8AlfrL87K06",
-    once:    "https://buy.stripe.com/dRm6ozeNm6gu7whbbv87K07",
-  },
-  investor: {
-    monthly: "https://buy.stripe.com/4gM5kv5cM5cqdUFenH87K08",
-    yearly:  "https://buy.stripe.com/14A4gr6gQ20eaIt7Zj87K09",
-    once:    "https://buy.stripe.com/3cI9AL8oYdIW03P3J387K0a",
-  },
+// Mapping: UI-BillingType → tRPC-billingType
+const BILLING_MAP: Record<BillingType, "monthly" | "yearly" | "lifetime"> = {
+  monthly: "monthly",
+  yearly:  "yearly",
+  once:    "lifetime",
 };
 
 /* ─── Free Plan ─────────────────────────────────────────────────────── */
@@ -156,15 +145,27 @@ export default function Pricing() {
     investor: "monthly",
   });
 
+  const checkoutMutation = trpc.plan.checkout.useMutation({
+    onSuccess: ({ checkoutUrl }) => {
+      toast.success("Du wirst zu Stripe weitergeleitet…");
+      window.open(checkoutUrl, "_blank");
+    },
+    onError: (err) => {
+      toast.error(`Fehler beim Checkout: ${err.message}`);
+    },
+  });
+
   const handleSelect = (planId: PaidPlanId) => {
     if (!isAuthenticated) {
       window.location.href = getLoginUrl();
       return;
     }
     const currentBilling = billing[planId];
-    const link = STRIPE_LINKS[planId][currentBilling];
-    toast.success("Du wirst zu Stripe weitergeleitet…");
-    window.open(link, "_blank");
+    checkoutMutation.mutate({
+      planId,
+      billingType: BILLING_MAP[currentBilling],
+      origin: window.location.origin,
+    });
   };
 
   return (
@@ -341,8 +342,13 @@ export default function Pricing() {
                     className={`w-full font-semibold ${plan.highlight ? "bg-white text-blue-900 hover:bg-blue-50" : ""}`}
                     variant={plan.highlight ? "default" : "outline"}
                     onClick={() => handleSelect(plan.id)}
+                    disabled={checkoutMutation.isPending}
                   >
-                    {plan.name} wählen
+                    {checkoutMutation.isPending ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Wird vorbereitet…</>
+                    ) : (
+                      <>{plan.name} wählen</>
+                    )}
                   </Button>
                 </div>
               </div>
