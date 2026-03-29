@@ -245,6 +245,49 @@ Format: {
       }),
   }),
 
+  // ─── Admin-Router ────────────────────────────────────────────────────────
+  admin: router({
+    // Alle Nutzer auflisten (nur Owner oder Admin)
+    getAllUsers: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin" && ctx.user.openId !== process.env.OWNER_OPEN_ID) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Kein Zugriff" });
+      }
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Datenbank nicht verfügbar" });
+      const allUsers = await db.select().from(users).orderBy(users.createdAt);
+      return { users: allUsers };
+    }),
+
+    // Plan eines Nutzers manuell ändern (Support-Funktion)
+    changePlan: protectedProcedure
+      .input(z.object({
+        userId: z.number(),
+        plan: z.enum(["none", "basic", "pro", "investor"]),
+        billingType: z.enum(["monthly", "yearly", "lifetime"]).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin" && ctx.user.openId !== process.env.OWNER_OPEN_ID) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Kein Zugriff" });
+        }
+        let planExpiresAt: Date | null = null;
+        if (input.plan !== "none") {
+          if (input.billingType === "monthly") {
+            planExpiresAt = new Date();
+            planExpiresAt.setMonth(planExpiresAt.getMonth() + 1);
+          } else if (input.billingType === "yearly") {
+            planExpiresAt = new Date();
+            planExpiresAt.setFullYear(planExpiresAt.getFullYear() + 1);
+          } else {
+            // Lifetime: +100 Jahre
+            planExpiresAt = new Date();
+            planExpiresAt.setFullYear(planExpiresAt.getFullYear() + 100);
+          }
+        }
+        await updateUserPlan(input.userId, input.plan, { planExpiresAt });
+        return { success: true };
+      }),
+  }),
+
   immobilien: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       if (ctx.user.plan === "none") return [];

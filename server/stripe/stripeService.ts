@@ -69,7 +69,7 @@ export async function createCheckoutSession(params: {
       },
     ],
     mode: billingType === "lifetime" ? "payment" : "subscription",
-    success_url: `${origin}/dashboard?checkout=success&plan=${planId}`,
+    success_url: `${origin}/checkout/success?plan=${planId}`,
     cancel_url: `${origin}/pricing?checkout=canceled`,
     allow_promotion_codes: true,
     locale: "de",

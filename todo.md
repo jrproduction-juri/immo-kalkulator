@@ -190,3 +190,12 @@
 - [x] webhook.ts: checkout.session.completed – 0 € Zahlung (amount_total === 0) akzeptieren
 - [x] webhook.ts: invoice.payment_succeeded – 0 € Rechnung akzeptieren
 - [x] Tests für 0 € Zahlung schreiben
+
+## Checkout-Erfolgsseite + Admin-Übersicht (Batch 6)
+- [x] /checkout/success Seite: Plan-Bestätigung, Konfetti-Animation, Weiterleitung zum Kalkulator
+- [x] Stripe success_url auf /checkout/success anpassen
+- [x] Admin-Seite /admin/users: Nutzerliste mit Plan, Ablaufdatum, Stripe-Customer-ID
+- [x] Admin-tRPC-Endpunkt: getAllUsers (nur für Owner/Admin)
+- [x] Admin-Seite: Suche nach Name/E-Mail, Filter nach Plan
+- [x] Admin-Seite: Plan manuell ändern (für Support-Fälle)
+- [x] Tests für neue Features schreiben

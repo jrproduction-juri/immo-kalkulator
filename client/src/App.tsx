@@ -12,6 +12,8 @@ import Pricing from "./pages/Pricing";
 import Impressum from "./pages/Impressum";
 import Datenschutz from "./pages/Datenschutz";
 import AGB from "./pages/AGB";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
+import AdminUsers from "./pages/AdminUsers";
 import { useAuth } from "./_core/hooks/useAuth";
 import { getLoginUrl } from "./const";
 import { Loader2 } from "lucide-react";
@@ -55,6 +57,10 @@ function Router() {
       <Route path="/impressum" component={Impressum} />
       <Route path="/datenschutz" component={Datenschutz} />
       <Route path="/agb" component={AGB} />
+      <Route path="/checkout/success" component={CheckoutSuccess} />
+      <Route path="/admin/users">
+        {() => <ProtectedRoute component={AdminUsers} />}
+      </Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
