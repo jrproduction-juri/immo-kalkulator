@@ -199,3 +199,8 @@
 - [x] Admin-Seite: Suche nach Name/E-Mail, Filter nach Plan
 - [x] Admin-Seite: Plan manuell ändern (für Support-Fälle)
 - [x] Tests für neue Features schreiben
+
+## Exposé-Upload Pro-Lock (Batch 7)
+- [x] ExposeUpload: Plan-Check – nur Pro/Investor darf hochladen, none/basic sieht Lock-Overlay
+- [x] Pricing-Seite: Exposé-Upload als Pro-Feature kennzeichnen
+- [x] Tests für Plan-Check aktualisieren

@@ -7,9 +7,11 @@ import { useState, useRef, useCallback } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { useLocation } from 'wouter';
 import {
   Upload, FileText, Image as ImageIcon, Loader2, CheckCircle2,
-  AlertCircle, X, ChevronRight, Sparkles
+  AlertCircle, X, ChevronRight, Sparkles, Lock
 } from 'lucide-react';
 import {
   Dialog,
@@ -70,6 +72,46 @@ const ACCEPTED_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/web
 const MAX_SIZE_MB = 10;
 
 export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) {
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
+
+  // Plan-Check: nur Pro und Investor dürfen hochladen
+  const plan = user?.plan ?? 'none';
+  const hasAccess = plan === 'pro' || plan === 'investor';
+
+  // Lock-Overlay für none/basic
+  if (!hasAccess) {
+    return (
+      <div className={cn(
+        'relative rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-8',
+        'flex flex-col items-center justify-center gap-4 text-center',
+        className
+      )}>
+        {/* Gesperrtes Overlay */}
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center">
+            <Lock className="w-7 h-7 text-slate-400" />
+          </div>
+          <div>
+            <p className="font-semibold text-slate-700 text-base">Exposé-Upload (Pro-Feature)</p>
+            <p className="text-sm text-slate-500 mt-1 max-w-xs">
+              Lade ein Exposé hoch und lass die KI alle Immobiliendaten automatisch ausfüllen.
+              Verfügbar ab dem <strong>Pro-Plan</strong>.
+            </p>
+          </div>
+          <Button
+            size="sm"
+            className="mt-1 bg-slate-900 hover:bg-slate-800 text-white"
+            onClick={() => navigate('/pricing')}
+          >
+            <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+            Jetzt upgraden
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
