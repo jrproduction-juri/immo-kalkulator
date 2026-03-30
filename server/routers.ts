@@ -288,6 +288,118 @@ Format: {
       }),
   }),
 
+  // ─── KI-Chat ─────────────────────────────────────────────────────────────
+  chat: router({
+    ask: protectedProcedure
+      .input(z.object({
+        message: z.string().min(1).max(2000),
+        history: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string(),
+        })).max(20).default([]),
+        dealData: z.object({
+          kaufpreis: z.number().optional(),
+          kaltmiete: z.number().optional(),
+          wohnflaeche: z.number().optional(),
+          eigenkapital: z.number().optional(),
+          kaufnebenkosten: z.number().optional(),
+          kreditrate: z.number().optional(),
+          zinssatz: z.number().optional(),
+          tilgung: z.number().optional(),
+          hausgeld: z.number().optional(),
+          ruecklagen: z.number().optional(),
+          steuersatz: z.number().optional(),
+          baujahr: z.number().optional(),
+          standort: z.string().optional(),
+          // Berechnete Ergebnisse
+          bruttomietrendite: z.number().optional(),
+          nettomietrendite: z.number().optional(),
+          cashflowMonatlich: z.number().optional(),
+          cashflowJaehrlich: z.number().optional(),
+          eigenkapitalrendite: z.number().nullable().optional(),
+          gesamtinvestition: z.number().optional(),
+          risikoScore: z.number().optional(),
+          risikoLabel: z.string().optional(),
+          investmentScore: z.number().optional(),
+          investmentLabel: z.string().optional(),
+        }).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Plan-Check: nur Pro und Investor
+        const plan = ctx.user.plan ?? "none";
+        if (plan !== "pro" && plan !== "investor") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Der KI-Chat ist ab dem Pro-Plan verfügbar.",
+          });
+        }
+
+        // System-Prompt mit Deal-Daten aufbauen
+        const d = input.dealData;
+        let systemPrompt = `Du bist ein erfahrener Immobilien-Investment-Berater und hilfst Nutzern, ihre Immobilienanalysen zu verstehen und zu verbessern. Du antwortest auf Deutsch, präzise und praxisnah.
+
+Wichtige Regeln:
+- Beantworte Fragen konkret auf Basis der vorliegenden Zahlen, wenn Daten vorhanden sind.
+- Erkläre Fachbegriffe verständlich (z. B. AfA, Nettomietrendite, Eigenkapitalrendite).
+- Gib keine Kauf- oder Verkaufsempfehlungen.
+- Bleibe sachlich und neutral.
+- Antworte kompakt (max. 300 Wörter), es sei denn, der Nutzer fragt nach Details.`;
+
+        if (d) {
+          const fmt = (v: number | null | undefined, suffix = "") =>
+            v != null ? `${v.toLocaleString("de-DE")}${suffix}` : "nicht angegeben";
+
+          systemPrompt += `
+
+---
+Aktuell analysiertes Objekt:
+- Kaufpreis: ${fmt(d.kaufpreis, " €")}
+- Wohnfläche: ${fmt(d.wohnflaeche, " m²")}
+- Kaltmiete: ${fmt(d.kaltmiete, " €/Mo")}
+- Eigenkapital: ${fmt(d.eigenkapital, " €")}
+- Gesamtinvestition: ${fmt(d.gesamtinvestition, " €")}
+- Kaufnebenkosten: ${fmt(d.kaufnebenkosten, " €")}
+- Kreditrate: ${fmt(d.kreditrate, " €/Mo")}
+- Zinssatz: ${fmt(d.zinssatz, " %")}
+- Tilgung: ${fmt(d.tilgung, " %")}
+- Hausgeld: ${fmt(d.hausgeld, " €/Mo")}
+- Rücklagen: ${fmt(d.ruecklagen, " €/Mo")}
+- Steuersatz: ${fmt(d.steuersatz, " %")}
+- Baujahr: ${d.baujahr ?? "nicht angegeben"}
+- Standort/PLZ: ${d.standort ?? "nicht angegeben"}
+
+Berechnete Kennzahlen:
+- Brutto-Mietrendite: ${fmt(d.bruttomietrendite, " %")}
+- Netto-Mietrendite: ${fmt(d.nettomietrendite, " %")}
+- Monatlicher Cashflow: ${fmt(d.cashflowMonatlich, " €")}
+- Jährlicher Cashflow: ${fmt(d.cashflowJaehrlich, " €")}
+- Eigenkapitalrendite: ${d.eigenkapitalrendite != null ? fmt(d.eigenkapitalrendite, " %") : "n/a (Vollfinanzierung)"}
+- Risiko-Score: ${d.risikoScore != null ? `${d.risikoScore.toFixed(1)} / 3 (${d.risikoLabel ?? ""})` : "nicht berechnet"}
+- Investment-Score: ${d.investmentScore != null ? `${d.investmentScore} / 100 (${d.investmentLabel ?? ""})` : "nicht berechnet"}
+---`;
+        }
+
+        // Nachrichten für LLM zusammenstellen
+        const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+          { role: "system", content: systemPrompt },
+          ...input.history.map(m => ({ role: m.role, content: m.content })),
+          { role: "user", content: input.message },
+        ];
+
+        try {
+          const response = await invokeLLM({ messages });
+          const rawContent = response.choices?.[0]?.message?.content ?? "";
+          const answer = typeof rawContent === "string" ? rawContent : JSON.stringify(rawContent);
+          return { answer };
+        } catch (e) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "KI-Antwort fehlgeschlagen. Bitte erneut versuchen.",
+          });
+        }
+      }),
+  }),
+
   immobilien: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       if (ctx.user.plan === "none") return [];

@@ -204,3 +204,11 @@
 - [x] ExposeUpload: Plan-Check – nur Pro/Investor darf hochladen, none/basic sieht Lock-Overlay
 - [x] Pricing-Seite: Exposé-Upload als Pro-Feature kennzeichnen
 - [x] Tests für Plan-Check aktualisieren
+
+## KI-Chat Integration (Batch 8)
+- [x] tRPC-Endpunkt chat.ask: System-Prompt mit Deal-Daten, LLM-Aufruf, Verlauf
+- [x] ImmoChatBox-Komponente: Chat-UI, Nachrichtenverlauf, Markdown-Rendering
+- [x] Chat: Plan-Lock (nur Pro/Investor), Basic sieht Upgrade-Hinweis
+- [x] Schwebender Chat-Button im Kalkulator (rechts unten)
+- [x] Deal-Daten aus Kalkulator-State an Chat übergeben
+- [x] Tests für chat.ask-Endpunkt und System-Prompt schreiben
