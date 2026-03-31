@@ -1,14 +1,8 @@
+import { Navbar } from "@/components/Navbar";
 export default function Impressum() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Navbar */}
-      <nav className="border-b border-gray-100 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <a href="/" className="font-bold text-gray-900 text-base hover:text-blue-600 transition-colors">
-            ← ImmoRenditeTool
-          </a>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
         <h1 className="font-bold text-3xl text-gray-900 mb-2">Impressum</h1>

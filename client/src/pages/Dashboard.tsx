@@ -3,10 +3,11 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Building2, Plus, LogOut, BarChart3, TrendingUp, Zap,
+  Building2, Plus, BarChart3, TrendingUp, Zap,
   Trash2, Edit, ArrowRight, Star, AlertCircle, Clock,
   Home, Briefcase, Building, Factory, HardHat
 } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -49,7 +50,7 @@ const PLAN_LABELS: Record<string, string> = {
 };
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [, navigate] = useLocation();
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
@@ -99,11 +100,6 @@ export default function Dashboard() {
     };
   });
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/");
-  };
-
   const trialExpiry = planQuery.data?.user?.planExpiresAt;
   const trialDaysLeft = trialExpiry
     ? Math.max(0, Math.ceil((new Date(trialExpiry).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
@@ -111,24 +107,8 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <a href="/dashboard" className="flex items-center gap-2.5">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png" alt="ImmoRenditeTool Logo" className="h-11 w-auto object-contain" />
-            <span className="font-bold text-gray-900 text-lg">ImmoRenditeTool</span>
-          </a>
-          <div className="flex items-center gap-3">
-            <Badge className={PLAN_COLORS[plan]}>
-              {PLAN_LABELS[plan]}
-            </Badge>
-            <span className="text-sm text-gray-600 hidden sm:block">{user?.name || user?.email}</span>
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-gray-500">
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      </nav>
+      {/* Globale Navbar mit Profil-Dropdown */}
+      <Navbar />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         {/* Trial Banner */}

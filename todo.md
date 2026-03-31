@@ -212,3 +212,7 @@
 - [x] Schwebender Chat-Button im Kalkulator (rechts unten)
 - [x] Deal-Daten aus Kalkulator-State an Chat übergeben
 - [x] Tests für chat.ask-Endpunkt und System-Prompt schreiben
+
+## Profil-Dropdown global (Batch 9)
+- [x] Profil-Dropdown in globale Navbar einbauen (Dashboard, Kalkulator, alle Seiten)
+- [x] Dropdown zeigt: Name, E-Mail, Plan, Objekte-Zähler, Upgrade-Link, Logout
