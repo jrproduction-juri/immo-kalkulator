@@ -216,3 +216,11 @@
 ## Profil-Dropdown global (Batch 9)
 - [x] Profil-Dropdown in globale Navbar einbauen (Dashboard, Kalkulator, alle Seiten)
 - [x] Dropdown zeigt: Name, E-Mail, Plan, Objekte-Zähler, Upgrade-Link, Logout
+
+## Kündigung + Widerruf im Dropdown (Batch 10)
+- [x] tRPC plan.cancel: Abo kündigen (cancel_at_period_end: true), nur für Abo-Nutzer
+- [x] tRPC plan.revoke: Widerruf (refunds.create + sofort deaktivieren), nur 14 Tage nach Kauf
+- [x] Navbar Dropdown: "Abo kündigen" Button mit Bestätigungs-Dialog (2 Klicks)
+- [x] Navbar Dropdown: "Kauf widerrufen" Button mit Bestätigungs-Dialog (2 Klicks), nur 14 Tage sichtbar
+- [x] Buttons nur für zahlende Nutzer sichtbar (nicht bei none/trial)
+- [x] Tests für plan.cancel und plan.revoke schreiben

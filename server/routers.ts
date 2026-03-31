@@ -14,7 +14,7 @@ import {
   updateImmobilie,
   updateUserPlan,
 } from "./db";
-import { createCheckoutSession, createCustomerPortalSession } from "./stripe/stripeService";
+import { createCheckoutSession, createCustomerPortalSession, cancelSubscription, refundLastPayment } from "./stripe/stripeService";
 import { getDb } from "./db";
 import { users } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -102,6 +102,89 @@ export const appRouter = router({
         }
         const portalUrl = await createCustomerPortalSession(user.stripeCustomerId, input.origin);
         return { portalUrl };
+      }),
+
+    // ─── Abo kündigen (zum Ende der Laufzeit) ─────────────────────────────────────
+    cancel: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        const user = ctx.user;
+
+        // Nur für Nutzer mit aktivem Abo (nicht none)
+        if (user.plan === "none") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Kein aktiver Plan zum Kündigen." });
+        }
+
+        // Lifetime-Pläne haben kein Abo – nur DB-Plan entfernen
+        if (!user.stripeCustomerId) {
+          await updateUserPlan(user.id, "none", { planExpiresAt: null });
+          return { success: true, cancelAt: null, message: "Plan wurde deaktiviert." };
+        }
+
+        try {
+          const { cancelAt } = await cancelSubscription(user.stripeCustomerId);
+          // Ablaufdatum in DB speichern (Zugang bis dahin erhalten)
+          if (cancelAt) {
+            await updateUserPlan(user.id, user.plan, { planExpiresAt: cancelAt });
+          }
+          return {
+            success: true,
+            cancelAt: cancelAt?.toISOString() ?? null,
+            message: cancelAt
+              ? `Dein Abo läuft am ${cancelAt.toLocaleDateString("de-DE")} aus.`
+              : "Abo wurde gekündigt.",
+          };
+        } catch (e: any) {
+          // Kein Stripe-Abo (z.B. Lifetime) – Plan direkt deaktivieren
+          if (e.message?.includes("Kein aktives Abonnement")) {
+            await updateUserPlan(user.id, "none", { planExpiresAt: null });
+            return { success: true, cancelAt: null, message: "Plan wurde deaktiviert." };
+          }
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: e.message });
+        }
+      }),
+
+    // ─── Widerruf (14-Tage-Rückgaberecht, sofortige Erstattung) ───────────────
+    revoke: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        const user = ctx.user;
+
+        if (user.plan === "none") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Kein aktiver Plan zum Widerrufen." });
+        }
+
+        // 14-Tage-Frist prüfen
+        const kaufDatum = user.planActivatedAt ? new Date(user.planActivatedAt) : null;
+        if (kaufDatum) {
+          const tageSeitKauf = Math.floor((Date.now() - kaufDatum.getTime()) / (1000 * 60 * 60 * 24));
+          if (tageSeitKauf > 14) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: `Die 14-tägige Widerrufsfrist ist abgelaufen (Kauf vor ${tageSeitKauf} Tagen).`,
+            });
+          }
+        }
+
+        if (!user.stripeCustomerId) {
+          // Kein Stripe-Konto – Plan direkt zurücksetzen
+          await updateUserPlan(user.id, "none", { planExpiresAt: null });
+          return { success: true, refundId: null, amount: 0, message: "Plan wurde zurückgesetzt." };
+        }
+
+        try {
+          const { refundId, amount, currency } = await refundLastPayment(user.stripeCustomerId);
+          // Plan sofort auf none setzen
+          await updateUserPlan(user.id, "none", { planExpiresAt: null });
+
+          const betrag = (amount / 100).toFixed(2);
+          return {
+            success: true,
+            refundId,
+            amount,
+            message: `Widerruf erfolgreich. ${betrag} ${currency.toUpperCase()} werden in 5–10 Werktagen erstattet.`,
+          };
+        } catch (e: any) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: e.message });
+        }
       }),
   }),
 
