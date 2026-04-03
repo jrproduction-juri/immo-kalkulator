@@ -229,3 +229,6 @@
 - [x] Alle Info-Texte in InputForm.tsx prüfen und korrigieren
 - [x] Alle Info-Texte in KennzahlenLegende.tsx prüfen und korrigieren
 - [x] Alle Info-Texte in anderen Komponenten prüfen und korrigieren
+
+## Dashboard Chart-Sortierung (Batch 12)
+- [ ] Portfolio-Cashflow-Chart: neueste Objekte rechts (chronologisch von links nach rechts)

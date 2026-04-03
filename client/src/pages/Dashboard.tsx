@@ -90,8 +90,10 @@ export default function Dashboard() {
     portfolioStats.gesamtRendite = portfolioStats.gesamtRendite / immobilien.length;
   }
 
-  // Cashflow-Chart-Daten
-  const chartData = immobilien.slice(0, 8).map((immo) => {
+  // Cashflow-Chart-Daten: älteste links, neueste rechts
+  // immobilien kommt vom Server sortiert nach desc(createdAt) → neueste zuerst
+  // Wir nehmen die ersten 8 und drehen sie um, damit neueste rechts erscheinen
+  const chartData = immobilien.slice(0, 8).reverse().map((immo) => {
     const e = immo.ergebnisse as any;
     return {
       name: immo.name.slice(0, 12),
