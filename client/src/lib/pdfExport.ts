@@ -325,13 +325,17 @@ export async function exportProPDF(formData: FormData, results: ProResults): Pro
     doc.setFont('helvetica', 'bold');
     doc.text(szenario.name, margin + 4, y + 8);
 
+    // Untertitel (beschreibung) in grau kursiv
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'italic');
+    doc.text(szenario.beschreibung, margin + 4, y + 14);
+
     doc.setTextColor(80, 80, 80);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
-    doc.text(szenario.beschreibung, margin + 4, y + 15);
-
     const detailLines = doc.splitTextToSize(szenario.details, contentW - 8);
-    doc.text(detailLines[0] || '', margin + 4, y + 22);
+    doc.text(detailLines[0] || '', margin + 4, y + 21);
 
     y += 36;
   });

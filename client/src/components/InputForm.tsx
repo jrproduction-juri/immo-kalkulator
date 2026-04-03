@@ -195,8 +195,170 @@ function NumberInput({
   );
 }
 
-// ─── Immobilienart-Karten ──────────────────────────────────────────────────────
+// ─── Szenario Info-Texte ───────────────────────────────────────────────────────
 
+const SZENARIO_INFO: Record<string, { name: string; subtitle: string; text: string[] }> = {
+  vermietung: {
+    name: 'Buy & Hold',
+    subtitle: 'Langfristige Vermietung',
+    text: [
+      'Langfristige Vermietungsstrategie. Die Immobilie wird dauerhaft vermietet, um regelmäßige Mieteinnahmen zu erzielen und langfristig Vermögen aufzubauen.',
+      'Im Fokus stehen: monatlicher Cashflow, Mietrendite, Tilgung des Darlehens und langfristige Wertsteigerung.',
+      'Viele Immobilieninvestoren verfolgen diese Strategie, um ein stabiles Einkommen und Vermögen über viele Jahre aufzubauen.',
+    ],
+  },
+  eigennutzung: {
+    name: 'Eigennutzungs-Strategie',
+    subtitle: 'Selbst nutzen & steuerfrei verkaufen',
+    text: [
+      'Selbst nutzen und steuerfrei verkaufen. Ein Immobilienverkauf ist steuerfrei, wenn die Immobilie im Verkaufsjahr und in den zwei vorherigen Kalenderjahren selbst genutzt wurde (§ 23 EStG).',
+      'In der Praxis bedeutet das oft etwa zwei Jahre Eigennutzung.',
+      'Wichtig: Auch wenn der Verkauf steuerfrei ist, können Finanzierungskosten, Hausgeld und Kaufnebenkosten dazu führen, dass der reale Gewinn geringer ausfällt oder sogar negativ ist.',
+    ],
+  },
+  buyHoldExit: {
+    name: 'Buy & Hold mit Exit',
+    subtitle: 'Vermieten & Verkauf nach 10 Jahren',
+    text: [
+      'Vermieten und Verkauf nach Ablauf der Spekulationsfrist. Die Immobilie wird mehrere Jahre vermietet und anschließend nach 10 Jahren verkauft.',
+      'In Deutschland sind Gewinne aus Immobilienverkäufen nach 10 Jahren Haltedauer steuerfrei (§ 23 EStG).',
+      'Das Szenario kombiniert: laufende Mieteinnahmen, Vermögensaufbau durch Tilgung, mögliche Wertsteigerung und steuerfreien Verkauf nach 10 Jahren.',
+    ],
+  },
+  fixFlip: {
+    name: 'Fix & Flip',
+    subtitle: 'Kaufen, sanieren & verkaufen',
+    text: [
+      'Kurzfristige Projektentwicklung. Die Immobilie wird gekauft, renoviert oder saniert und anschließend wieder verkauft.',
+      'Der Gewinn entsteht durch: Aufwertung der Immobilie, Preissteigerung und erfolgreiche Renovierung.',
+      'Dieses Szenario wird häufig von Projektentwicklern und Immobilien-Flippern genutzt.',
+    ],
+  },
+};
+
+// ─── SzenarioRow: einzelne Szenario-Zeile mit Accordion ───────────────────────────
+
+function SzenarioRow({
+  infoKey,
+  checked,
+  onChange,
+  disabled,
+  proOnly,
+  onUpgrade,
+}: {
+  infoKey: string;
+  checked: boolean;
+  onChange?: (v: boolean) => void;
+  disabled?: boolean;
+  proOnly?: boolean;
+  onUpgrade?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const info = SZENARIO_INFO[infoKey];
+  if (!info) return null;
+
+  return (
+    <div className={cn('rounded-lg border bg-gray-50 border-gray-100 overflow-hidden', disabled && 'opacity-70')}>
+      {/* Hauptzeile */}
+      <div className="flex items-center justify-between py-1.5 px-3">
+        <div className="flex items-center gap-1.5 min-w-0">
+          {disabled && <Lock className="w-3 h-3 text-gray-400 shrink-0" />}
+          <span className={cn('text-sm cursor-pointer truncate', disabled ? 'text-gray-400' : 'text-gray-700')}>
+            {info.name}
+          </span>
+          <button
+            type="button"
+            onClick={() => setOpen(o => !o)}
+            className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            aria-label="Info anzeigen"
+          >
+            <Info className="w-3.5 h-3.5" />
+          </button>
+        </div>
+        {proOnly && !onChange ? (
+          <Badge variant="secondary" className="text-[10px] bg-blue-100 text-blue-700 cursor-pointer shrink-0" onClick={onUpgrade}>Pro</Badge>
+        ) : (
+          <Switch checked={checked} onCheckedChange={onChange} disabled={disabled} />
+        )}
+      </div>
+      {/* Accordion-Inhalt */}
+      {open && (
+        <div className="px-3 pb-3 pt-0 border-t border-gray-100">
+          <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide mt-2 mb-1">{info.subtitle}</p>
+          {info.text.map((t, i) => (
+            <p key={i} className="text-xs text-gray-500 leading-relaxed mb-1.5 last:mb-0">{t}</p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── SzenarienSection ───────────────────────────────────────────────────────
+
+function SzenarienSection({
+  data,
+  set,
+  isPro,
+  onUpgrade,
+}: {
+  data: FormData;
+  set: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
+  isPro: boolean;
+  onUpgrade?: () => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">Szenarien berechnen</Label>
+      <div className="space-y-2">
+        {/* 1. Buy & Hold */}
+        <SzenarioRow
+          infoKey="vermietung"
+          checked={data.szenarioVermietung}
+          onChange={v => set('szenarioVermietung', v)}
+        />
+        {/* 2. Buy & Hold mit Exit (Pro) */}
+        {isPro ? (
+          <SzenarioRow
+            infoKey="buyHoldExit"
+            checked={data.szenarioBuyHold10JEnabled ?? false}
+            onChange={v => set('szenarioBuyHold10JEnabled', v)}
+          />
+        ) : (
+          <SzenarioRow
+            infoKey="buyHoldExit"
+            checked={false}
+            proOnly
+            onUpgrade={onUpgrade}
+          />
+        )}
+        {/* 3. Eigennutzungs-Strategie */}
+        <SzenarioRow
+          infoKey="eigennutzung"
+          checked={data.szenarioEigennutzung}
+          onChange={v => set('szenarioEigennutzung', v)}
+        />
+        {/* 4. Fix & Flip (Pro) */}
+        {isPro ? (
+          <SzenarioRow
+            infoKey="fixFlip"
+            checked={data.szenarioFlipSanieren}
+            onChange={v => set('szenarioFlipSanieren', v)}
+          />
+        ) : (
+          <SzenarioRow
+            infoKey="fixFlip"
+            checked={false}
+            proOnly
+            onUpgrade={onUpgrade}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Immobilienart-Karten ───────────────────────────────────────────────────────
 const ART_OPTIONS: { value: ImmobilienArt; label: string; icon: React.ReactNode; proOnly: boolean; desc: string }[] = [
   { value: 'wohnung', label: 'Wohnung', icon: <Home className="w-4 h-4" />, proOnly: false, desc: 'ETW / Eigentumswohnung' },
   { value: 'efh', label: 'Einfamilienhaus', icon: <Home className="w-4 h-4" />, proOnly: true, desc: 'EFH mit Grundstück' },
@@ -635,46 +797,12 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
       </div>
 
       {/* ── Szenarien ────────────────────────────────────────────────── */}
-      <div className="space-y-2">
-        <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide">Szenarien berechnen</Label>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 border border-gray-100">
-            <Label className="text-sm text-gray-700 cursor-pointer">Buy & Hold (Vermietung)</Label>
-            <Switch checked={data.szenarioVermietung} onCheckedChange={v => set('szenarioVermietung', v)} />
-          </div>
-
-          <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 border border-gray-100">
-            <Label className="text-sm text-gray-700 cursor-pointer">Eigennutzung</Label>
-            <Switch checked={data.szenarioEigennutzung} onCheckedChange={v => set('szenarioEigennutzung', v)} />
-          </div>
-
-          {isPro ? (
-            <>
-              <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 border border-gray-100">
-                <div className="flex items-center gap-1.5">
-                  <Label className="text-sm text-gray-700 cursor-pointer">Verkauf nach 24 Monaten</Label>
-                  <InfoBtn field="verkauf24Monate" />
-                </div>
-                <Switch checked={data.szenarioVerkauf24Monate} onCheckedChange={v => set('szenarioVerkauf24Monate', v)} />
-              </div>
-              <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 border border-gray-100">
-                <Label className="text-sm text-gray-700 cursor-pointer">Fix & Flip</Label>
-                <Switch checked={data.szenarioFlipSanieren} onCheckedChange={v => set('szenarioFlipSanieren', v)} />
-              </div>
-            </>
-          ) : (
-            <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50 border border-gray-100 opacity-70">
-              <div className="flex items-center gap-1.5">
-                <Lock className="w-3 h-3 text-gray-400" />
-                <Label className="text-sm text-gray-400">Verkauf nach 24 Monaten</Label>
-                <InfoBtn field="verkauf24Monate" />
-              </div>
-              <Badge variant="secondary" className="text-[10px] bg-blue-100 text-blue-700 cursor-pointer" onClick={onUpgrade}>Pro</Badge>
-            </div>
-          )}
-        </div>
-      </div>
+      <SzenarienSection
+        data={data}
+        set={set}
+        isPro={isPro}
+        onUpgrade={onUpgrade}
+      />
 
       {/* ── Berechnen-Button ─────────────────────────────────────────── */}
       <Button

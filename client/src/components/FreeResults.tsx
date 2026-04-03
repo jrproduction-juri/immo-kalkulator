@@ -216,12 +216,12 @@ export function FreeResultsPanel({ results, onExportPDF }: FreeResultsProps) {
           <div className="relative rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4">
             <div className="blur-sm select-none pointer-events-none space-y-2">
               <div className="p-3 rounded-lg border border-emerald-200 bg-emerald-50">
-                <p className="font-semibold text-xs text-emerald-700">Buy & Hold – Vermietung</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Langfristige Vermietungsstrategie</p>
+                <p className="font-semibold text-xs text-emerald-700">Buy & Hold</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Langfristige Vermietung</p>
               </div>
               <div className="p-3 rounded-lg border border-amber-200 bg-amber-50">
-                <p className="font-semibold text-xs text-amber-700">Eigennutzung</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Selbst einziehen statt vermieten</p>
+                <p className="font-semibold text-xs text-amber-700">Eigennutzungs-Strategie</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Selbst nutzen & steuerfrei verkaufen</p>
               </div>
             </div>
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">

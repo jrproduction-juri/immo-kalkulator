@@ -65,6 +65,7 @@ export interface FormData {
   szenarioEigennutzung: boolean;
   szenarioVerkauf24Monate: boolean; // steuerfrei nach 24 Monaten Eigennutzung
   szenarioFlipSanieren: boolean;
+  szenarioBuyHold10JEnabled?: boolean; // Buy & Hold mit Exit (10 Jahre)
 
   // ── Eigennutzung Steuerfreiheit ────────────────────────────────────────────────
   eigennutzungMonate?: number;
@@ -395,8 +396,8 @@ export function berechneFreeResults(data: FormData): FreeResults {
   };
 
   const szenarioEigennutzung: SzenarioResult = {
-    name: 'Eigennutzung',
-    beschreibung: 'Selbst einziehen statt mieten',
+    name: 'Eigennutzungs-Strategie',
+    beschreibung: 'Selbst nutzen & steuerfrei verkaufen',
     cashflowMonat: -(monatlicheRate + data.nichtUmlagefaehig + data.sonstigeAusgaben),
     bewertung: monatlicheRate < effektiveKaltmiete * 1.2 ? 'positiv' : 'neutral',
     details: `Monatliche Belastung: ${(monatlicheRate + data.nichtUmlagefaehig).toFixed(0)} € | Vergleichsmiete: ${effektiveKaltmiete.toFixed(0)} €`,
@@ -506,9 +507,9 @@ export function berechneProResults(data: FormData): ProResults {
   const steuerfreierGewinn = wertsteigerung2J - kaufnebenkosten;
   const istEtw = data.art === 'wohnung' || data.art === 'neubau';
   const szenarioVerkauf24Monate: SzenarioResult = {
-    name: '24 Monate Eigennutzung → steuerfrei',
+    name: 'Eigennutzungs-Strategie',
     beschreibung: istEtw
-      ? 'Selbst nutzen & nach 24 Monaten steuerfrei verkaufen (§ 23 EStG)'
+      ? 'Selbst nutzen & steuerfrei verkaufen'
       : 'Nur bei Eigentumswohnungen möglich (§ 23 EStG)',
     gewinnNachSteuer: istEtw ? steuerfreierGewinn : 0,
     rendite: istEtw && data.eigenkapital > 0 ? (steuerfreierGewinn / data.eigenkapital) * 100 : 0,
@@ -521,8 +522,8 @@ export function berechneProResults(data: FormData): ProResults {
 
   // Szenario: Buy & Hold 10 Jahre
   const szenarioBuyHold10J: SzenarioResult = {
-    name: 'Buy & Hold 10 Jahre',
-    beschreibung: 'Kaufen, vermieten & 10 Jahre halten',
+    name: 'Buy & Hold mit Exit',
+    beschreibung: 'Vermieten & Verkauf nach 10 Jahren',
     cashflowMonat: cashflowNachSteuer,
     rendite: freeResults.nettomietrendite + 3,
     gewinnNachSteuer: (cashflowNachSteuer * 12 * 10) + data.kaufpreis * 0.3,
@@ -731,7 +732,7 @@ export function berechneProResults(data: FormData): ProResults {
     cashflowNachSteuer,
     szenarioFlipSanieren: data.szenarioFlipSanieren ? szenarioFlipSanieren : undefined,
     szenarioVerkauf24Monate: data.szenarioVerkauf24Monate ? szenarioVerkauf24Monate : undefined,
-    szenarioBuyHold10J: data.szenarioVermietung ? szenarioBuyHold10J : undefined,
+    szenarioBuyHold10J: data.szenarioBuyHold10JEnabled ? szenarioBuyHold10J : undefined,
     projektion10J,
     risikoBewertung,
     zielrenditeAnalyse,
@@ -762,6 +763,7 @@ export function getDefaultFormData(art: ImmobilienArt = 'wohnung'): FormData {
     szenarioEigennutzung: false,
     szenarioVerkauf24Monate: false,
     szenarioFlipSanieren: false,
+    szenarioBuyHold10JEnabled: false,
   };
 
   switch (art) {

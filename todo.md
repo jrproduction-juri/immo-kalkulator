@@ -232,3 +232,13 @@
 
 ## Dashboard Chart-Sortierung (Batch 12)
 - [ ] Portfolio-Cashflow-Chart: neueste Objekte rechts (chronologisch von links nach rechts)
+
+## Szenario-Überarbeitung (Apr 2026)
+- [x] Szenario-Namen vereinheitlicht: Buy & Hold, Buy & Hold mit Exit, Eigennutzungs-Strategie, Fix & Flip
+- [x] calculations.ts: alle 4 Szenario-Namen + Untertitel aktualisiert
+- [x] InputForm: SzenarioRow-Komponente mit Info-Accordion (klappbar, mobile-optimiert)
+- [x] InputForm: SZENARIO_INFO-Texte für alle 4 Szenarien hinterlegt
+- [x] InputForm: Buy & Hold mit Exit als neues Pro-Szenario (szenarioBuyHold10JEnabled)
+- [x] FreeResults: Blur-Vorschau und Szenario-Namen aktualisiert
+- [x] PDF-Export: Untertitel (kursiv) unterhalb des Szenario-Namens hinzugefügt
+- [x] Pricing-Seite: Szenario-Features mit neuen offiziellen Bezeichnungen aktualisiert
