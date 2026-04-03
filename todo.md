@@ -224,3 +224,8 @@
 - [x] Navbar Dropdown: "Kauf widerrufen" Button mit Bestätigungs-Dialog (2 Klicks), nur 14 Tage sichtbar
 - [x] Buttons nur für zahlende Nutzer sichtbar (nicht bei none/trial)
 - [x] Tests für plan.cancel und plan.revoke schreiben
+
+## Info-Texte (i-Buttons) Überprüfung (Batch 11)
+- [x] Alle Info-Texte in InputForm.tsx prüfen und korrigieren
+- [x] Alle Info-Texte in KennzahlenLegende.tsx prüfen und korrigieren
+- [x] Alle Info-Texte in anderen Komponenten prüfen und korrigieren

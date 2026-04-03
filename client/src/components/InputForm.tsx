@@ -123,6 +123,26 @@ const INFO: Record<string, { title: string; text: string }> = {
     title: 'Steuerfreier Verkauf',
     text: 'Bei mind. 24 Monaten Eigennutzung ist der Verkauf einer Eigentumswohnung steuerfrei (§ 23 EStG). Diese Regelung gilt nur für Eigentumswohnungen, nicht für Mehrfamilienhäuser.',
   },
+  standort: {
+    title: 'Standort (optional)',
+    text: 'Ort oder Stadtteil der Immobilie (z.B. "Hamburg, Rahlstedt"). Wird im Exposé und in der Analyse als Standortangabe verwendet. Hat keinen Einfluss auf die Renditeberechnung.',
+  },
+  sonstigeAusgaben: {
+    title: 'Sonstige Ausgaben',
+    text: 'Weitere monatliche Kosten, die nicht in anderen Feldern erfasst sind (z.B. Steuerberater, Kleinreparaturen). Direkt cashflow-wirksam.',
+  },
+  highlights: {
+    title: 'Highlights (für Exposé)',
+    text: 'Besondere Merkmale der Immobilie für das Exposé (z.B. Balkon, Aufzug, Tiefgarage, Fußbodenheizung). Hat keinen Einfluss auf die Berechnung.',
+  },
+  baujahr: {
+    title: 'Baujahr',
+    text: 'Das Baujahr der Immobilie. Beeinflusst den AfA-Satz: Gebäude ab 2023 → 3 % p.a., ältere Gebäude → 2 % p.a. Neubauten haben oft geringere Instandhaltungskosten.',
+  },
+  zustand: {
+    title: 'Zustand der Immobilie',
+    text: 'Aktueller Zustand der Immobilie. Neuwertig = keine Renovierung nötig. Renoviert = kürzlich saniert. Renovierungsbedürftig = höhere Instandhaltungskosten einplanen.',
+  },
 };
 
 function InfoBtn({ field }: { field: string }) {
@@ -333,7 +353,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
               <NumberInput value={data.grundstueckFlaeche ?? 0} onChange={v => set('grundstueckFlaeche', v)} suffix="m²" placeholder="500" />
             </div>
             <div>
-              <FieldLabel label="Standort (optional)" field="nichtUmlagefaehig" />
+              <FieldLabel label="Standort (optional)" field="standort" />
               <Input
                 type="text"
                 value={data.standort ?? ''}
@@ -346,7 +366,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
         )}
         {art !== 'efh' && (
           <div>
-            <FieldLabel label="Standort (optional)" field="nichtUmlagefaehig" />
+            <FieldLabel label="Standort (optional)" field="standort" />
             <Input
               type="text"
               value={data.standort ?? ''}
@@ -490,13 +510,12 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
                 <NumberInput value={data.kreditrate ?? 0} onChange={v => set('kreditrate', v > 0 ? v : undefined as unknown as number)} suffix="€/Mo" placeholder="auto" />
               </div>
               <div>
-                <FieldLabel label="Sonstige Ausgaben" field="nichtUmlagefaehig" />
+                <FieldLabel label="Sonstige Ausgaben" field="sonstigeAusgaben" />
                 <NumberInput value={data.sonstigeAusgaben} onChange={v => set('sonstigeAusgaben', v)} suffix="€/Mo" placeholder="0" />
               </div>
             </div>
           </div>
         )}
-
         {/* Alle anderen Arten: Standard-Kosten */}
         {art !== 'efh' && (
           <div className="grid grid-cols-2 gap-3">
@@ -515,7 +534,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
               <NumberInput value={data.nichtUmlagefaehig} onChange={v => set('nichtUmlagefaehig', v)} suffix="€/Mo" placeholder="100" />
             </div>
             <div>
-              <FieldLabel label="Sonstige Ausgaben" field="nichtUmlagefaehig" />
+              <FieldLabel label="Sonstige Ausgaben" field="sonstigeAusgaben" />
               <NumberInput value={data.sonstigeAusgaben} onChange={v => set('sonstigeAusgaben', v)} suffix="€/Mo" placeholder="0" />
             </div>
           </div>
@@ -602,7 +621,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
               <NumberInput value={data.eigennutzungMonate ?? 0} onChange={v => set('eigennutzungMonate', v)} suffix="Mo" placeholder="0" step={1} />
             </div>
             <div>
-              <FieldLabel label="Highlights (für Exposé)" field="kaltmiete" />
+              <FieldLabel label="Highlights (für Exposé)" field="highlights" />
               <Input
                 type="text"
                 value={data.highlights ?? ''}
