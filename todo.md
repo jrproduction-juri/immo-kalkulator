@@ -242,3 +242,8 @@
 - [x] FreeResults: Blur-Vorschau und Szenario-Namen aktualisiert
 - [x] PDF-Export: Untertitel (kursiv) unterhalb des Szenario-Namens hinzugefügt
 - [x] Pricing-Seite: Szenario-Features mit neuen offiziellen Bezeichnungen aktualisiert
+
+## PDF & Mobile Fixes (Apr 2026)
+- [x] Basis-PDF: nur eingeschränkte Inhalte (Kaufpreis, Grundkennzahlen, Buy & Hold Szenario, kein Pro-Inhalt)
+- [x] Pro-PDF: Eigennutzungs-Szenario in Szenario-Sektion ergänzt (korrekte Reihenfolge: Buy&Hold, BH-Exit, Eigennutzung, Verkauf24M, Fix&Flip)
+- [x] Mobile Tab-Navigation: horizontal scrollbar (scrollbar-none, overflow-x-auto, w-max)

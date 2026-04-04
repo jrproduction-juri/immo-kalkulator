@@ -338,8 +338,8 @@ export default function Kalkulator() {
             ) : (
               <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <div className="px-4 pt-4 border-b border-border">
-                    <TabsList className="h-9 bg-secondary/50">
+                  <div className="px-4 pt-4 border-b border-border overflow-x-auto scrollbar-none">
+                    <TabsList className="h-9 bg-secondary/50 w-max min-w-full flex-nowrap">
                       <TabsTrigger value="ergebnisse" className="text-xs">
                         <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
                         Ergebnisse
