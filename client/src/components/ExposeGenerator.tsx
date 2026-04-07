@@ -1,12 +1,13 @@
 import { FormData, ProResults, formatEuro, formatProzent } from '@/lib/calculations';
 import { exportExposePDF } from '@/lib/pdfExport';
 import { Button } from '@/components/ui/button';
-import { Building2, MapPin, Euro, TrendingUp, Star, FileDown, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { Building2, MapPin, Euro, TrendingUp, Star, FileDown, Loader2, Sparkles, RefreshCw, X, Plus } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
 
 interface ExposeGeneratorProps {
   formData: FormData;
@@ -20,9 +21,96 @@ export function ExposeGenerator({ formData, results }: ExposeGeneratorProps) {
     renovierungsbeduerftig: 'Renovierungsbedürftig',
   }[formData.zustand];
 
-  const highlights = formData.highlights
-    ? formData.highlights.split(',').map(h => h.trim()).filter(Boolean)
-    : ['Gute Lage', 'Solide Bausubstanz', 'Investitionspotenzial'];
+  // KI-Highlights State: null = noch nicht geladen, [] = leer, [...] = geladen
+  const [aiHighlights, setAiHighlights] = useState<string[] | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editValue, setEditValue] = useState('');
+  const [newHighlight, setNewHighlight] = useState('');
+  const [showAddInput, setShowAddInput] = useState(false);
+  const hasGeneratedRef = useRef(false);
+
+  const generateHighlightsMutation = trpc.expose.generateHighlights.useMutation({
+    onSuccess: (data) => {
+      setAiHighlights(data.highlights);
+    },
+    onError: () => {
+      // Fallback auf manuelle Highlights oder generische
+      const fallback = formData.highlights
+        ? formData.highlights.split(',').map((h: string) => h.trim()).filter(Boolean)
+        : [];
+      setAiHighlights(fallback.length > 0 ? fallback : ['Solide Kapitalanlage', 'Vermietetes Objekt', 'Langfristiges Investment']);
+      toast.error('KI-Highlights konnten nicht generiert werden', { description: 'Generische Highlights werden angezeigt.' });
+    },
+  });
+
+  // Beim ersten Rendern automatisch KI-Highlights generieren
+  useEffect(() => {
+    if (hasGeneratedRef.current) return;
+    hasGeneratedRef.current = true;
+    generateHighlightsMutation.mutate({
+      kaufpreis: formData.kaufpreis,
+      wohnflaeche: formData.wohnflaeche,
+      baujahr: formData.baujahr,
+      zustand: formData.zustand as 'neu' | 'renoviert' | 'renovierungsbeduerftig',
+      ort: formData.standort || formData.ort || undefined,
+      adresse: formData.adresse || undefined,
+      zimmeranzahl: formData.zimmeranzahl || undefined,
+      energieklasse: formData.energieklasse || undefined,
+      kaltmiete: formData.kaltmiete,
+      nettoCashflowMonat: results.nettoCashflowMonat,
+      bruttomietrendite: results.bruttomietrendite,
+      nettomietrendite: results.nettomietrendite,
+      eigenkapitalrendite: results.eigenkapitalrendite ?? undefined,
+      gesamtinvestition: results.gesamtinvestition,
+      objekttyp: formData.objekttyp || undefined,
+      beschreibung: formData.beschreibung || undefined,
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleRegenerate = () => {
+    setAiHighlights(null);
+    generateHighlightsMutation.mutate({
+      kaufpreis: formData.kaufpreis,
+      wohnflaeche: formData.wohnflaeche,
+      baujahr: formData.baujahr,
+      zustand: formData.zustand as 'neu' | 'renoviert' | 'renovierungsbeduerftig',
+      ort: formData.standort || formData.ort || undefined,
+      adresse: formData.adresse || undefined,
+      zimmeranzahl: formData.zimmeranzahl || undefined,
+      energieklasse: formData.energieklasse || undefined,
+      kaltmiete: formData.kaltmiete,
+      nettoCashflowMonat: results.nettoCashflowMonat,
+      bruttomietrendite: results.bruttomietrendite,
+      nettomietrendite: results.nettomietrendite,
+      eigenkapitalrendite: results.eigenkapitalrendite ?? undefined,
+      gesamtinvestition: results.gesamtinvestition,
+      objekttyp: formData.objekttyp || undefined,
+      beschreibung: formData.beschreibung || undefined,
+    });
+  };
+
+  const handleEditSave = (index: number) => {
+    if (!aiHighlights) return;
+    const updated = [...aiHighlights];
+    updated[index] = editValue.trim();
+    setAiHighlights(updated.filter(Boolean));
+    setEditingIndex(null);
+  };
+
+  const handleDelete = (index: number) => {
+    if (!aiHighlights) return;
+    setAiHighlights(aiHighlights.filter((_, i) => i !== index));
+  };
+
+  const handleAddHighlight = () => {
+    if (!newHighlight.trim()) return;
+    setAiHighlights([...(aiHighlights ?? []), newHighlight.trim()]);
+    setNewHighlight('');
+    setShowAddInput(false);
+  };
+
+  const isLoading = generateHighlightsMutation.isPending || aiHighlights === null;
+  const displayHighlights = aiHighlights ?? [];
 
   const cashflowData = [
     { name: 'Kaltmiete', value: formData.kaltmiete, fill: '#059669' },
@@ -42,7 +130,12 @@ export function ExposeGenerator({ formData, results }: ExposeGeneratorProps) {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      await exportExposePDF(formData, results);
+      // Aktuelle KI-Highlights in formData einbetten für PDF
+      const formDataWithHighlights = {
+        ...formData,
+        highlights: displayHighlights.join(', '),
+      };
+      await exportExposePDF(formDataWithHighlights, results);
       toast.success('Exposé-PDF exportiert!', { description: 'Das PDF wurde in deinen Downloads gespeichert.' });
     } catch (e) {
       console.error('Exposé PDF error:', e);
@@ -128,20 +221,108 @@ export function ExposeGenerator({ formData, results }: ExposeGeneratorProps) {
             </p>
           </div>
 
-          {/* Highlights */}
-          {highlights.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Highlights</p>
-              <div className="flex flex-wrap gap-1.5">
-                {highlights.map((h, i) => (
-                  <div key={i} className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-100">
-                    <Star className="w-2.5 h-2.5 text-blue-600" />
-                    <span className="text-xs text-blue-700 font-medium">{h}</span>
-                  </div>
-                ))}
+          {/* KI-Highlights */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Highlights</p>
+                {!isLoading && (
+                  <span className="flex items-center gap-0.5 text-[10px] text-blue-500 font-medium">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    KI
+                  </span>
+                )}
               </div>
+              {!isLoading && (
+                <button
+                  onClick={handleRegenerate}
+                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-blue-600 transition-colors"
+                  title="Neu generieren"
+                >
+                  <RefreshCw className="w-2.5 h-2.5" />
+                  Neu
+                </button>
+              )}
             </div>
-          )}
+
+            {isLoading ? (
+              <div className="flex items-center gap-2 py-3">
+                <Loader2 className="w-3.5 h-3.5 text-blue-500 animate-spin" />
+                <span className="text-xs text-muted-foreground">KI analysiert das Objekt...</span>
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <div className="flex flex-wrap gap-1.5">
+                  {displayHighlights.map((h, i) => (
+                    <div key={i} className="group flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-100 hover:border-blue-300 transition-colors">
+                      {editingIndex === i ? (
+                        <input
+                          autoFocus
+                          className="text-xs text-blue-700 font-medium bg-transparent outline-none w-28"
+                          value={editValue}
+                          onChange={e => setEditValue(e.target.value)}
+                          onBlur={() => handleEditSave(i)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') handleEditSave(i);
+                            if (e.key === 'Escape') setEditingIndex(null);
+                          }}
+                        />
+                      ) : (
+                        <>
+                          <Star className="w-2.5 h-2.5 text-blue-600 shrink-0" />
+                          <span
+                            className="text-xs text-blue-700 font-medium cursor-pointer"
+                            onClick={() => { setEditingIndex(i); setEditValue(h); }}
+                            title="Klicken zum Bearbeiten"
+                          >
+                            {h}
+                          </span>
+                          <button
+                            onClick={() => handleDelete(i)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity ml-0.5"
+                            title="Entfernen"
+                          >
+                            <X className="w-2.5 h-2.5 text-blue-400 hover:text-red-500" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* Hinzufügen-Button */}
+                  {!showAddInput && displayHighlights.length < 6 && (
+                    <button
+                      onClick={() => setShowAddInput(true)}
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-dashed border-blue-200 text-blue-400 hover:border-blue-400 hover:text-blue-600 transition-colors text-xs"
+                    >
+                      <Plus className="w-2.5 h-2.5" />
+                      Hinzufügen
+                    </button>
+                  )}
+                </div>
+
+                {showAddInput && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <input
+                      autoFocus
+                      className="text-xs border border-blue-200 rounded-full px-2.5 py-1 outline-none focus:border-blue-400 w-40"
+                      placeholder="Neues Highlight..."
+                      value={newHighlight}
+                      onChange={e => setNewHighlight(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') handleAddHighlight();
+                        if (e.key === 'Escape') setShowAddInput(false);
+                      }}
+                    />
+                    <button onClick={handleAddHighlight} className="text-xs text-blue-600 hover:text-blue-800 font-medium">OK</button>
+                    <button onClick={() => setShowAddInput(false)} className="text-xs text-muted-foreground hover:text-foreground">Abbrechen</button>
+                  </div>
+                )}
+
+                <p className="text-[10px] text-muted-foreground/60 mt-1">Klicke auf ein Highlight zum Bearbeiten · Hover zum Löschen</p>
+              </div>
+            )}
+          </div>
 
           {/* Cashflow Chart */}
           <div>

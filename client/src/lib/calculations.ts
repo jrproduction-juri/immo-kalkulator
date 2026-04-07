@@ -15,7 +15,13 @@ export interface FormData {
   baujahr: number;
   zustand: 'neu' | 'renoviert' | 'renovierungsbeduerftig';
   standort?: string;
+  adresse?: string;
+  ort?: string;
   highlights?: string;
+  zimmeranzahl?: number;
+  energieklasse?: string;
+  objekttyp?: string;
+  beschreibung?: string;
 
   // ── Miete / Einnahmen ──────────────────────────────────────────────────────
   kaltmiete: number;            // Wohnung, Neubau: monatliche Kaltmiete

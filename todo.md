@@ -247,3 +247,8 @@
 - [x] Basis-PDF: nur eingeschränkte Inhalte (Kaufpreis, Grundkennzahlen, Buy & Hold Szenario, kein Pro-Inhalt)
 - [x] Pro-PDF: Eigennutzungs-Szenario in Szenario-Sektion ergänzt (korrekte Reihenfolge: Buy&Hold, BH-Exit, Eigennutzung, Verkauf24M, Fix&Flip)
 - [x] Mobile Tab-Navigation: horizontal scrollbar (scrollbar-none, overflow-x-auto, w-max)
+
+## KI-Highlights (Apr 2026)
+- [x] tRPC-Prozedur generateHighlights: KI analysiert Baujahr/Zustand/Ort/Rendite und generiert 3-5 ehrliche, objektspezifische Highlights
+- [x] Frontend: Highlights im Exposé-Tab automatisch via KI generieren (mit Lade-Spinner, manuell editierbar, Neu-generieren-Button)
+- [x] Highlights auch im PDF-Exposé verwenden (aktuelle KI-Highlights werden beim PDF-Export übergeben)

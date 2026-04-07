@@ -326,6 +326,114 @@ Format: {
           });
         }
       }),
+
+    // KI-generierte, objektspezifische Highlights
+    generateHighlights: protectedProcedure
+      .input(z.object({
+        kaufpreis: z.number(),
+        wohnflaeche: z.number(),
+        baujahr: z.number(),
+        zustand: z.enum(["neu", "renoviert", "renovierungsbeduerftig"]),
+        ort: z.string().optional(),
+        adresse: z.string().optional(),
+        zimmeranzahl: z.number().optional(),
+        energieklasse: z.string().optional(),
+        kaltmiete: z.number(),
+        nettoCashflowMonat: z.number(),
+        bruttomietrendite: z.number(),
+        nettomietrendite: z.number(),
+        eigenkapitalrendite: z.number().optional(),
+        gesamtinvestition: z.number(),
+        objekttyp: z.string().optional(),
+        beschreibung: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const {
+          kaufpreis, wohnflaeche, baujahr, zustand, ort, adresse,
+          zimmeranzahl, energieklasse, kaltmiete, nettoCashflowMonat,
+          bruttomietrendite, nettomietrendite, eigenkapitalrendite,
+          gesamtinvestition, objekttyp, beschreibung,
+        } = input;
+
+        const zustandText = {
+          neu: "Neubau / Erstbezug",
+          renoviert: "Renoviert / Gepflegt",
+          renovierungsbeduerftig: "Renovierungsbedürftig – Sanierungspotenzial",
+        }[zustand];
+
+        const currentYear = new Date().getFullYear();
+        const alter = currentYear - baujahr;
+
+        const systemPrompt = `Du bist ein erfahrener Immobiliengutachter und Investmentberater in Deutschland.
+Deine Aufgabe: Generiere 3 bis 5 prägnante, ehrliche und objektspezifische Highlights für ein Immobilien-Exposé.
+
+Regeln:
+- Jedes Highlight ist eine kurze Phrase (3–6 Wörter), keine ganze Sätze
+- Sei ehrlich: bei Renovierungsbedarf schreibe "Sanierungspotenzial" nicht "Top-Zustand"
+- Beziehe dich auf die konkreten Zahlen (Rendite, Cashflow, Baujahr, Lage)
+- Falls ein Ort angegeben ist, bewerte die Lage realistisch (Großstadt = gute Lage, Kleinstadt = solide Lage etc.)
+- Keine leeren Marketing-Phrasen wie "Traumimmobilie" oder "einmalige Gelegenheit"
+- Antworte NUR mit einem JSON-Array von Strings: ["Highlight 1", "Highlight 2", ...]`;
+
+        const userPrompt = `Immobilien-Daten:
+- Kaufpreis: ${kaufpreis.toLocaleString("de-DE")} €
+- Wohnfläche: ${wohnflaeche} m²
+- Baujahr: ${baujahr} (Alter: ca. ${alter} Jahre)
+- Zustand: ${zustandText}
+- Ort: ${ort || adresse || "nicht angegeben"}
+- Zimmer: ${zimmeranzahl ?? "nicht angegeben"}
+- Energieklasse: ${energieklasse || "nicht angegeben"}
+- Objekttyp: ${objekttyp || "nicht angegeben"}
+- Kaltmiete: ${kaltmiete.toLocaleString("de-DE")} € / Monat
+- Netto-Cashflow: ${nettoCashflowMonat >= 0 ? "+" : ""}${nettoCashflowMonat.toFixed(0)} € / Monat
+- Bruttomietrendite: ${bruttomietrendite.toFixed(2)} %
+- Nettomietrendite: ${nettomietrendite.toFixed(2)} %
+- Eigenkapitalrendite: ${eigenkapitalrendite != null ? eigenkapitalrendite.toFixed(2) + " %" : "nicht berechnet"}
+- Gesamtinvestition: ${gesamtinvestition.toLocaleString("de-DE")} €
+${beschreibung ? `- Beschreibung: ${beschreibung}` : ""}
+
+Generiere jetzt 3–5 ehrliche, prägnante Highlights als JSON-Array.`;
+
+        try {
+          const response = await invokeLLM({
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            response_format: {
+              type: "json_schema",
+              json_schema: {
+                name: "highlights_list",
+                strict: true,
+                schema: {
+                  type: "object",
+                  properties: {
+                    highlights: {
+                      type: "array",
+                      items: { type: "string" },
+                      description: "Liste von 3–5 prägnanten Highlights",
+                    },
+                  },
+                  required: ["highlights"],
+                  additionalProperties: false,
+                },
+              },
+            },
+          });
+          const rawContent = response.choices?.[0]?.message?.content ?? "";
+          const content = typeof rawContent === "string" ? rawContent : JSON.stringify(rawContent);
+          const parsed = JSON.parse(content);
+          const highlights: string[] = Array.isArray(parsed.highlights)
+            ? parsed.highlights.slice(0, 5)
+            : [];
+          return { highlights };
+        } catch (e) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Highlights konnten nicht generiert werden.",
+          });
+        }
+      }),
   }),
 
   // ─── Admin-Router ────────────────────────────────────────────────────────
