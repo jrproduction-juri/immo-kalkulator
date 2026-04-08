@@ -325,7 +325,22 @@ async function handleCheckoutCompleted(
   }
 
   // Plan ermitteln (mit Fallback für externe Payment-Links)
-  const planInfo = await determinePlanFromSession(session);
+  let planInfo = await determinePlanFromSession(session);
+  
+  // Spezialfall: 0 Euro Zahlungen (Rabattcode)
+  // Bei 0 Euro Zahlungen kann determinePlanFromSession fehlschlagen
+  // Fallback: Plan aus Metadata oder investor als Standard
+  if (!planInfo && isFreePurchase) {
+    const metadataPlan = session.metadata?.plan_id as any;
+    if (metadataPlan && ["basic", "pro", "investor"].includes(metadataPlan)) {
+      console.log(`[Webhook] 🎟️ Plan aus Metadata für 0 Euro Zahlung: ${metadataPlan}`);
+      planInfo = { planId: metadataPlan, billingType: "lifetime" };
+    } else {
+      console.log(`[Webhook] 🎟️ Kein Plan in Metadata, verwende Fallback investor für 0 Euro Zahlung`);
+      planInfo = { planId: "investor", billingType: "lifetime" };
+    }
+  }
+  
   if (!planInfo) {
     console.error(`[Webhook] ❌ Plan konnte nicht ermittelt werden für User ${userId} | Session ${session.id}`);
     // Trotzdem als verarbeitet markieren um Endlosschleifen zu vermeiden

@@ -262,3 +262,7 @@
 
 ## Admin-Plan-Änder-Fix (Apr 2026)
 - [x] updateUserPlan: Drizzle ORM Fehler behoben (Shorthand `plan` zu `plan: plan` korrigiert)
+
+
+## 0 Euro Rabattcode-Fix (Apr 2026)
+- [x] Webhook: 0 Euro Zahlungen - Plan aus Metadata auslesen oder investor als Fallback
