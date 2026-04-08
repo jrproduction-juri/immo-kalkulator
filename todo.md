@@ -258,3 +258,7 @@
 - [x] Webhook: Fehlende Signatur nur ablehnen wenn Secret vorhanden
 - [x] Webhook: Verbessertes Logging für Debugging
 - [x] Plan-Aktivierung via checkout.session.completed funktioniert korrekt
+
+
+## Admin-Plan-Änder-Fix (Apr 2026)
+- [x] updateUserPlan: Drizzle ORM Fehler behoben (Shorthand `plan` zu `plan: plan` korrigiert)

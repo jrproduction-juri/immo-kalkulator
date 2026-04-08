@@ -105,7 +105,7 @@ export async function updateUserPlan(
   if (!db) throw new Error("Database not available");
   await db.update(users)
     .set({
-      plan,
+      plan: plan,
       planActivatedAt: new Date(),
       planExpiresAt: options?.planExpiresAt ?? null,
       trialStartedAt: options?.trialStartedAt ?? null,
