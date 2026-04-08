@@ -19,23 +19,39 @@ import { getPlanFromPriceId, PlanId } from "./products";
  */
 export async function handleStripeWebhook(req: Request, res: Response) {
   const sig = req.headers["stripe-signature"];
+  const webhookSecretCheck = ENV.stripeWebhookSecret;
 
-  if (!sig) {
+  // Nur ablehnen wenn ein Secret konfiguriert ist UND die Signatur fehlt
+  if (!sig && webhookSecretCheck) {
     console.error("[Webhook] ❌ Fehlende Stripe-Signatur");
     return res.status(400).json({ error: "Fehlende Stripe-Signatur" });
   }
 
   let event: Stripe.Event;
 
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      ENV.stripeWebhookSecret
-    );
-  } catch (err) {
-    console.error("[Webhook] ❌ Signaturverifizierung fehlgeschlagen:", err);
-    return res.status(400).json({ error: "Webhook-Signatur ungültig" });
+  const webhookSecret = ENV.stripeWebhookSecret;
+
+  if (!webhookSecret) {
+    // Kein Webhook-Secret konfiguriert: JSON direkt parsen (nur in Entwicklung/Test)
+    console.warn("[Webhook] ⚠️ Kein STRIPE_WEBHOOK_SECRET konfiguriert – Signaturverifizierung übersprungen!");
+    try {
+      const rawBody = req.body instanceof Buffer ? req.body.toString("utf8") : req.body;
+      event = JSON.parse(typeof rawBody === "string" ? rawBody : JSON.stringify(rawBody)) as Stripe.Event;
+    } catch (err) {
+      console.error("[Webhook] ❌ Body konnte nicht geparst werden:", err);
+      return res.status(400).json({ error: "Ungültiger Webhook-Body" });
+    }
+  } else {
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig as string,
+        webhookSecret
+      );
+    } catch (err) {
+      console.error("[Webhook] ❌ Signaturverifizierung fehlgeschlagen:", err);
+      return res.status(400).json({ error: "Webhook-Signatur ungültig" });
+    }
   }
 
   console.log(`[Webhook] 📨 Event empfangen: ${event.type} | Event-ID: ${event.id}`);

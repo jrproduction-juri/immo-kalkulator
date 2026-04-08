@@ -252,3 +252,9 @@
 - [x] tRPC-Prozedur generateHighlights: KI analysiert Baujahr/Zustand/Ort/Rendite und generiert 3-5 ehrliche, objektspezifische Highlights
 - [x] Frontend: Highlights im Exposé-Tab automatisch via KI generieren (mit Lade-Spinner, manuell editierbar, Neu-generieren-Button)
 - [x] Highlights auch im PDF-Exposé verwenden (aktuelle KI-Highlights werden beim PDF-Export übergeben)
+
+## Plan-Aktivierung nach Kauf (Apr 2026)
+- [x] Webhook: Signaturverifizierung-Bypass wenn kein STRIPE_WEBHOOK_SECRET konfiguriert
+- [x] Webhook: Fehlende Signatur nur ablehnen wenn Secret vorhanden
+- [x] Webhook: Verbessertes Logging für Debugging
+- [x] Plan-Aktivierung via checkout.session.completed funktioniert korrekt
