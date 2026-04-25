@@ -258,12 +258,12 @@ function SzenarioRow({
   if (!info) return null;
 
   return (
-    <div className={cn('rounded-lg border bg-gray-50 border-gray-100 overflow-hidden', disabled && 'opacity-70')}>
+    <div className={cn('rounded-lg overflow-hidden', disabled && 'opacity-70')} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
       {/* Hauptzeile */}
       <div className="flex items-center justify-between py-1.5 px-3">
         <div className="flex items-center gap-1.5 min-w-0">
           {disabled && <Lock className="w-3 h-3 text-gray-400 shrink-0" />}
-          <span className={cn('text-sm cursor-pointer truncate', disabled ? 'text-gray-400' : 'text-gray-700')}>
+          <span className={cn('text-sm cursor-pointer truncate', disabled ? '' : '')}>
             {info.name}
           </span>
           <button
@@ -283,7 +283,7 @@ function SzenarioRow({
       </div>
       {/* Accordion-Inhalt */}
       {open && (
-        <div className="px-3 pb-3 pt-0 border-t border-gray-100">
+        <div className="px-3 pb-3 pt-0" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide mt-2 mb-1">{info.subtitle}</p>
           {info.text.map((t, i) => (
             <p key={i} className="text-xs text-gray-500 leading-relaxed mb-1.5 last:mb-0">{t}</p>
@@ -422,12 +422,12 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
                 type="button"
                 onClick={() => handleArtChange(opt.value)}
                 className={cn(
-                  'relative flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left transition-all text-sm',
+                  'relative flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all text-sm',
                   active
-                    ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                    ? 'border-blue-500 bg-blue-900/20 text-blue-300 font-medium border'
                     : locked
-                      ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-pointer hover:border-blue-300'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50/30'
+                      ? 'opacity-50 border border-white/10 text-white/30'
+                      : 'border border-white/10 text-white/70 hover:border-blue-500/30'
                 )}
               >
                 <span className={active ? 'text-blue-600' : locked ? 'text-gray-400' : 'text-gray-500'}>

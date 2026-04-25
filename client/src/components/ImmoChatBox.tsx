@@ -145,7 +145,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
       {/* ─── Chat-Fenster ─────────────────────────────────────────────────── */}
       {isOpen && (
         <div className="
-          w-[92vw] max-w-[400px] bg-white rounded-2xl shadow-2xl border border-slate-200
+          w-[92vw] max-w-[400px] rounded-2xl shadow-2xl
           flex flex-col overflow-hidden
           animate-in slide-in-from-bottom-4 fade-in duration-200
         " style={{ height: 'min(560px, 80vh)' }}>
@@ -229,7 +229,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                           onClick={() => sendMessage(prompt)}
                           className="
                             text-left text-xs px-3 py-2 rounded-lg border border-slate-200
-                            bg-white hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700
+                            hover:border-blue-500/30
                             text-slate-600 transition-colors leading-snug
                           "
                         >
@@ -253,7 +253,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                       'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
                       msg.role === 'user'
                         ? 'bg-slate-900 text-white rounded-br-sm'
-                        : 'bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm'
+                        : 'rounded-bl-sm'
                     )}>
                       {msg.role === 'assistant' ? (
                         <div className="prose prose-sm max-w-none prose-slate">
@@ -269,7 +269,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                 {/* Lade-Indikator */}
                 {isLoading && (
                   <div className="flex justify-start">
-                    <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+                    <div className="rounded-2xl rounded-bl-sm px-4 py-3" style={{ background: "#1a2235", border: "1px solid rgba(255,255,255,0.08)" }}>
                       <div className="flex items-center gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                         <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -283,7 +283,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
               </div>
 
               {/* Eingabefeld */}
-              <div className="p-3 border-t border-slate-200 bg-white">
+              <div className="p-3" style={{ borderTop: "1px solid rgba(255,255,255,0.08)", background: "#0f1929" }}>
                 <div className="flex items-end gap-2">
                   <textarea
                     ref={inputRef}

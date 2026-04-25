@@ -136,7 +136,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border shadow-sm">
+      <header className="sticky top-0 z-50 border-b" style={{ backgroundColor: "rgba(10, 15, 26, 0.95)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.06)" }}>
         <div className="container">
           <div className="flex items-center justify-between h-14">
 
@@ -148,7 +148,7 @@ export function Navbar() {
                 className="h-11 w-auto object-contain transition-transform group-hover:scale-105"
               />
               <div>
-                <span className="font-display font-bold text-sm text-foreground leading-none block">
+                <span className="font-display font-bold text-sm text-white leading-none block">
                   ImmoRenditeTool
                 </span>
                 <span className="text-[10px] text-muted-foreground leading-none">

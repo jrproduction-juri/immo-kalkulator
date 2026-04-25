@@ -2,7 +2,10 @@ import { FreeResults as FreeResultsType, formatEuro, formatProzent } from '@/lib
 import { MetricCard, MetricGrid } from './MetricCard';
 import { usePro } from '@/contexts/ProContext';
 import { ProLockBadge } from './UpgradeModal';
-import { CheckCircle2, AlertTriangle, XCircle, TrendingUp, Lock, ArrowRight, FileText, Mail, Building2 } from 'lucide-react';
+import {
+  CheckCircle2, AlertTriangle, XCircle, TrendingUp, Lock,
+  ArrowRight, FileText, Mail, Building2, Brain, Zap, Shield
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
@@ -19,48 +22,85 @@ function EmpfehlungBanner({ empfehlung, text }: { empfehlung: FreeResultsType['e
     sinnvoll: {
       icon: CheckCircle2,
       label: 'Kauf sinnvoll',
-      bg: 'bg-emerald-50 border-emerald-200',
-      text: 'text-emerald-800',
-      iconColor: 'text-emerald-600',
+      dotColor: '#10B981',
+      borderColor: 'rgba(16, 185, 129, 0.25)',
+      bgColor: 'rgba(16, 185, 129, 0.08)',
+      textColor: '#10B981',
+      subColor: 'rgba(255,255,255,0.5)',
     },
     pruefen: {
       icon: AlertTriangle,
       label: 'Prüfen empfohlen',
-      bg: 'bg-amber-50 border-amber-200',
-      text: 'text-amber-800',
-      iconColor: 'text-amber-600',
+      dotColor: '#F59E0B',
+      borderColor: 'rgba(245, 158, 11, 0.25)',
+      bgColor: 'rgba(245, 158, 11, 0.08)',
+      textColor: '#F59E0B',
+      subColor: 'rgba(255,255,255,0.5)',
     },
     kritisch: {
       icon: XCircle,
       label: 'Kritisch bewerten',
-      bg: 'bg-red-50 border-red-200',
-      text: 'text-red-800',
-      iconColor: 'text-red-600',
+      dotColor: '#EF4444',
+      borderColor: 'rgba(239, 68, 68, 0.25)',
+      bgColor: 'rgba(239, 68, 68, 0.08)',
+      textColor: '#EF4444',
+      subColor: 'rgba(255,255,255,0.5)',
     },
   };
   const c = config[empfehlung];
   return (
-    <div className={`flex items-start gap-3 p-4 rounded-xl border ${c.bg}`}>
-      <c.icon className={`w-5 h-5 shrink-0 mt-0.5 ${c.iconColor}`} />
+    <div
+      className="flex items-start gap-3 p-4 rounded-xl"
+      style={{ background: c.bgColor, border: `1px solid ${c.borderColor}` }}
+    >
+      <div className="flex items-center gap-2 shrink-0 mt-0.5">
+        <div
+          className="w-2.5 h-2.5 rounded-full"
+          style={{ background: c.dotColor, boxShadow: `0 0 8px ${c.dotColor}80` }}
+        />
+        <c.icon className="w-4 h-4" style={{ color: c.textColor }} />
+      </div>
       <div>
-        <p className={`font-display font-bold text-sm ${c.text}`}>{c.label}</p>
-        <p className={`text-xs mt-0.5 ${c.text} opacity-80`}>{text}</p>
+        <p className="font-bold text-sm" style={{ color: c.textColor, fontFamily: 'Sora, sans-serif' }}>
+          {c.label}
+        </p>
+        <p className="text-xs mt-0.5" style={{ color: c.subColor }}>{text}</p>
       </div>
     </div>
   );
 }
 
-/** Gesperrte Kennzahl-Kachel mit Blur-Effekt und Lock-Icon */
 function LockedMetricCard({ label }: { label: string }) {
   return (
-    <div className="relative rounded-xl border border-dashed border-gray-200 bg-gray-50 p-3 overflow-hidden">
+    <div
+      className="relative rounded-xl p-3 overflow-hidden"
+      style={{
+        background: 'rgba(255,255,255,0.02)',
+        border: '1px dashed rgba(255,255,255,0.08)'
+      }}
+    >
       <div className="blur-sm select-none">
-        <p className="text-xs text-muted-foreground mb-1">{label}</p>
-        <p className="font-bold text-lg text-foreground">– – –</p>
+        <p className="text-xs mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>{label}</p>
+        <p className="font-bold text-lg text-white">– – –</p>
       </div>
       <div className="absolute inset-0 flex items-center justify-center">
-        <Lock className="w-4 h-4 text-gray-400" />
+        <Lock className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.2)' }} />
       </div>
+    </div>
+  );
+}
+
+function ProgressBar({ value, max, color }: { value: number; max: number; color: string }) {
+  const pct = Math.min(100, Math.max(0, (value / max) * 100));
+  return (
+    <div
+      className="h-1.5 rounded-full overflow-hidden mt-2"
+      style={{ background: 'rgba(255,255,255,0.06)' }}
+    >
+      <div
+        className="h-full rounded-full transition-all duration-700"
+        style={{ width: `${pct}%`, background: color }}
+      />
     </div>
   );
 }
@@ -70,22 +110,45 @@ export function FreeResultsPanel({ results, onExportPDF }: FreeResultsProps) {
   const [, navigate] = useLocation();
 
   const cashflowData = [
-    { name: 'Einnahmen', value: results.monatlicheEinnahmen, fill: '#059669' },
-    { name: 'Kreditrate', value: results.monatlicheRate, fill: '#1565C0' },
-    { name: 'Hausgeld+Rückl.', value: results.monatlicheKosten - results.monatlicheRate, fill: '#7C3AED' },
-    { name: 'Cashflow', value: Math.abs(results.nettoCashflowMonat), fill: results.nettoCashflowMonat >= 0 ? '#059669' : '#DC2626' },
+    { name: 'Einnahmen', value: results.monatlicheEinnahmen, fill: '#10B981' },
+    { name: 'Kreditrate', value: results.monatlicheRate, fill: '#3B82F6' },
+    { name: 'Hausgeld+Rückl.', value: results.monatlicheKosten - results.monatlicheRate, fill: '#8B5CF6' },
+    { name: 'Cashflow', value: Math.abs(results.nettoCashflowMonat), fill: results.nettoCashflowMonat >= 0 ? '#10B981' : '#EF4444' },
   ];
+
+  const renditeColor = results.bruttomietrendite >= 5
+    ? '#10B981'
+    : results.bruttomietrendite >= 3.5
+    ? '#F59E0B'
+    : '#EF4444';
+
+  const cashflowColor = results.nettoCashflowMonat >= 0 ? '#10B981'
+    : results.nettoCashflowMonat >= -200 ? '#F59E0B' : '#EF4444';
 
   return (
     <div className="space-y-5 animate-slide-in-up">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-display font-bold text-lg text-foreground">Analyse-Ergebnis</h2>
-          <p className="text-xs text-muted-foreground">Basierend auf deinen Eingaben</p>
+          <h2
+            className="font-bold text-lg text-white"
+            style={{ fontFamily: 'Sora, sans-serif' }}
+          >
+            Analyse-Ergebnis
+          </h2>
+          <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            Basierend auf deinen Eingaben
+          </p>
         </div>
         {isFree && (
-          <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs font-medium">
+          <span
+            className="px-2.5 py-0.5 rounded-full text-xs font-medium"
+            style={{
+              background: 'rgba(255,255,255,0.06)',
+              color: 'rgba(255,255,255,0.4)',
+              border: '1px solid rgba(255,255,255,0.08)'
+            }}
+          >
             Free
           </span>
         )}
@@ -94,39 +157,97 @@ export function FreeResultsPanel({ results, onExportPDF }: FreeResultsProps) {
       {/* Empfehlung */}
       <EmpfehlungBanner empfehlung={results.empfehlung} text={results.empfehlungText} />
 
-      {/* Kernkennzahlen: Free zeigt nur Brutto + Cashflow, Rest gesperrt */}
+      {/* Kernkennzahlen */}
       <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Kernkennzahlen</p>
-        <MetricGrid>
-          {/* Immer sichtbar */}
-          <MetricCard
-            label="Bruttomietrendite"
-            value={formatProzent(results.bruttomietrendite)}
-            trend={results.bruttomietrendite >= 5 ? 'up' : results.bruttomietrendite >= 3.5 ? 'neutral' : 'down'}
-            color={results.bruttomietrendite >= 5 ? 'success' : results.bruttomietrendite >= 3.5 ? 'warning' : 'danger'}
-            highlight
-            infoKuerzel="BMR"
-          />
-          <MetricCard
-            label="Netto-Cashflow / Monat"
-            value={formatEuro(results.nettoCashflowMonat)}
-            subValue={`${formatEuro(results.nettoCashflowJahr)} / Jahr`}
-            trend={results.nettoCashflowMonat >= 0 ? 'up' : 'down'}
-            color={results.nettoCashflowMonat >= 0 ? 'success' : results.nettoCashflowMonat >= -200 ? 'warning' : 'danger'}
-            highlight
-            infoKuerzel="CF"
-          />
-          {/* Hinweis für automatische Schätzung */}
-          {results.usesEstimate && (
-            <div className="col-span-full p-3 bg-blue-50 border border-blue-200 rounded-lg flex gap-2">
-              <AlertTriangle className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-blue-800">
-                <p className="font-semibold">Automatische Schätzung</p>
-                <p className="mt-1 opacity-90">Da keine genauen Werte für Rücklagen und nicht umlagefähige Kosten angegeben wurden, nutzt das Tool eine automatische Schätzung von 50% des Hausgeldes (≈ {formatEuro(results.estimatedEigentuemerkosten)}/Monat).</p>
-              </div>
+        <p
+          className="text-xs font-semibold uppercase tracking-wider mb-3"
+          style={{ color: 'rgba(255,255,255,0.3)' }}
+        >
+          Kernkennzahlen
+        </p>
+
+        {/* Visual Metric Cards */}
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          {/* Bruttomietrendite */}
+          <div
+            className="rounded-xl p-4"
+            style={{
+              background: '#111827',
+              border: `1px solid ${renditeColor}25`
+            }}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Bruttomietrendite</p>
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ background: renditeColor, boxShadow: `0 0 6px ${renditeColor}80` }}
+              />
             </div>
-          )}
-          {/* Gesperrt für Free */}
+            <p
+              className="font-bold text-2xl"
+              style={{ fontFamily: 'IBM Plex Mono, monospace', color: renditeColor }}
+            >
+              {formatProzent(results.bruttomietrendite)}
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              {results.bruttomietrendite >= 5 ? 'sehr gut' : results.bruttomietrendite >= 3.5 ? 'akzeptabel' : 'kritisch'}
+            </p>
+            <ProgressBar value={results.bruttomietrendite} max={8} color={renditeColor} />
+          </div>
+
+          {/* Netto-Cashflow */}
+          <div
+            className="rounded-xl p-4"
+            style={{
+              background: '#111827',
+              border: `1px solid ${cashflowColor}25`
+            }}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Cashflow/Monat</p>
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ background: cashflowColor, boxShadow: `0 0 6px ${cashflowColor}80` }}
+              />
+            </div>
+            <p
+              className="font-bold text-2xl"
+              style={{ fontFamily: 'IBM Plex Mono, monospace', color: cashflowColor }}
+            >
+              {results.nettoCashflowMonat >= 0 ? '+' : ''}{formatEuro(results.nettoCashflowMonat)}
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              {formatEuro(results.nettoCashflowJahr)} / Jahr
+            </p>
+            <ProgressBar
+              value={Math.max(0, results.nettoCashflowMonat + 500)}
+              max={1000}
+              color={cashflowColor}
+            />
+          </div>
+        </div>
+
+        {/* Estimate Warning */}
+        {results.usesEstimate && (
+          <div
+            className="p-3 rounded-lg flex gap-2 mb-3"
+            style={{
+              background: 'rgba(59, 130, 246, 0.08)',
+              border: '1px solid rgba(59, 130, 246, 0.2)'
+            }}
+          >
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#60A5FA' }} />
+            <div className="text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              <p className="font-semibold" style={{ color: '#60A5FA' }}>Automatische Schätzung</p>
+              <p className="mt-1">
+                Keine genauen Werte für Rücklagen angegeben — Schätzung: {formatEuro(results.estimatedEigentuemerkosten)}/Monat.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Additional Metrics */}
+        <MetricGrid>
           {isBasic ? (
             <>
               <MetricCard
@@ -150,51 +271,118 @@ export function FreeResultsPanel({ results, onExportPDF }: FreeResultsProps) {
         </MetricGrid>
       </div>
 
-      {/* Finanzierungsübersicht: nur für Basic+ */}
+      {/* Finanzierungsübersicht */}
       {isBasic ? (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Finanzierung</p>
-          <MetricGrid>
-          <MetricCard label="Kaufnebenkosten" value={formatEuro(results.kaufnebenkosten)} size="sm" infoKuerzel="NK" />
-          <MetricCard label="Gesamtinvestition" value={formatEuro(results.gesamtinvestition)} size="sm" color="blue" infoKuerzel="GI" />
-          <MetricCard label="Darlehenssumme" value={formatEuro(results.darlehenssumme)} size="sm" />
-          <MetricCard label="Monatliche Kosten" value={formatEuro(results.monatlicheKosten)} size="sm" />
-          </MetricGrid>
+          <p
+            className="text-xs font-semibold uppercase tracking-wider mb-3"
+            style={{ color: 'rgba(255,255,255,0.3)' }}
+          >
+            Finanzierung
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: 'Kaufnebenkosten', value: formatEuro(results.kaufnebenkosten) },
+              { label: 'Gesamtinvestition', value: formatEuro(results.gesamtinvestition), highlight: true },
+              { label: 'Darlehenssumme', value: formatEuro(results.darlehenssumme) },
+              { label: 'Monatliche Kosten', value: formatEuro(results.monatlicheKosten) },
+            ].map(({ label, value, highlight }) => (
+              <div
+                key={label}
+                className="p-3 rounded-xl"
+                style={{
+                  background: '#111827',
+                  border: highlight ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid rgba(255,255,255,0.06)'
+                }}
+              >
+                <p className="text-xs mb-1" style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</p>
+                <p
+                  className="font-bold text-sm"
+                  style={{
+                    fontFamily: 'IBM Plex Mono, monospace',
+                    color: highlight ? '#60A5FA' : 'rgba(255,255,255,0.8)'
+                  }}
+                >
+                  {value}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
-        /* Gesperrter Finanzierungsbereich für Free */
-        <div className="relative rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4">
+        <div
+          className="relative rounded-xl p-4"
+          style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px dashed rgba(255,255,255,0.08)'
+          }}
+        >
           <div className="blur-sm select-none pointer-events-none">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Finanzierung</p>
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
+              style={{ color: 'rgba(255,255,255,0.3)' }}
+            >
+              Finanzierung
+            </p>
             <div className="grid grid-cols-2 gap-2">
               {['Kaufnebenkosten', 'Gesamtinvestition', 'Darlehenssumme', 'Monatliche Kosten'].map(l => (
-                <div key={l} className="bg-white rounded-lg p-2 border border-border">
-                  <p className="text-xs text-muted-foreground">{l}</p>
-                  <p className="font-bold text-sm">– – –</p>
+                <div
+                  key={l}
+                  className="rounded-lg p-2"
+                  style={{ background: 'rgba(255,255,255,0.04)' }}
+                >
+                  <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>{l}</p>
+                  <p className="font-bold text-sm text-white">– – –</p>
                 </div>
               ))}
             </div>
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-            <Lock className="w-5 h-5 text-gray-400" />
-            <p className="text-xs text-gray-500 font-medium">Basic oder höher</p>
+            <Lock className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.2)' }} />
+            <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              Basic oder höher
+            </p>
           </div>
         </div>
       )}
 
-      {/* Cashflow-Chart: immer sichtbar */}
-      <div className="bg-card border border-border rounded-xl p-4">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+      {/* Cashflow-Chart */}
+      <div
+        className="rounded-xl p-4"
+        style={{
+          background: '#111827',
+          border: '1px solid rgba(255,255,255,0.06)'
+        }}
+      >
+        <p
+          className="text-xs font-semibold uppercase tracking-wider mb-3"
+          style={{ color: 'rgba(255,255,255,0.3)' }}
+        >
           Monatlicher Cashflow-Überblick
         </p>
         <ResponsiveContainer width="100%" height={160}>
           <BarChart data={cashflowData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+            <XAxis
+              dataKey="name"
+              tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.4)' }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.4)' }}
+              axisLine={false}
+              tickLine={false}
+            />
             <Tooltip
               formatter={(v: number) => [formatEuro(v), '']}
-              contentStyle={{ fontSize: 11, borderRadius: 8 }}
+              contentStyle={{
+                fontSize: 11,
+                borderRadius: 8,
+                background: '#1a2235',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: 'white'
+              }}
             />
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
               {cashflowData.map((entry, i) => (
@@ -205,94 +393,158 @@ export function FreeResultsPanel({ results, onExportPDF }: FreeResultsProps) {
         </ResponsiveContainer>
       </div>
 
-      {/* Basis-Szenarien: immer anzeigen */}
+      {/* Basis-Szenarien */}
       <div>
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Basis-Szenarien</p>
+        <div className="flex items-center justify-between mb-3">
+          <p
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: 'rgba(255,255,255,0.3)' }}
+          >
+            Basis-Szenarien
+          </p>
           {isFree && <ProLockBadge />}
         </div>
         {isFree ? (
-          /* Gesperrte Szenarien für Free */
-          <div className="relative rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4">
+          <div
+            className="relative rounded-xl p-4"
+            style={{
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px dashed rgba(255,255,255,0.08)'
+            }}
+          >
             <div className="blur-sm select-none pointer-events-none space-y-2">
-              <div className="p-3 rounded-lg border border-emerald-200 bg-emerald-50">
-                <p className="font-semibold text-xs text-emerald-700">Buy & Hold</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Langfristige Vermietung</p>
+              <div
+                className="p-3 rounded-lg"
+                style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}
+              >
+                <p className="font-semibold text-xs" style={{ color: '#10B981' }}>Buy & Hold</p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Langfristige Vermietung</p>
               </div>
-              <div className="p-3 rounded-lg border border-amber-200 bg-amber-50">
-                <p className="font-semibold text-xs text-amber-700">Eigennutzungs-Strategie</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Selbst nutzen & steuerfrei verkaufen</p>
+              <div
+                className="p-3 rounded-lg"
+                style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)' }}
+              >
+                <p className="font-semibold text-xs" style={{ color: '#F59E0B' }}>Eigennutzungs-Strategie</p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Selbst nutzen & steuerfrei verkaufen</p>
               </div>
             </div>
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-              <Lock className="w-5 h-5 text-gray-400" />
-              <p className="text-xs text-gray-500 font-medium">Upgrade für Szenarien</p>
+              <Lock className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.2)' }} />
+              <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                Upgrade für Szenarien
+              </p>
             </div>
           </div>
         ) : (
           <div className="space-y-2">
             {results.szenarioVermietung && (
-              <div className={`p-3 rounded-lg border border-emerald-200 bg-emerald-50`}>
-                <p className="font-display font-semibold text-xs text-emerald-700">{results.szenarioVermietung.name}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{results.szenarioVermietung.beschreibung}</p>
-                <p className="text-xs mt-1.5 text-foreground/70">{results.szenarioVermietung.details}</p>
+              <div
+                className="p-3 rounded-lg"
+                style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}
+              >
+                <p className="font-bold text-xs" style={{ color: '#10B981', fontFamily: 'Sora, sans-serif' }}>
+                  {results.szenarioVermietung.name}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  {results.szenarioVermietung.beschreibung}
+                </p>
+                <p className="text-xs mt-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  {results.szenarioVermietung.details}
+                </p>
               </div>
             )}
             {results.szenarioEigennutzung && (
-              <div className={`p-3 rounded-lg border border-amber-200 bg-amber-50`}>
-                <p className="font-display font-semibold text-xs text-amber-700">{results.szenarioEigennutzung.name}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{results.szenarioEigennutzung.beschreibung}</p>
-                <p className="text-xs mt-1.5 text-foreground/70">{results.szenarioEigennutzung.details}</p>
+              <div
+                className="p-3 rounded-lg"
+                style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)' }}
+              >
+                <p className="font-bold text-xs" style={{ color: '#F59E0B', fontFamily: 'Sora, sans-serif' }}>
+                  {results.szenarioEigennutzung.name}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  {results.szenarioEigennutzung.beschreibung}
+                </p>
+                <p className="text-xs mt-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  {results.szenarioEigennutzung.details}
+                </p>
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Upsell-Banner für Free-User */}
+      {/* Upgrade Prompt for Free Users — subtle but clear */}
       {isFree && (
         <div
-          className="relative rounded-xl overflow-hidden border border-blue-200"
-          style={{ background: 'linear-gradient(135deg, #0A2540 0%, #1565C0 100%)' }}
+          className="relative rounded-xl overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, #0f1f3d 0%, #1a2f5a 100%)',
+            border: '1px solid rgba(59, 130, 246, 0.2)'
+          }}
         >
-          <div className="p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <Lock className="w-4 h-4 text-white/70" />
-              <p className="text-white/70 text-xs font-medium uppercase tracking-wider">Mehr freischalten</p>
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse 50% 60% at 100% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 70%)'
+            }}
+          />
+          <div className="relative p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Brain className="w-4 h-4" style={{ color: '#60A5FA' }} />
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#60A5FA' }}>
+                Pro freischalten
+              </p>
             </div>
-            <p className="text-white font-display font-bold text-base mb-1">
-              Vollständige Analyse & mehr Objekte
+            <p
+              className="font-bold text-base text-white mb-1"
+              style={{ fontFamily: 'Sora, sans-serif' }}
+            >
+              Vollständige KI-Investmentanalyse &amp; Risiko-Report
             </p>
-            <p className="text-white/70 text-xs mb-4">
-              Eigenkapitalrendite · AfA & Steuer · Szenarien · PDF-Export · Exposé · Email-Generator
+            <p className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              Eigenkapitalrendite · AfA &amp; Steuer · Szenarien · PDF-Export · Exposé · Email-Generator
             </p>
-            {/* Feature-Chips */}
             <div className="flex flex-wrap gap-1.5 mb-4">
               {[
                 { icon: TrendingUp, text: 'Pro-Analyse' },
+                { icon: Shield, text: 'Risiko-Score' },
                 { icon: FileText, text: 'PDF-Report' },
                 { icon: Mail, text: 'Email-Generator' },
                 { icon: Building2, text: 'Exposé' },
               ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20">
-                  <Icon className="w-3 h-3 text-blue-300" />
-                  <span className="text-white/80 text-xs">{text}</span>
+                <div
+                  key={text}
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs"
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    color: '#60A5FA'
+                  }}
+                >
+                  <Icon className="w-3 h-3" />
+                  {text}
                 </div>
               ))}
             </div>
-            <Button
-              className="bg-white text-blue-900 hover:bg-blue-50 h-9 text-sm font-semibold"
+            <button
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all"
+              style={{
+                background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
+                boxShadow: '0 0 20px rgba(59, 130, 246, 0.25)'
+              }}
               onClick={() => navigate('/pricing')}
+              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.opacity = '0.9')}
+              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.opacity = '1')}
             >
-              <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-              Pläne ansehen
-              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-            </Button>
+              <Zap className="w-3.5 h-3.5" />
+              Auf Pro upgraden
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
       )}
 
-      {/* PDF-Export: nur für Basic+ */}
+      {/* PDF-Export */}
       <div className="flex gap-2">
         {isBasic ? (
           <Button
@@ -300,19 +552,34 @@ export function FreeResultsPanel({ results, onExportPDF }: FreeResultsProps) {
             size="sm"
             className="flex-1 text-xs"
             onClick={onExportPDF}
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              color: 'rgba(255,255,255,0.7)'
+            }}
           >
             Basis-PDF exportieren
           </Button>
         ) : (
-          <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-gray-200 bg-gray-50">
-            <Lock className="w-3.5 h-3.5 text-gray-400" />
-            <span className="text-xs text-gray-400">PDF-Export – Upgrade erforderlich</span>
+          <div
+            className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg"
+            style={{
+              border: '1px dashed rgba(255,255,255,0.08)',
+              background: 'rgba(255,255,255,0.02)'
+            }}
+          >
+            <Lock className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.2)' }} />
+            <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              PDF-Export – Upgrade erforderlich
+            </span>
             <ProLockBadge />
           </div>
         )}
         {isPro && (
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">Vollständiges PDF im Pro-Tab</span>
+            <span className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              Vollständiges PDF im Pro-Tab
+            </span>
           </div>
         )}
       </div>

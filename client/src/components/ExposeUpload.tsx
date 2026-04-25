@@ -243,7 +243,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
             'relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all',
             isDragging
               ? 'border-blue-400 bg-blue-50'
-              : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/30'
+              : ''
           )}
         >
           <input
@@ -273,7 +273,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
           'flex items-center gap-3 px-3 py-2.5 rounded-xl border',
           isAnalyzing ? 'bg-blue-50 border-blue-100' :
           hasResult ? 'bg-emerald-50 border-emerald-100' :
-          isUploading ? 'bg-gray-50 border-gray-200' : 'bg-gray-50 border-gray-200'
+          isUploading ? '' : ''
         )}>
           <div className="shrink-0">
             {uploadedFile.type === 'application/pdf'
@@ -340,7 +340,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
                     'w-full flex items-center justify-between px-3 py-2 rounded-lg border text-left transition-all',
                     selectedFields.has(key)
                       ? 'bg-blue-50 border-blue-200'
-                      : 'bg-gray-50 border-gray-200 opacity-60'
+                      : 'opacity-60'
                   )}
                 >
                   <div>

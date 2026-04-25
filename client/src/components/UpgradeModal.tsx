@@ -52,7 +52,7 @@ export function UpgradeModal() {
         </div>
 
         {/* Features */}
-        <div className="px-8 py-6 bg-white">
+        <div className="px-8 py-6" style={{ background: "#111827" }}>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
             Enthaltene Features
           </p>

@@ -1,15 +1,15 @@
 import { Navbar } from "@/components/Navbar";
 export default function AGB() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: "#0A0F1A" }}>
       <Navbar />
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <h1 className="font-bold text-3xl text-gray-900 mb-2">Allgemeine Geschäftsbedingungen (AGB)</h1>
+        <h1 className="font-bold text-3xl text-white mb-2">Allgemeine Geschäftsbedingungen (AGB)</h1>
         <p className="text-gray-500 text-sm mb-10">Stand: März 2026 · ImmoRenditeTool von Juri Telipko / JR Production</p>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">1. Geltungsbereich</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">1. Geltungsbereich</h2>
           <div className="text-gray-700 leading-relaxed space-y-2">
             <p>Diese Allgemeinen Geschäftsbedingungen gelten für die Nutzung des Online-Tools <strong>ImmoRenditeTool</strong> (nachfolgend „Tool" oder „Dienst") unter der Domain immorenditetool.de, betrieben von Juri Telipko / JR Production, Römerallee 5, 50127 Bergheim (nachfolgend „Anbieter").</p>
             <p>Mit der Registrierung oder der Nutzung des Tools erklärt sich der Nutzer mit diesen AGB einverstanden. Abweichende Bedingungen des Nutzers werden nicht anerkannt.</p>
@@ -17,7 +17,7 @@ export default function AGB() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">2. Leistungsbeschreibung</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">2. Leistungsbeschreibung</h2>
           <div className="text-gray-700 leading-relaxed space-y-2">
             <p>Das ImmoRenditeTool stellt Berechnungen und Auswertungen zur wirtschaftlichen Analyse von Immobilieninvestitionen bereit. Der Dienst umfasst je nach gewähltem Tarif:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -33,7 +33,7 @@ export default function AGB() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">3. Registrierung und Nutzerkonto</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">3. Registrierung und Nutzerkonto</h2>
           <div className="text-gray-700 leading-relaxed space-y-2">
             <p>Zur Nutzung bestimmter Funktionen ist eine Registrierung erforderlich. Der Nutzer verpflichtet sich:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -46,7 +46,7 @@ export default function AGB() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">4. Preise und Zahlungsbedingungen</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">4. Preise und Zahlungsbedingungen</h2>
           <div className="text-gray-700 leading-relaxed space-y-2">
             <p>Die aktuell gültigen Preise sind auf der Preisseite (<a href="/pricing" className="text-blue-600 hover:underline">immorenditetool.de/pricing</a>) einsehbar. Es gelten folgende Tarife:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -61,7 +61,7 @@ export default function AGB() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">5. Widerrufsrecht</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">5. Widerrufsrecht</h2>
           <div className="text-gray-700 leading-relaxed space-y-2">
             <p>Verbrauchern steht ein gesetzliches Widerrufsrecht zu. Bei digitalen Inhalten, die sofort nach Kaufabschluss bereitgestellt werden, erlischt das Widerrufsrecht mit ausdrücklicher Zustimmung des Nutzers zur sofortigen Ausführung.</p>
             <p>Für Abonnements gilt: Der Nutzer kann innerhalb von 14 Tagen nach Vertragsschluss widerrufen. Für bereits erbrachte Leistungen wird eine anteilige Vergütung berechnet.</p>
@@ -70,7 +70,7 @@ export default function AGB() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">6. Haftungsausschluss</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">6. Haftungsausschluss</h2>
           <div className="text-gray-700 leading-relaxed space-y-2">
             <p>Alle Berechnungen erfolgen auf Basis der vom Nutzer eingegebenen Daten. Der Anbieter übernimmt keine Gewähr für:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -83,14 +83,14 @@ export default function AGB() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">7. Verfügbarkeit</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">7. Verfügbarkeit</h2>
           <p className="text-gray-700 leading-relaxed">
             Der Anbieter bemüht sich um eine möglichst unterbrechungsfreie Verfügbarkeit des Tools, kann jedoch keine dauerhafte Verfügbarkeit garantieren. Wartungsarbeiten, technische Störungen oder höhere Gewalt können zu vorübergehenden Einschränkungen führen. Ein Anspruch auf Verfügbarkeit besteht nicht.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">8. Nutzungsrechte und geistiges Eigentum</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">8. Nutzungsrechte und geistiges Eigentum</h2>
           <div className="text-gray-700 leading-relaxed space-y-2">
             <p>Der Anbieter räumt dem Nutzer ein nicht-exklusives, nicht übertragbares Recht zur Nutzung des Tools für private und gewerbliche Zwecke ein. Es ist nicht gestattet:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -102,14 +102,14 @@ export default function AGB() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">9. Änderungen</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">9. Änderungen</h2>
           <p className="text-gray-700 leading-relaxed">
             Der Anbieter behält sich vor, Funktionen, Inhalte und Preise des Tools jederzeit zu ändern oder zu erweitern. Wesentliche Änderungen der AGB werden dem Nutzer per E-Mail mitgeteilt. Widerspricht der Nutzer nicht innerhalb von 30 Tagen, gelten die neuen AGB als akzeptiert.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">10. Schlussbestimmungen</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">10. Schlussbestimmungen</h2>
           <div className="text-gray-700 leading-relaxed space-y-2">
             <p>Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts. Gerichtsstand ist Bergheim, soweit gesetzlich zulässig.</p>
             <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.</p>
@@ -117,7 +117,7 @@ export default function AGB() {
         </section>
       </main>
 
-      <footer className="border-t border-gray-100 py-6 bg-gray-50">
+      <footer className="py-6 mt-8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 flex flex-wrap gap-4 justify-center text-xs text-gray-400">
           <a href="/impressum" className="hover:text-gray-600">Impressum</a>
           <a href="/datenschutz" className="hover:text-gray-600">Datenschutz</a>

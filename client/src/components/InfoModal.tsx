@@ -101,7 +101,7 @@ export function InfoModal({ title, text, className }: InfoModalProps) {
       <div
         ref={modalRef}
         className={cn(
-          'relative z-10 bg-white rounded-2xl shadow-2xl',
+          'relative z-10 rounded-2xl shadow-2xl',
           'w-full max-w-sm mx-auto',        // Desktop: max 384px
           'sm:max-w-[380px]',
           'p-5',
@@ -118,7 +118,7 @@ export function InfoModal({ title, text, className }: InfoModalProps) {
             {title && (
               <h3
                 id="info-modal-title"
-                className="text-sm font-semibold text-gray-900 leading-tight"
+                className="text-sm font-semibold text-white leading-tight"
               >
                 {title}
               </h3>
@@ -128,7 +128,7 @@ export function InfoModal({ title, text, className }: InfoModalProps) {
             type="button"
             aria-label="Schließen"
             onClick={() => setOpen(false)}
-            className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors" style={{ color: "rgba(255,255,255,0.4)" }}
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -275,8 +275,8 @@ export function KennzahlInfoModal({
       />
       <div
         ref={modalRef}
-        className="relative z-10 bg-white rounded-2xl shadow-2xl p-5 animate-in fade-in-0 zoom-in-95 duration-150"
-        style={{ maxWidth: 'min(400px, 90vw)', width: '100%' }}
+        className="relative z-10 rounded-2xl shadow-2xl p-5 animate-in fade-in-0 zoom-in-95 duration-150"
+        style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.1)", maxWidth: 'min(400px, 90vw)', width: '100%' }}
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-3">
@@ -284,13 +284,13 @@ export function KennzahlInfoModal({
             <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center">
               <Info className="w-4 h-4 text-blue-600" />
             </div>
-            <h3 className="text-sm font-semibold text-gray-900">{name}</h3>
+            <h3 className="text-sm font-semibold text-white">{name}</h3>
           </div>
           <button
             type="button"
             aria-label="Schließen"
             onClick={() => setOpen(false)}
-            className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors" style={{ color: "rgba(255,255,255,0.4)" }}
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -298,7 +298,7 @@ export function KennzahlInfoModal({
 
         {/* Formel */}
         {formel && (
-          <div className="mb-3 px-3 py-2 bg-gray-50 rounded-lg border border-gray-100">
+          <div className="mb-3 px-3 py-2 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
             <p className="text-[11px] text-gray-500 font-medium uppercase tracking-wide mb-0.5">Formel</p>
             <p className="text-xs font-mono text-gray-700 break-words">{formel}</p>
           </div>

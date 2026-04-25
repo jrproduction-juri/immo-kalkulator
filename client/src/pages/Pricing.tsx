@@ -171,10 +171,10 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#0A0F1A" }}>
 
       {/* ── Navbar ─────────────────────────────────────────────────── */}
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <nav className="sticky top-0 z-50 border-b" style={{ backgroundColor: "rgba(10, 15, 26, 0.95)", backdropFilter: "blur(16px)", borderColor: "rgba(255,255,255,0.06)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
             <img
@@ -223,7 +223,7 @@ export default function Pricing() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-start">
 
           {/* Free-Karte */}
-          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <div className="rounded-2xl overflow-hidden" style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.08)" }}>
             <div className="p-6">
               <p className="text-xs font-semibold uppercase tracking-wider mb-1 text-gray-400">Free</p>
               <p className="font-bold text-4xl text-gray-900">0 €</p>
@@ -256,9 +256,9 @@ export default function Pricing() {
                 className={`relative rounded-2xl overflow-hidden border ${
                   plan.highlight
                     ? "border-blue-500 shadow-xl shadow-blue-100"
-                    : "border-gray-200 bg-white shadow-sm"
+                    : "border-white/8"
                 }`}
-                style={plan.highlight ? { background: "linear-gradient(160deg, #0A2540 0%, #1565C0 100%)" } : {}}
+                style={plan.highlight ? { background: "linear-gradient(160deg, #0A2540 0%, #1565C0 100%)" } : { background: "#111827", border: "1px solid rgba(255,255,255,0.08)" }}
               >
                 {/* Badge */}
                 {plan.badge && (
@@ -269,12 +269,12 @@ export default function Pricing() {
 
                 <div className={`p-6 ${plan.badge ? "" : ""}`}>
                   {/* Plan-Name */}
-                  <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${plan.highlight ? "text-blue-300" : "text-gray-400"}`}>
+                  <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${plan.highlight ? "text-blue-300" : "text-white/40"}`}>
                     {plan.name}
                   </p>
 
                   {/* ── Billing-Toggle ────────────────────────── */}
-                  <div className={`flex gap-1 p-1 rounded-lg mb-4 ${plan.highlight ? "bg-white/10" : "bg-gray-100"}`}>
+                  <div className={`flex gap-1 p-1 rounded-lg mb-4 ${plan.highlight ? "bg-white/10" : "bg-white/5"}`}>
                     {(["monthly", "yearly", "once"] as BillingType[]).map((b) => (
                       <button
                         key={b}
@@ -282,7 +282,7 @@ export default function Pricing() {
                         className={`flex-1 text-[11px] py-1.5 rounded-md font-medium transition-all ${
                           currentBilling === b
                             ? plan.highlight
-                              ? "bg-white text-blue-900 shadow-sm"
+                              ? "bg-blue-500 text-white"
                               : "bg-white text-gray-900 shadow-sm"
                             : plan.highlight
                             ? "text-white/60 hover:text-white"
@@ -295,10 +295,10 @@ export default function Pricing() {
                   </div>
 
                   {/* Preis */}
-                  <p className={`font-bold text-3xl leading-none ${plan.highlight ? "text-white" : "text-gray-900"}`}>
+                  <p className={`font-bold text-3xl leading-none ${plan.highlight ? "text-white" : "text-white"}`}>
                     {getDisplayPrice(plan, currentBilling)}
                   </p>
-                  <p className={`text-xs mt-1.5 mb-1 ${plan.highlight ? "text-blue-200" : "text-gray-400"}`}>
+                  <p className={`text-xs mt-1.5 mb-1 ${plan.highlight ? "text-blue-200" : "text-white/40"}`}>
                     {getSubline(plan, currentBilling)}
                   </p>
 
@@ -359,27 +359,27 @@ export default function Pricing() {
         </div>
 
         {/* ── Preisvergleich-Hinweis ──────────────────────────────── */}
-        <div className="mt-10 max-w-2xl mx-auto bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-4 text-center">Wie unterscheiden sich die Zahlungsoptionen?</h3>
+        <div className="mt-10 max-w-2xl mx-auto rounded-2xl p-6" style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.06)" }}>
+          <h3 className="font-semibold text-white mb-4 text-center">Wie unterscheiden sich die Zahlungsoptionen?</h3>
           <div className="grid grid-cols-3 gap-4 text-center text-sm">
-            <div className="p-3 rounded-xl bg-blue-50 border border-blue-100">
-              <p className="font-bold text-blue-700 mb-1">Monatlich</p>
-              <p className="text-gray-500 text-xs">Günstigster Einstieg · volle Flexibilität · jederzeit kündbar</p>
+            <div className="p-3 rounded-xl" style={{ background: "rgba(59, 130, 246, 0.1)", border: "1px solid rgba(59, 130, 246, 0.2)" }}>
+              <p className="font-bold mb-1" style={{ color: "#60A5FA" }}>Monatlich</p>
+              <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>Günstigster Einstieg · volle Flexibilität · jederzeit kündbar</p>
             </div>
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100">
-              <p className="font-bold text-emerald-700 mb-1">Jährlich</p>
-              <p className="text-gray-500 text-xs">~2 Monate geschenkt · günstiger pro Monat als monatlich</p>
+            <div className="p-3 rounded-xl" style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
+              <p className="font-bold mb-1" style={{ color: "#10B981" }}>Jährlich</p>
+              <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>~2 Monate geschenkt · günstiger pro Monat als monatlich</p>
             </div>
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-100">
-              <p className="font-bold text-amber-700 mb-1">Einmalig (Lifetime)</p>
-              <p className="text-gray-500 text-xs">Einmaliger Höchstpreis · lebenslanger Zugang · keine Folgekosten</p>
+            <div className="p-3 rounded-xl" style={{ background: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.2)" }}>
+              <p className="font-bold mb-1" style={{ color: "#F59E0B" }}>Einmalig (Lifetime)</p>
+              <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>Einmaliger Höchstpreis · lebenslanger Zugang · keine Folgekosten</p>
             </div>
           </div>
         </div>
 
         {/* ── FAQ ────────────────────────────────────────────────── */}
         <div className="mt-12 max-w-2xl mx-auto">
-          <h2 className="font-bold text-2xl text-gray-900 text-center mb-8">Häufige Fragen</h2>
+          <h2 className="font-bold text-2xl text-white text-center mb-8">Häufige Fragen</h2>
           <div className="space-y-4">
             {[
               {
@@ -403,9 +403,9 @@ export default function Pricing() {
                 a: "Zahlungen werden über Stripe abgewickelt — dem weltweit führenden Zahlungsdienstleister.",
               },
             ].map(({ q, a }) => (
-              <div key={q} className="bg-white rounded-xl p-5 border border-gray-100">
-                <p className="font-semibold text-gray-900 mb-1.5">{q}</p>
-                <p className="text-gray-500 text-sm">{a}</p>
+              <div key={q} className="rounded-xl p-5" style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <p className="font-semibold text-white mb-1.5">{q}</p>
+                <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>{a}</p>
               </div>
             ))}
           </div>
@@ -413,7 +413,7 @@ export default function Pricing() {
       </div>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-gray-100 py-8 bg-white">
+      <footer className="py-8 mt-8" style={{ backgroundColor: "#080D16", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <img
@@ -421,17 +421,17 @@ export default function Pricing() {
               alt="ImmoRenditeTool Logo"
               className="h-10 w-auto object-contain"
             />
-            <span className="font-semibold text-sm text-gray-900">ImmoRenditeTool</span>
+            <span className="font-semibold text-sm text-white">ImmoRenditeTool</span>
           </div>
-          <p className="text-xs text-gray-400 text-center">
+          <p className="text-xs text-center" style={{ color: "rgba(255,255,255,0.2)" }}>
             Alle Berechnungen ohne Gewähr · Keine Anlageberatung · © {new Date().getFullYear()} ImmoRenditeTool
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <a href="/" className="text-xs text-gray-400 hover:text-gray-600">Startseite</a>
-            <a href="/dashboard" className="text-xs text-gray-400 hover:text-gray-600">Dashboard</a>
-            <a href="/impressum" className="text-xs text-gray-400 hover:text-gray-600">Impressum</a>
-            <a href="/datenschutz" className="text-xs text-gray-400 hover:text-gray-600">Datenschutz</a>
-            <a href="/agb" className="text-xs text-gray-400 hover:text-gray-600">AGB</a>
+            <a href="/" className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>Startseite</a>
+            <a href="/dashboard" className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>Dashboard</a>
+            <a href="/impressum" className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>Impressum</a>
+            <a href="/datenschutz" className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>Datenschutz</a>
+            <a href="/agb" className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>AGB</a>
           </div>
         </div>
       </footer>

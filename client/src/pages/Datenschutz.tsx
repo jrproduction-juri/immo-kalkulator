@@ -1,22 +1,22 @@
 import { Navbar } from "@/components/Navbar";
 export default function Datenschutz() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: "#0A0F1A" }}>
       <Navbar />
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <h1 className="font-bold text-3xl text-gray-900 mb-2">Datenschutzerklärung</h1>
+        <h1 className="font-bold text-3xl text-white mb-2">Datenschutzerklärung</h1>
         <p className="text-gray-500 text-sm mb-10">Stand: März 2026</p>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">1. Allgemeine Hinweise</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">1. Allgemeine Hinweise</h2>
           <p className="text-gray-700 leading-relaxed">
             Der Schutz Ihrer persönlichen Daten ist uns wichtig. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften (DSGVO, BDSG) sowie dieser Datenschutzerklärung. Die Nutzung unserer Website ist in der Regel ohne Angabe personenbezogener Daten möglich.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">2. Verantwortliche Stelle</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">2. Verantwortliche Stelle</h2>
           <div className="text-gray-700 leading-relaxed space-y-1">
             <p>Verantwortlich für die Datenverarbeitung auf dieser Website ist:</p>
             <div className="mt-2 pl-4 border-l-2 border-gray-200 space-y-1">
@@ -28,7 +28,7 @@ export default function Datenschutz() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">3. Erhebung und Speicherung personenbezogener Daten</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">3. Erhebung und Speicherung personenbezogener Daten</h2>
           <div className="text-gray-700 leading-relaxed space-y-3">
             <p>Beim Besuch unserer Website werden automatisch Informationen durch den Hosting-Anbieter in sogenannten Server-Logfiles erfasst. Dazu gehören:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -45,7 +45,7 @@ export default function Datenschutz() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">4. Nutzerkonto und Authentifizierung</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">4. Nutzerkonto und Authentifizierung</h2>
           <div className="text-gray-700 leading-relaxed space-y-3">
             <p>Zur Nutzung bestimmter Funktionen (Speichern von Analysen, Portfolio-Verwaltung) ist eine Registrierung und Anmeldung erforderlich. Wir nutzen dafür ein OAuth-basiertes Authentifizierungssystem. Dabei werden folgende Daten verarbeitet:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -59,7 +59,7 @@ export default function Datenschutz() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">5. Nutzung des Immobilien-Analyse-Tools</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">5. Nutzung des Immobilien-Analyse-Tools</h2>
           <div className="text-gray-700 leading-relaxed space-y-3">
             <p>Bei der Nutzung des ImmoRenditeTools können Sie Immobiliendaten (Kaufpreis, Miete, Finanzierungsdaten etc.) eingeben. Diese Daten werden:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -73,7 +73,7 @@ export default function Datenschutz() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">6. Zahlungsabwicklung (Stripe)</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">6. Zahlungsabwicklung (Stripe)</h2>
           <div className="text-gray-700 leading-relaxed space-y-3">
             <p>Für die Abwicklung kostenpflichtiger Abonnements nutzen wir den Zahlungsdienstleister <strong>Stripe, Inc.</strong> (354 Oyster Point Blvd, South San Francisco, CA 94080, USA).</p>
             <p>Im Rahmen der Zahlungsabwicklung werden folgende Daten an Stripe übermittelt:</p>
@@ -89,7 +89,7 @@ export default function Datenschutz() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">7. Webanalyse (Umami Analytics)</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">7. Webanalyse (Umami Analytics)</h2>
           <div className="text-gray-700 leading-relaxed space-y-3">
             <p>Wir nutzen <strong>Umami Analytics</strong> zur datenschutzfreundlichen Analyse des Nutzungsverhaltens auf unserer Website. Umami:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -104,7 +104,7 @@ export default function Datenschutz() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">8. Cookies</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">8. Cookies</h2>
           <div className="text-gray-700 leading-relaxed space-y-3">
             <p>Wir verwenden ausschließlich technisch notwendige Cookies:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -116,7 +116,7 @@ export default function Datenschutz() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">9. Ihre Rechte</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">9. Ihre Rechte</h2>
           <div className="text-gray-700 leading-relaxed space-y-3">
             <p>Sie haben jederzeit das Recht auf:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -133,21 +133,21 @@ export default function Datenschutz() {
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">10. Datensicherheit</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">10. Datensicherheit</h2>
           <p className="text-gray-700 leading-relaxed">
             Diese Website nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte eine SSL/TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile des Browsers von „http://" auf „https://" wechselt und an dem Schloss-Symbol in Ihrer Browserzeile.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="font-semibold text-lg text-gray-900 mb-3">11. Änderungen dieser Datenschutzerklärung</h2>
+          <h2 className="font-semibold text-lg text-white mb-3">11. Änderungen dieser Datenschutzerklärung</h2>
           <p className="text-gray-700 leading-relaxed">
             Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie stets den aktuellen rechtlichen Anforderungen entsprechen zu lassen oder um Änderungen unserer Leistungen in der Datenschutzerklärung umzusetzen. Für Ihren erneuten Besuch gilt dann die neue Datenschutzerklärung.
           </p>
         </section>
       </main>
 
-      <footer className="border-t border-gray-100 py-6 bg-gray-50">
+      <footer className="py-6 mt-8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 flex flex-wrap gap-4 justify-center text-xs text-gray-400">
           <a href="/impressum" className="hover:text-gray-600">Impressum</a>
           <a href="/datenschutz" className="hover:text-gray-600">Datenschutz</a>

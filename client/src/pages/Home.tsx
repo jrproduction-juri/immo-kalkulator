@@ -1,17 +1,19 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { getLoginUrl } from "@/const";
-import { Building2, BarChart3, TrendingUp, Shield, Zap, CheckCircle2, Star, ArrowRight, Calculator } from "lucide-react";
+import {
+  Building2, BarChart3, TrendingUp, Shield, Zap, CheckCircle2,
+  ArrowRight, Calculator, Lock, Star, ChevronDown, FileText,
+  Brain, AlertTriangle, Download, Layers
+} from "lucide-react";
 import { useLocation } from "wouter";
-import { useEffect } from "react";
-
-const HERO_IMG = 'https://private-us-east-1.manuscdn.com/sessionFile/d1B7vnkB4jEDrlWUS8LSxe/sandbox/l45cXWfOMIxTINpDvpvKli-img-1_1771591087000_na1fn_aGVyby1idWlsZGluZw.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZDFCN3Zua0I0akVEcmxXVVM4TFN4ZS9zYW5kYm94L2w0NWNYV2ZPTUl4VElOcER2cHZLbGktaW1nLTFfMTc3MTU5MTA4NzAwMF9uYTFmbl9hR1Z5YnkxaWRXbHNaR2x1WncucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=E0caWN5PU2RcuAI-R1YiAyalKQgE7sypGiKRPhUtgHtOuC7zykNm-bySdd4JMI0YfrNeqIrxGx87Rh3JinTXdoX29VC179WURA4OCwO5zmYV8IYejMKpqx191Gw5OKw6SjRUlgmxbe-cQpNvKoDBbZu6qpuaOFZvKbRS8P0fI79qnwRuQGCXH5fcEfXzj7uXpX92mnZtNXwg3Sg2OLAPbUQLfxWcx90VOzsOkpcv3X3H-k9Zhd5T753EUMtCxM2xRDPDJ0CSAvpJHeKUug-Vj9cuddLDH7ZMOrgBGtgeQPK5iy94zSQs4iZYMRTiDZuO6uPBsLmWc-bsEbuQye~rCA__';
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();
   const [, navigate] = useLocation();
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Redirect logged-in users to dashboard
   useEffect(() => {
     if (!loading && isAuthenticated) {
       navigate("/dashboard");
@@ -23,297 +25,992 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#0A0F1A' }}>
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+      <nav
+        className="fixed top-0 left-0 right-0 z-50 border-b"
+        style={{
+          backgroundColor: 'rgba(10, 15, 26, 0.92)',
+          backdropFilter: 'blur(16px)',
+          borderColor: 'rgba(255,255,255,0.06)'
+        }}
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png" alt="ImmoRenditeTool Logo" className="h-11 w-auto object-contain" />
-            <span className="font-bold text-gray-900 text-lg">ImmoRenditeTool</span>
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)' }}
+            >
+              <Building2 className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-bold text-white text-lg" style={{ fontFamily: 'Sora, sans-serif' }}>
+              ImmoRenditeTool
+            </span>
           </a>
           <div className="flex items-center gap-3">
-            <a href="/pricing" className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors hidden sm:block">Preise</a>
-            <Button variant="outline" size="sm" onClick={handleLogin} className="text-sm">
+            <a
+              href="/pricing"
+              className="text-sm font-medium transition-colors hidden sm:block"
+              style={{ color: 'rgba(255,255,255,0.6)' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'white')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
+            >
+              Preise
+            </a>
+            <button
+              onClick={handleLogin}
+              className="text-sm font-medium px-4 py-2 rounded-lg transition-all"
+              style={{
+                color: 'rgba(255,255,255,0.7)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                backgroundColor: 'transparent'
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.06)';
+                (e.currentTarget as HTMLElement).style.color = 'white';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.7)';
+              }}
+            >
               Anmelden
-            </Button>
-            <Button size="sm" onClick={handleLogin} className="text-sm text-white" style={{ background: 'linear-gradient(135deg, #0A2540 0%, #0D6EFD 100%)' }}>
+            </button>
+            <button
+              onClick={handleLogin}
+              className="text-sm font-bold px-5 py-2 rounded-lg transition-all text-white"
+              style={{ background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)' }}
+              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.opacity = '0.9')}
+              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.opacity = '1')}
+            >
               Kostenlos starten
-            </Button>
+            </button>
           </div>
         </div>
       </nav>
 
       {/* ── Hero ── */}
-      <section className="relative pt-16 overflow-hidden" aria-labelledby="hero-heading">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${HERO_IMG})` }} />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(10,37,64,0.92) 0%, rgba(13,110,253,0.80) 60%, rgba(10,37,64,0.85) 100%)' }} />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-24 md:py-32">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/25 mb-6">
-              <Star className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
-              <span className="text-white/90 text-xs font-medium">Professionelle Investment-Analyse für Deutschland</span>
+      <section
+        className="relative pt-16 overflow-hidden"
+        style={{
+          background: 'linear-gradient(180deg, #0A0F1A 0%, #0D1B2A 100%)',
+          backgroundImage: `
+            linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+            linear-gradient(180deg, #0A0F1A 0%, #0D1B2A 100%)
+          `,
+          backgroundSize: '40px 40px, 40px 40px, 100% 100%'
+        }}
+      >
+        {/* Radial glow */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(59, 130, 246, 0.10) 0%, transparent 70%)'
+          }}
+        />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: '10%', right: '10%', width: '400px', height: '400px',
+            background: 'radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 70%)'
+          }}
+        />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-28 md:py-36">
+          {/* Badge */}
+          <div className="flex justify-center mb-8">
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                border: '1px solid rgba(59, 130, 246, 0.25)',
+                color: '#60A5FA'
+              }}
+            >
+              <Star className="w-3.5 h-3.5 fill-current" style={{ color: '#F59E0B' }} />
+              <span>Professionelle Investment-Analyse für Deutschland</span>
             </div>
-            <h1 id="hero-heading" className="font-bold text-4xl md:text-5xl text-white leading-tight mb-4">
-              Immobilien Rendite<br />
-              <span className="text-blue-300">Kalkulator</span>
+          </div>
+
+          {/* Headline */}
+          <div className="text-center max-w-4xl mx-auto mb-8">
+            <h1
+              className="font-bold leading-tight mb-6"
+              style={{
+                fontFamily: 'Sora, sans-serif',
+                fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                color: 'white',
+                letterSpacing: '-0.02em'
+              }}
+            >
+              Immobilien-Investments{' '}
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}
+              >
+                in Sekunden
+              </span>{' '}
+              analysieren
             </h1>
-            <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-xl">
-              Bruttomietrendite, Netto-Cashflow &amp; Eigenkapitalrendite berechnen — für ETW, EFH, MFH &amp; Neubau. Mit AfA-Berechnung, Steueroptimierung und 10-Jahres-Projektion.
+            <p
+              className="text-lg md:text-xl leading-relaxed max-w-2xl mx-auto"
+              style={{ color: 'rgba(255,255,255,0.6)' }}
+            >
+              Cashflow, Mietrendite &amp; Risikobewertung auf einen Blick — mit AfA-Berechnung,
+              Steueroptimierung und 10-Jahres-Projektion.
             </p>
-            <div className="flex flex-wrap gap-3 mb-8">
-              {[
-                { icon: BarChart3, text: 'Rendite-Analyse' },
-                { icon: Calculator, text: 'Cashflow-Berechnung' },
-                { icon: TrendingUp, text: '10-Jahres-Projektion' },
-                { icon: Shield, text: 'Steueroptimierung' },
-              ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/20">
-                  <Icon className="w-3.5 h-3.5 text-blue-300" />
-                  <span className="text-white/80 text-sm">{text}</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button
-                size="lg"
-                onClick={handleLogin}
-                className="text-white font-semibold px-8 shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #0D6EFD 0%, #0A2540 100%)' }}
-              >
-                Jetzt kostenlos starten
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <a href="/pricing">
-                <Button size="lg" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 font-medium">
-                  Preise ansehen
-                </Button>
-              </a>
-            </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── Features ── */}
-      <section className="py-20 bg-gray-50" aria-labelledby="features-heading">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <h2 id="features-heading" className="font-bold text-3xl text-gray-900 mb-3">Alles was du für dein Immobilien-Investment brauchst</h2>
-            <p className="text-gray-500 text-lg max-w-xl mx-auto">Von der ersten Rendite-Kalkulation bis zum professionellen Investment-Report — alles in einer App.</p>
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mb-16">
+            <button
+              onClick={handleLogin}
+              className="flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-base text-white transition-all"
+              style={{
+                background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
+                boxShadow: '0 0 30px rgba(59, 130, 246, 0.3)'
+              }}
+              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+            >
+              <Calculator className="w-5 h-5" />
+              Kostenlose Analyse starten
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <a
+              href="/pricing"
+              className="flex items-center gap-2 px-8 py-4 rounded-xl font-medium text-base transition-all"
+              style={{
+                color: 'rgba(255,255,255,0.7)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                backgroundColor: 'rgba(255,255,255,0.04)'
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.08)';
+                (e.currentTarget as HTMLElement).style.color = 'white';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.04)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.7)';
+              }}
+            >
+              Preise ansehen
+            </a>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Calculator,
-                title: 'Präzise Berechnungen',
-                desc: 'Bruttomietrendite, Netto-Cashflow, Eigenkapitalrendite und AfA — alle relevanten Kennzahlen auf einen Blick.',
-                color: 'bg-blue-50 text-blue-600',
-              },
-              {
-                icon: TrendingUp,
-                title: 'Szenarien & Projektion',
-                desc: '10-Jahres-Projektion, Sanieren & Verkaufen, steuerfreier Verkauf nach 24 Monaten Eigennutzung und mehr.',
-                color: 'bg-green-50 text-green-600',
-              },
-              {
-                icon: Shield,
-                title: 'Steueroptimierung',
-                desc: 'AfA-Berechnung, Grenzsteuersatz, Spekulationssteuer und Steuerersparnis — rechtssicher und verständlich.',
-                color: 'bg-purple-50 text-purple-600',
-              },
-              {
-                icon: Building2,
-                title: 'Portfolio-Verwaltung',
-                desc: 'Speichere alle deine Immobilien, vergleiche sie nebeneinander und behalte den Überblick über dein Portfolio.',
-                color: 'bg-orange-50 text-orange-600',
-              },
-              {
-                icon: BarChart3,
-                title: 'PDF & Excel Export',
-                desc: 'Professionelle Reports mit allen Grafiken, Szenarien und Kennzahlen — bereit für Banken und Berater.',
-                color: 'bg-red-50 text-red-600',
-              },
-              {
-                icon: Zap,
-                title: 'Email & Exposé',
-                desc: 'Generiere professionelle Makler-Emails und Exposés direkt aus deinen Berechnungen.',
-                color: 'bg-yellow-50 text-yellow-600',
-              },
-            ].map(({ icon: Icon, title, desc, color }) => (
-              <div key={title} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${color}`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ── Pricing Preview ── */}
-      <section className="py-20 bg-white" aria-labelledby="pricing-heading">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <h2 id="pricing-heading" className="font-bold text-3xl text-gray-900 mb-3">Transparente Preise für jeden Investor</h2>
-            <p className="text-gray-500 text-lg">Monatlich, jährlich oder einmalig — du entscheidest. <a href="/pricing" className="text-blue-600 hover:underline font-medium">Alle Details ansehen →</a></p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {/* Feature Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
             {[
-              {
-                name: 'Basic',
-                price: 'ab 9 €',
-                billing: 'pro Monat · oder 79 €/Jahr · oder 149 € einmalig',
-                desc: 'Für Einsteiger und gelegentliche Analysen',
-                features: ['Bruttomietrendite', 'Netto-Cashflow', 'AfA & Steuerersparnis', 'Eigenkapitalrendite', 'Bis zu 10 Immobilien'],
-                cta: 'Basic wählen',
-                highlight: false,
-              },
-              {
-                name: 'Pro',
-                price: 'ab 19 €',
-                billing: 'pro Monat · oder 149 €/Jahr · oder 299 € einmalig',
-                desc: 'Für aktive Investoren mit mehreren Objekten',
-                features: ['Alle Basic-Features', 'Erweiterte Szenarien', 'PDF-Report', 'Exposé-Generator', 'Email-Generator', '14 Tage kostenlos testen'],
-                cta: 'Pro wählen',
-                highlight: true,
-              },
-              {
-                name: 'Investor',
-                price: 'ab 39 €',
-                billing: 'pro Monat · oder 299 €/Jahr · oder 499 € einmalig',
-                desc: 'Für Profi-Investoren und Portfolios',
-                features: ['Alle Pro-Features', 'Unbegrenzte Immobilien', 'Portfolio-Übersicht', 'Objekte vergleichen', 'Excel-Export'],
-                cta: 'Investor wählen',
-                highlight: false,
-              },
-            ].map(({ name, price, billing, desc, features, cta, highlight }) => (
+              { icon: BarChart3, text: 'Rendite-Analyse' },
+              { icon: Calculator, text: 'Cashflow-Berechnung' },
+              { icon: TrendingUp, text: '10-Jahres-Projektion' },
+              { icon: Shield, text: 'Steueroptimierung' },
+              { icon: Brain, text: 'KI-Bewertung' },
+            ].map(({ icon: Icon, text }) => (
               <div
-                key={name}
-                className={`relative rounded-2xl p-6 border ${highlight ? 'border-blue-500 shadow-lg shadow-blue-100' : 'border-gray-200'}`}
-                style={highlight ? { background: 'linear-gradient(135deg, #0A2540 0%, #1565C0 100%)' } : { background: 'white' }}
+                key={text}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: 'rgba(255,255,255,0.6)'
+                }}
               >
-                {highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="px-3 py-1 rounded-full bg-yellow-400 text-yellow-900 text-xs font-bold">BELIEBTESTE WAHL</span>
-                  </div>
-                )}
-                <div className="mb-5">
-                  <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${highlight ? 'text-blue-300' : 'text-gray-400'}`}>{name}</p>
-                  <p className={`font-bold text-3xl ${highlight ? 'text-white' : 'text-gray-900'}`}>{price}</p>
-                  <p className={`text-xs mt-1 ${highlight ? 'text-blue-200' : 'text-gray-400'}`}>{billing}</p>
-                  <p className={`text-sm mt-2 ${highlight ? 'text-white/70' : 'text-gray-500'}`}>{desc}</p>
-                </div>
-                <ul className="space-y-2.5 mb-6">
-                  {features.map(f => (
-                    <li key={f} className={`flex items-center gap-2 text-sm ${highlight ? 'text-white/85' : 'text-gray-600'}`}>
-                      <CheckCircle2 className={`w-4 h-4 shrink-0 ${highlight ? 'text-blue-300' : 'text-blue-500'}`} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className={`w-full font-semibold ${highlight ? 'bg-white text-blue-900 hover:bg-blue-50' : ''}`}
-                  variant={highlight ? 'default' : 'outline'}
-                  onClick={handleLogin}
-                >
-                  {cta}
-                </Button>
+                <Icon className="w-3.5 h-3.5" style={{ color: '#60A5FA' }} />
+                {text}
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Example Results Preview ── */}
+      <section
+        className="py-24"
+        style={{
+          background: 'linear-gradient(180deg, #0D1B2A 0%, #0A0F1A 100%)'
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
+              style={{
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.2)',
+                color: '#F59E0B'
+              }}
+            >
+              <Zap className="w-3 h-3" />
+              BEISPIEL-ANALYSE
+            </div>
+            <h2
+              className="font-bold text-3xl md:text-4xl text-white mb-4"
+              style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.02em' }}
+            >
+              So sehen deine Ergebnisse aus
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.5)' }} className="text-lg max-w-xl mx-auto">
+              Verstehe den Wert des Tools, bevor du startest.
+            </p>
+          </div>
+
+          {/* Example Result Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {/* Cashflow */}
+            <div
+              className="rounded-2xl p-6 transition-all"
+              style={{
+                background: '#111827',
+                border: '1px solid rgba(255,255,255,0.08)'
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Netto-Cashflow
+                </p>
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: 'rgba(16, 185, 129, 0.15)' }}
+                >
+                  <TrendingUp className="w-3.5 h-3.5" style={{ color: '#10B981' }} />
+                </div>
+              </div>
+              <p
+                className="font-bold text-3xl mb-1"
+                style={{ fontFamily: 'IBM Plex Mono, monospace', color: '#10B981' }}
+              >
+                +320 €
+              </p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>pro Monat</p>
+              <div className="mt-4">
+                <div className="progress-bar-track">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: '72%', background: 'linear-gradient(90deg, #059669, #10B981)' }}
+                  />
+                </div>
+                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>72% positiver Cashflow</p>
+              </div>
+            </div>
+
+            {/* Mietrendite */}
+            <div
+              className="rounded-2xl p-6 transition-all"
+              style={{
+                background: '#111827',
+                border: '1px solid rgba(255,255,255,0.08)'
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Bruttomietrendite
+                </p>
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: 'rgba(59, 130, 246, 0.15)' }}
+                >
+                  <BarChart3 className="w-3.5 h-3.5" style={{ color: '#3B82F6' }} />
+                </div>
+              </div>
+              <p
+                className="font-bold text-3xl mb-1"
+                style={{ fontFamily: 'IBM Plex Mono, monospace', color: '#60A5FA' }}
+              >
+                5,8 %
+              </p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>p.a. — sehr gut</p>
+              <div className="mt-4">
+                <div className="progress-bar-track">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: '80%', background: 'linear-gradient(90deg, #1d4ed8, #3b82f6)' }}
+                  />
+                </div>
+                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Über Marktdurchschnitt</p>
+              </div>
+            </div>
+
+            {/* EK-Rendite */}
+            <div
+              className="rounded-2xl p-6 transition-all"
+              style={{
+                background: '#111827',
+                border: '1px solid rgba(245, 158, 11, 0.2)'
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  EK-Rendite
+                </p>
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: 'rgba(245, 158, 11, 0.15)' }}
+                >
+                  <Star className="w-3.5 h-3.5 fill-current" style={{ color: '#F59E0B' }} />
+                </div>
+              </div>
+              <p
+                className="font-bold text-3xl mb-1"
+                style={{ fontFamily: 'IBM Plex Mono, monospace', color: '#F59E0B' }}
+              >
+                8,0 %
+              </p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>p.a. — sehr gut</p>
+              <div className="mt-4">
+                <div className="progress-bar-track">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: '88%', background: 'linear-gradient(90deg, #d97706, #f59e0b)' }}
+                  />
+                </div>
+                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Hebeleffekt aktiv</p>
+              </div>
+            </div>
+
+            {/* Risikobewertung */}
+            <div
+              className="rounded-2xl p-6 transition-all"
+              style={{
+                background: '#111827',
+                border: '1px solid rgba(255,255,255,0.08)'
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Risikobewertung
+                </p>
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ background: 'rgba(16, 185, 129, 0.15)' }}
+                >
+                  <Shield className="w-3.5 h-3.5" style={{ color: '#10B981' }} />
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mb-1">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ background: '#10B981', boxShadow: '0 0 8px rgba(16,185,129,0.5)' }}
+                />
+                <p
+                  className="font-bold text-2xl"
+                  style={{ fontFamily: 'IBM Plex Mono, monospace', color: '#10B981' }}
+                >
+                  Niedrig
+                </p>
+              </div>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Score: 82 / 100</p>
+              <div className="mt-4">
+                <div className="progress-bar-track">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: '82%', background: 'linear-gradient(90deg, #059669, #10B981)' }}
+                  />
+                </div>
+                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Empfehlung: Kaufen</p>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Summary Preview */}
+          <div
+            className="rounded-2xl p-6"
+            style={{
+              background: 'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(245,158,11,0.05))',
+              border: '1px solid rgba(59, 130, 246, 0.15)'
+            }}
+          >
+            <div className="flex items-start gap-4">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)' }}
+              >
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="font-bold text-white text-sm" style={{ fontFamily: 'Sora, sans-serif' }}>
+                    KI-Investmentanalyse
+                  </p>
+                  <span className="badge-pro">Pro</span>
+                </div>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  <span style={{ color: '#10B981', fontWeight: 600 }}>Starkes Investment.</span> Die Immobilie zeigt eine
+                  überdurchschnittliche Bruttomietrendite von 5,8 % bei positivem Cashflow von +320 €/Monat.
+                  Der Hebeleffekt durch Finanzierung steigert die EK-Rendite auf 8,0 % p.a. — deutlich über
+                  alternativen Anlageformen. Risikofaktoren: moderate Leerstandsgefahr, Instandhaltungsrücklage
+                  ausreichend. <span style={{ color: '#F59E0B', fontWeight: 600 }}>Kaufempfehlung bei aktuellem Preisniveau.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Free vs Pro Comparison ── */}
+      <section className="py-24" style={{ backgroundColor: '#0A0F1A' }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+                color: '#60A5FA'
+              }}
+            >
+              <Layers className="w-3 h-3" />
+              PLÄNE VERGLEICHEN
+            </div>
+            <h2
+              className="font-bold text-3xl md:text-4xl text-white mb-4"
+              style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.02em' }}
+            >
+              Free vs. Pro — Was du bekommst
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.5)' }} className="text-lg max-w-xl mx-auto">
+              Starte kostenlos und upgrade, wenn du mehr brauchst.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Free Card */}
+            <div
+              className="rounded-2xl p-8"
+              style={{
+                background: '#111827',
+                border: '1px solid rgba(255,255,255,0.08)'
+              }}
+            >
+              <div className="mb-6">
+                <span className="badge-free">Free</span>
+                <p className="font-bold text-2xl text-white mt-3 mb-1" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  Kostenlos
+                </p>
+                <p style={{ color: 'rgba(255,255,255,0.4)' }} className="text-sm">
+                  Für erste Analysen und Einsteiger
+                </p>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  { text: 'Bruttomietrendite', ok: true },
+                  { text: 'Netto-Cashflow', ok: true },
+                  { text: 'Basis-Empfehlung', ok: true },
+                  { text: 'Cashflow-Chart', ok: true },
+                  { text: 'Nettomietrendite', ok: false },
+                  { text: 'Finanzierungsübersicht', ok: false },
+                  { text: 'Szenarien & Projektion', ok: false },
+                  { text: 'KI-Investmentanalyse', ok: false },
+                  { text: 'PDF-Report', ok: false },
+                  { text: 'Risiko-Scoring', ok: false },
+                ].map(({ text, ok }) => (
+                  <li key={text} className="flex items-center gap-3">
+                    {ok ? (
+                      <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: '#10B981' }} />
+                    ) : (
+                      <Lock className="w-4 h-4 shrink-0" style={{ color: 'rgba(255,255,255,0.2)' }} />
+                    )}
+                    <span
+                      className="text-sm"
+                      style={{ color: ok ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)' }}
+                    >
+                      {text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={handleLogin}
+                className="w-full mt-8 py-3 rounded-xl font-semibold text-sm transition-all"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: 'rgba(255,255,255,0.7)',
+                  backgroundColor: 'transparent'
+                }}
+                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.06)')}
+                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.backgroundColor = 'transparent')}
+              >
+                Kostenlos starten
+              </button>
+            </div>
+
+            {/* Pro Card */}
+            <div
+              className="rounded-2xl p-8 relative overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, #0f1f3d 0%, #1a2f5a 100%)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                boxShadow: '0 0 40px rgba(59, 130, 246, 0.12)'
+              }}
+            >
+              {/* Popular badge */}
+              <div
+                className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold"
+                style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)', color: '#0A0F1A' }}
+              >
+                BELIEBTESTE WAHL
+              </div>
+
+              <div className="mb-6">
+                <span className="badge-pro">Pro</span>
+                <p className="font-bold text-2xl text-white mt-3 mb-1" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  ab 19 €<span className="text-base font-normal" style={{ color: 'rgba(255,255,255,0.5)' }}>/Monat</span>
+                </p>
+                <p style={{ color: 'rgba(255,255,255,0.4)' }} className="text-sm">
+                  Für aktive Investoren mit mehreren Objekten
+                </p>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  'Alle Free-Features',
+                  'Nettomietrendite & Finanzierung',
+                  'Szenarien & 10-Jahres-Projektion',
+                  'KI-Investmentanalyse',
+                  'Detailliertes Risiko-Scoring',
+                  'PDF Investment-Report',
+                  'Exposé-Generator',
+                  'Email-Generator',
+                  'Steueroptimierung & AfA',
+                  '14 Tage kostenlos testen',
+                ].map((text) => (
+                  <li key={text} className="flex items-center gap-3">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: '#3B82F6' }} />
+                    <span className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>{text}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={handleLogin}
+                className="w-full mt-8 py-3 rounded-xl font-bold text-sm transition-all text-white"
+                style={{
+                  background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
+                  boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)'
+                }}
+                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.opacity = '0.9')}
+                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.opacity = '1')}
+              >
+                Pro 14 Tage kostenlos testen
+                <ArrowRight className="w-4 h-4 inline ml-2" />
+              </button>
+              <p className="text-center text-xs mt-3" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                Keine Kreditkarte erforderlich
+              </p>
+            </div>
+          </div>
+
           <div className="text-center mt-8">
-            <a href="/pricing" className="text-blue-600 hover:text-blue-700 text-sm font-medium inline-flex items-center gap-1">
-              Alle Features vergleichen <ArrowRight className="w-3.5 h-3.5" />
+            <a
+              href="/pricing"
+              className="text-sm font-medium inline-flex items-center gap-1 transition-colors"
+              style={{ color: '#60A5FA' }}
+            >
+              Alle Pläne vergleichen (Basic, Pro, Investor)
+              <ArrowRight className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>
       </section>
 
-      {/* ── FAQ (SEO) ── */}
-      <section className="py-20 bg-gray-50" aria-labelledby="faq-heading">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <h2 id="faq-heading" className="font-bold text-3xl text-gray-900 mb-3">Häufige Fragen zum Immobilien-Investment</h2>
-            <p className="text-gray-500 text-lg">Alles Wichtige rund um Rendite, Cashflow und Steueroptimierung.</p>
+      {/* ── Pro Features Highlight ── */}
+      <section
+        className="py-24"
+        style={{
+          background: 'linear-gradient(180deg, #0A0F1A 0%, #0D1525 100%)',
+          backgroundImage: `
+            linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+            linear-gradient(180deg, #0A0F1A 0%, #0D1525 100%)
+          `,
+          backgroundSize: '40px 40px, 40px 40px, 100% 100%'
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
+              style={{
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.2)',
+                color: '#F59E0B'
+              }}
+            >
+              <Star className="w-3 h-3 fill-current" />
+              PRO FEATURES
+            </div>
+            <h2
+              className="font-bold text-3xl md:text-4xl text-white mb-4"
+              style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.02em' }}
+            >
+              Alles was professionelle Investoren brauchen
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.5)' }} className="text-lg max-w-xl mx-auto">
+              Von der ersten Kalkulation bis zum professionellen Investment-Report.
+            </p>
           </div>
-          <div className="space-y-4">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                icon: Brain,
+                title: 'KI-Investmentanalyse',
+                desc: 'GPT-gestützte Bewertung deiner Immobilie mit Stärken, Risiken und konkreter Handlungsempfehlung.',
+                color: '#3B82F6',
+                bg: 'rgba(59, 130, 246, 0.1)',
+                pro: true,
+              },
+              {
+                icon: Shield,
+                title: 'Detailliertes Risiko-Scoring',
+                desc: 'Ampel-System mit Score 0–100, Leerstandsrisiko, Finanzierungsrisiko und Marktrisiko-Analyse.',
+                color: '#10B981',
+                bg: 'rgba(16, 185, 129, 0.1)',
+                pro: true,
+              },
+              {
+                icon: FileText,
+                title: 'PDF Investment-Report',
+                desc: 'Professioneller Report mit allen Kennzahlen, Grafiken und Szenarien — bereit für Banken und Berater.',
+                color: '#F59E0B',
+                bg: 'rgba(245, 158, 11, 0.1)',
+                pro: true,
+              },
+              {
+                icon: TrendingUp,
+                title: '10-Jahres-Projektion',
+                desc: 'Cashflow-Entwicklung, Wertsteigerung und Eigenkapitalaufbau über 10 Jahre visualisiert.',
+                color: '#8B5CF6',
+                bg: 'rgba(139, 92, 246, 0.1)',
+                pro: true,
+              },
+              {
+                icon: Download,
+                title: 'Exposé & Email-Generator',
+                desc: 'Professionelle Makler-Emails und Exposés direkt aus deinen Berechnungen generieren.',
+                color: '#EC4899',
+                bg: 'rgba(236, 72, 153, 0.1)',
+                pro: true,
+              },
+              {
+                icon: Calculator,
+                title: 'Erweiterte Finanzrechnung',
+                desc: 'AfA-Berechnung, Spekulationssteuer, Grenzsteuersatz und vollständige Steueroptimierung.',
+                color: '#06B6D4',
+                bg: 'rgba(6, 182, 212, 0.1)',
+                pro: false,
+              },
+            ].map(({ icon: Icon, title, desc, color, bg, pro }) => (
+              <div
+                key={title}
+                className="rounded-2xl p-6 transition-all group"
+                style={{
+                  background: '#111827',
+                  border: '1px solid rgba(255,255,255,0.06)'
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = `${color}30`;
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.06)';
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: bg }}
+                  >
+                    <Icon className="w-5 h-5" style={{ color }} />
+                  </div>
+                  {pro && <span className="badge-pro">Pro</span>}
+                </div>
+                <h3
+                  className="font-bold text-white mb-2"
+                  style={{ fontFamily: 'Sora, sans-serif' }}
+                >
+                  {title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Trust Section ── */}
+      <section className="py-24" style={{ backgroundColor: '#0A0F1A' }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
+              style={{
+                background: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                color: '#10B981'
+              }}
+            >
+              <CheckCircle2 className="w-3 h-3" />
+              WARUM IMMORENDITETOOL
+            </div>
+            <h2
+              className="font-bold text-3xl md:text-4xl text-white mb-4"
+              style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.02em' }}
+            >
+              Transparente Berechnungen, denen du vertrauen kannst
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Calculator,
+                title: 'Wie die Berechnungen funktionieren',
+                desc: 'Alle Formeln basieren auf deutschen Immobilien-Standards: DIN-konforme AfA-Berechnung, aktuelles Steuerrecht (§ 21 EStG), marktübliche Hausgeld-Schätzungen und Finanzierungsrechner nach Annuitätenmethode.',
+                color: '#3B82F6',
+                bg: 'rgba(59, 130, 246, 0.1)',
+              },
+              {
+                icon: TrendingUp,
+                title: 'Warum die Analyse hilft',
+                desc: 'Schlechte Immobilien-Investments entstehen durch fehlende Zahlen. Mit ImmoRenditeTool siehst du sofort, ob eine Immobilie positiven Cashflow bringt, welche Rendite realistisch ist und wo Risiken lauern — bevor du kaufst.',
+                color: '#10B981',
+                bg: 'rgba(16, 185, 129, 0.1)',
+              },
+              {
+                icon: Shield,
+                title: 'Sicherheit & Datenschutz',
+                desc: 'Deine Daten werden verschlüsselt gespeichert und niemals an Dritte weitergegeben. Alle Berechnungen laufen direkt in deinem Browser. DSGVO-konform, Server in Deutschland.',
+                color: '#F59E0B',
+                bg: 'rgba(245, 158, 11, 0.1)',
+              },
+            ].map(({ icon: Icon, title, desc, color, bg }) => (
+              <div
+                key={title}
+                className="rounded-2xl p-6"
+                style={{
+                  background: '#111827',
+                  border: '1px solid rgba(255,255,255,0.06)'
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                  style={{ background: bg }}
+                >
+                  <Icon className="w-5 h-5" style={{ color }} />
+                </div>
+                <h3
+                  className="font-bold text-white mb-3"
+                  style={{ fontFamily: 'Sora, sans-serif' }}
+                >
+                  {title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section
+        className="py-24"
+        style={{
+          background: 'linear-gradient(180deg, #0A0F1A 0%, #0D1B2A 100%)'
+        }}
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-4"
+              style={{
+                background: 'rgba(139, 92, 246, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+                color: '#A78BFA'
+              }}
+            >
+              FAQ
+            </div>
+            <h2
+              className="font-bold text-3xl md:text-4xl text-white mb-4"
+              style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.02em' }}
+            >
+              Häufige Fragen
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.5)' }} className="text-lg">
+              Alles Wichtige rund um Rendite, Cashflow und Steueroptimierung.
+            </p>
+          </div>
+          <div className="space-y-3">
             {[
               {
                 q: 'Wie berechne ich die Bruttomietrendite einer Immobilie?',
-                a: 'Die Bruttomietrendite berechnet sich als: (Jahreskaltmiete ÷ Kaufpreis) × 100. Beispiel: Bei 1.000 €/Monat Kaltmiete und 300.000 € Kaufpreis ergibt sich eine Bruttomietrendite von 4 %. Als Faustregel gilt: ab 4 % brutto ist eine Immobilie für Buy-and-Hold interessant.',
+                a: 'Die Bruttomietrendite berechnet sich als: (Jahreskaltmiete ÷ Kaufpreis) × 100. Beispiel: Bei 1.000 €/Monat Kaltmiete und 300.000 € Kaufpreis ergibt sich eine Bruttomietrendite von 4 %. Als Faustregel gilt: ab 4 % brutto ist eine Immobilie für Buy-and-Hold interessant.',
               },
               {
                 q: 'Was ist ein guter Netto-Cashflow bei einer Immobilie?',
-                a: 'Ein positiver Netto-Cashflow bedeutet, dass die Mieteinnahmen alle Kosten (Kreditrate, Hausgeld, Verwaltung, Rücklagen) übersteigen. Für Investoren gilt ein monatlicher Überschuss von 100–300 € als solide Basis. Negativer Cashflow ist nur dann tragbar, wenn die Steuerersparnis und Wertsteigerung dies ausgleichen.',
+                a: 'Ein positiver Netto-Cashflow bedeutet, dass die Mieteinnahmen alle Kosten (Kreditrate, Hausgeld, Verwaltung, Rücklagen) übersteigen. Für Investoren gilt ein monatlicher Überschuss von 100–300 € als solide Basis. Negativer Cashflow ist nur dann tragbar, wenn die Steuerersparnis und Wertsteigerung dies ausgleichen.',
               },
               {
                 q: 'Was bedeutet AfA bei Immobilien und wie hoch ist sie?',
-                a: 'AfA steht für Absetzung für Abnutzung. Bei vermieteten Immobilien können Gebäudekosten steuerlich abgeschrieben werden: 2 % p.a. bei Baujahr nach 1924, 2,5 % bei älteren Gebäuden, 3 % bei Neubauten ab 2023. Das Grundstück ist nicht abschreibungsfähig.',
+                a: 'AfA steht für Absetzung für Abnutzung. Bei vermieteten Immobilien können Gebäudekosten steuerlich abgeschrieben werden: 2 % p.a. bei Baujahr nach 1924, 2,5 % bei älteren Gebäuden, 3 % bei Neubauten ab 2023. Das Grundstück ist nicht abschreibungsfähig.',
               },
               {
-                q: 'Welche Immobilienarten unterstützt das ImmoRenditeTool?',
-                a: 'Das ImmoRenditeTool unterstützt Eigentumswohnungen (ETW), Einfamilienhäuser (EFH), Mehrfamilienhäuser (MFH), Neubauten und Gewerbeimmobilien – jeweils mit spezifischen Berechnungsfeldern und Kennzahlen.',
-              },
-              {
-                q: 'Wie berechne ich den maximalen Kaufpreis für eine Zielrendite?',
-                a: 'Der maximale Kaufpreis für eine Zielrendite ergibt sich aus: Jahreskaltmiete ÷ (Zielrendite / 100). Bei 1.200 €/Monat Kaltmiete und 6 % Zielrendite wäre der maximale Kaufpreis 240.000 €. Das ImmoRenditeTool berechnet diesen Wert automatisch.',
+                q: 'Wie hoch sollte die Eigenkapitalrendite bei einer Immobilie sein?',
+                a: 'Eine Eigenkapitalrendite von 5–10 % gilt als attraktiv für Immobilien-Investments in Deutschland. Sie berechnet sich aus dem jährlichen Cashflow nach Steuern geteilt durch das eingesetzte Eigenkapital. Mit Hebeleffekt (Finanzierung) kann sie deutlich über der Bruttomietrendite liegen.',
               },
               {
                 q: 'Kann ich Immobilien nach 24 Monaten steuerfrei verkaufen?',
                 a: 'Ja, bei selbstgenutzten Eigentumswohnungen entfällt die Spekulationssteuer nach 24 Monaten Eigennutzung. Das ImmoRenditeTool berechnet dieses Szenario automatisch und zeigt den steuerfreien Verkaufsgewinn.',
               },
               {
-                q: 'Wie hoch sollte die Eigenkapitalrendite bei einer Immobilie sein?',
-                a: 'Eine Eigenkapitalrendite von 5–10 % gilt als attraktiv für Immobilien-Investments in Deutschland. Sie berechnet sich aus dem jährlichen Cashflow nach Steuern geteilt durch das eingesetzte Eigenkapital. Mit Hebeleffekt (Finanzierung) kann sie deutlich über der Bruttomietrendite liegen.',
+                q: 'Ist das ImmoRenditeTool kostenlos nutzbar?',
+                a: 'Ja, die Grundfunktionen sind kostenlos: Bruttomietrendite, Cashflow und Basisanalyse. Premium-Funktionen wie erweiterte Szenarien, PDF Investment-Report, Portfolio-Verwaltung und Excel-Export sind ab 9 €/Monat verfügbar.',
               },
               {
-                q: 'Ist das ImmoRenditeTool kostenlos nutzbar?',
-                a: 'Ja, die Grundfunktionen sind kostenlos: Bruttomietrendite, Cashflow und Basisanalyse. Premium-Funktionen wie erweiterte Szenarien, PDF Investment-Report, Portfolio-Verwaltung und Excel-Export sind ab 9 €/Monat verfügbar.',
+                q: 'Welche Immobilienarten unterstützt das ImmoRenditeTool?',
+                a: 'Das ImmoRenditeTool unterstützt Eigentumswohnungen (ETW), Einfamilienhäuser (EFH), Mehrfamilienhäuser (MFH), Neubauten und Gewerbeimmobilien — jeweils mit spezifischen Berechnungsfeldern und Kennzahlen.',
               },
-            ].map(({ q, a }) => (
-              <details key={q} className="bg-white rounded-xl border border-gray-200 group">
-                <summary className="flex items-center justify-between p-5 cursor-pointer list-none">
-                  <h3 className="font-semibold text-gray-900 text-sm pr-4">{q}</h3>
-                  <span className="shrink-0 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 group-open:rotate-45 transition-transform text-lg leading-none">+</span>
-                </summary>
-                <p className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{a}</p>
-              </details>
+            ].map(({ q, a }, i) => (
+              <div
+                key={i}
+                className="rounded-xl overflow-hidden transition-all"
+                style={{
+                  background: '#111827',
+                  border: `1px solid ${openFaq === i ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255,255,255,0.06)'}`
+                }}
+              >
+                <button
+                  className="w-full flex items-center justify-between p-5 text-left"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                >
+                  <span
+                    className="font-semibold text-sm pr-4"
+                    style={{ color: openFaq === i ? 'white' : 'rgba(255,255,255,0.8)', fontFamily: 'Sora, sans-serif' }}
+                  >
+                    {q}
+                  </span>
+                  <ChevronDown
+                    className="w-4 h-4 shrink-0 transition-transform"
+                    style={{
+                      color: 'rgba(255,255,255,0.4)',
+                      transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)'
+                    }}
+                  />
+                </button>
+                {openFaq === i && (
+                  <p
+                    className="px-5 pb-5 text-sm leading-relaxed"
+                    style={{ color: 'rgba(255,255,255,0.5)' }}
+                  >
+                    {a}
+                  </p>
+                )}
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-16" style={{ background: 'linear-gradient(135deg, #0A2540 0%, #0D6EFD 100%)' }}>
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="font-bold text-3xl text-white mb-4">Starte jetzt deine erste Analyse</h2>
-          <p className="text-white/70 text-lg mb-8">Kostenlos anmelden, Daten eingeben, sofort Ergebnisse sehen.</p>
-          <Button
-            size="lg"
-            onClick={handleLogin}
-            className="bg-white text-blue-900 hover:bg-blue-50 font-semibold px-10"
+      {/* ── Final CTA ── */}
+      <section
+        className="py-24 relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, #0f1f3d 0%, #1a2f5a 100%)',
+          backgroundImage: `
+            linear-gradient(rgba(59, 130, 246, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.06) 1px, transparent 1px),
+            linear-gradient(135deg, #0f1f3d 0%, #1a2f5a 100%)
+          `,
+          backgroundSize: '40px 40px, 40px 40px, 100% 100%'
+        }}
+      >
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(59, 130, 246, 0.12) 0%, transparent 70%)'
+          }}
+        />
+        <div className="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
+          <h2
+            className="font-bold text-3xl md:text-4xl text-white mb-4"
+            style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '-0.02em' }}
           >
-            Kostenlos starten <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+            Starte jetzt deine erste Analyse
+          </h2>
+          <p className="text-lg mb-10" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            Kostenlos anmelden, Daten eingeben, sofort Ergebnisse sehen.
+          </p>
+          <button
+            onClick={handleLogin}
+            className="inline-flex items-center gap-2 px-10 py-4 rounded-xl font-bold text-base text-white transition-all"
+            style={{
+              background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
+              boxShadow: '0 0 40px rgba(59, 130, 246, 0.35)'
+            }}
+            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)')}
+            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+          >
+            Kostenlos starten
+            <ArrowRight className="w-5 h-5" />
+          </button>
+          <p className="text-xs mt-4" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            Keine Kreditkarte · Keine Verpflichtung · Sofort loslegen
+          </p>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-gray-100 py-8 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer
+        className="py-10"
+        style={{
+          backgroundColor: '#080D16',
+          borderTop: '1px solid rgba(255,255,255,0.06)'
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663196939510/MpQxIZzGZxrLthGU.png" alt="ImmoRenditeTool Logo" className="h-10 w-auto object-contain" />
-            <span className="font-semibold text-sm text-gray-900">ImmoRenditeTool</span>
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)' }}
+            >
+              <Building2 className="w-4 h-4 text-white" />
+            </div>
+            <span
+              className="font-bold text-white"
+              style={{ fontFamily: 'Sora, sans-serif' }}
+            >
+              ImmoRenditeTool
+            </span>
           </div>
-          <p className="text-xs text-gray-400 text-center">
+          <p className="text-xs text-center" style={{ color: 'rgba(255,255,255,0.25)' }}>
             Alle Berechnungen ohne Gewähr · Keine Anlageberatung · © {new Date().getFullYear()} ImmoRenditeTool
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <a href="/pricing" className="text-xs text-gray-400 hover:text-gray-600">Preise</a>
-            <a href="/impressum" className="text-xs text-gray-400 hover:text-gray-600">Impressum</a>
-            <a href="/datenschutz" className="text-xs text-gray-400 hover:text-gray-600">Datenschutz</a>
-            <a href="/agb" className="text-xs text-gray-400 hover:text-gray-600">AGB</a>
+          <div className="flex flex-wrap gap-5 justify-center">
+            {[
+              { href: '/pricing', label: 'Preise' },
+              { href: '/impressum', label: 'Impressum' },
+              { href: '/datenschutz', label: 'Datenschutz' },
+              { href: '/agb', label: 'AGB' },
+            ].map(({ href, label }) => (
+              <a
+                key={href}
+                href={href}
+                className="text-xs transition-colors"
+                style={{ color: 'rgba(255,255,255,0.3)' }}
+                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.7)')}
+                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.3)')}
+              >
+                {label}
+              </a>
+            ))}
           </div>
         </div>
       </footer>

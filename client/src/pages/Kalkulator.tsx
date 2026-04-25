@@ -230,23 +230,23 @@ export default function Kalkulator() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: "#0A0F1A" }}>
       <Navbar />
       <UpgradeModal />
 
       {/* Breadcrumb */}
-      <div className="border-b border-border bg-secondary/20">
+      <div className="border-b" style={{ backgroundColor: "rgba(255,255,255,0.02)", borderColor: "rgba(255,255,255,0.06)" }}>
         <div className="container py-2 flex items-center gap-2">
-          <button onClick={() => navigate('/dashboard')} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => navigate('/dashboard')} className="flex items-center gap-1.5 text-xs transition-colors" style={{ color: 'rgba(255,255,255,0.4)' }}>
             <ArrowLeft className="w-3.5 h-3.5" />
             Dashboard
           </button>
-          <span className="text-xs text-muted-foreground">/</span>
-          <span className="text-xs text-foreground font-medium">
+          <span className="text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>/</span>
+          <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>
             {savedId ? saveName || 'Analyse' : 'Neue Analyse'}
           </span>
           {savedId && (
-            <span className="ml-auto flex items-center gap-1 text-xs text-green-600">
+            <span className="ml-auto flex items-center gap-1 text-xs" style={{ color: '#10B981' }}>
               <Check className="w-3 h-3" /> Gespeichert
             </span>
           )}
@@ -259,15 +259,15 @@ export default function Kalkulator() {
 
           {/* Left: Input Form */}
           <div className="lg:sticky lg:top-20">
-            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-border bg-secondary/30">
+            <div className="rounded-2xl overflow-hidden" style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div className="px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.03)" }}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <Calculator className="w-3.5 h-3.5 text-blue-700" />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(59, 130, 246, 0.15)" }}>
+                      <Calculator className="w-3.5 h-3.5" style={{ color: "#60A5FA" }} />
                     </div>
                     <div>
-                      <h2 className="font-display font-bold text-sm text-foreground">Eingabe</h2>
+                      <h2 className="font-display font-bold text-sm text-white">Eingabe</h2>
                       <p className="text-xs text-muted-foreground">Objekt- & Finanzierungsdaten</p>
                     </div>
                   </div>
@@ -302,7 +302,7 @@ export default function Kalkulator() {
           {/* Right: Results */}
           <div ref={resultsRef}>
             {!freeResults ? (
-              <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+              <div className="rounded-2xl overflow-hidden" style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.08)" }}>
                 <div
                   className="relative h-48 bg-cover bg-center"
                   style={{ backgroundImage: `url(${PRO_BG})` }}
@@ -310,13 +310,13 @@ export default function Kalkulator() {
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/90" />
                 </div>
                 <div className="px-6 py-8 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                    <BarChart3 className="w-7 h-7 text-blue-600" />
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(59, 130, 246, 0.1)' }}>
+                    <BarChart3 className="w-7 h-7" style={{ color: '#3B82F6' }} />
                   </div>
-                  <h3 className="font-display font-bold text-lg text-foreground mb-2">
+                  <h3 className="font-display font-bold text-lg text-white mb-2">
                     Bereit für deine Analyse
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
+                  <p className="text-sm mb-6 max-w-sm mx-auto" style={{ color: 'rgba(255,255,255,0.5)' }}>
                     Fülle das Formular links aus und klicke auf „Berechnung starten", um sofort Cashflow, Rendite und Szenarien zu sehen.
                   </p>
                   <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
@@ -326,20 +326,20 @@ export default function Kalkulator() {
                       { icon: TrendingUp, label: 'Szenarien', desc: 'Vermietung & mehr' },
                       { icon: TrendingUp, label: 'Empfehlung', desc: 'Kauf sinnvoll?' },
                     ].map(({ icon: Icon, label, desc }) => (
-                      <div key={label} className="p-3 rounded-xl bg-secondary/50 text-left">
-                        <Icon className="w-4 h-4 text-blue-600 mb-1.5" />
-                        <p className="text-xs font-semibold text-foreground">{label}</p>
-                        <p className="text-xs text-muted-foreground">{desc}</p>
+                      <div key={label} className="p-3 rounded-xl text-left" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                        <Icon className="w-4 h-4 mb-1.5" style={{ color: '#3B82F6' }} />
+                        <p className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>{label}</p>
+                        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{desc}</p>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+              <div className="rounded-2xl overflow-hidden" style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.08)" }}>
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <div className="px-4 pt-4 border-b border-border overflow-x-auto scrollbar-none">
-                    <TabsList className="h-9 bg-secondary/50 w-max min-w-full flex-nowrap">
+                  <div className="px-4 pt-4 overflow-x-auto scrollbar-none" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <TabsList className="h-9 w-max min-w-full flex-nowrap" style={{ background: 'rgba(255,255,255,0.05)' }}>
                       <TabsTrigger value="ergebnisse" className="text-xs">
                         <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
                         Ergebnisse
@@ -488,14 +488,14 @@ export default function Kalkulator() {
                   <button
                     key={label}
                     onClick={() => setShowUpgradeModal(true)}
-                    className="p-3 rounded-xl border border-dashed border-border hover:border-blue-300 hover:bg-blue-50/50 transition-all text-left group"
+                    className="p-3 rounded-xl transition-all text-left group" style={{ background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.1)' }}
                   >
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Icon className="w-3.5 h-3.5 text-muted-foreground group-hover:text-blue-600 transition-colors" />
-                      <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-semibold">Pro</span>
+                      <Icon className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
+                      <span className="text-xs px-1.5 py-0.5 rounded font-bold" style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)', color: '#0A0F1A' }}>Pro</span>
                     </div>
-                    <p className="text-xs font-semibold text-foreground">{label}</p>
-                    <p className="text-xs text-muted-foreground">{desc}</p>
+                    <p className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>{label}</p>
+                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{desc}</p>
                   </button>
                 ))}
               </div>
