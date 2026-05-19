@@ -28,31 +28,31 @@ export function UpgradeModal() {
         <DialogTitle className="sr-only">Pro freischalten</DialogTitle>
         {/* Header */}
         <div
-          className="relative px-8 pt-8 pb-6 text-white"
+          className="relative px-8 pt-8 pb-6 text-foreground"
           style={{ background: 'linear-gradient(135deg, #0A2540 0%, #1565C0 100%)' }}
         >
           <button
             onClick={() => setShowUpgradeModal(false)}
-            className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors"
+            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
               <Zap className="w-5 h-5 text-yellow-300" />
             </div>
             <div>
-              <p className="text-white/70 text-xs font-medium uppercase tracking-wider">Upgrade auf</p>
+              <p className="text-foreground/70 text-xs font-medium uppercase tracking-wider">Upgrade auf</p>
               <h2 className="text-2xl font-display font-bold">Pro Version</h2>
             </div>
           </div>
-          <p className="text-white/80 text-sm leading-relaxed">
+          <p className="text-foreground/80 text-sm leading-relaxed">
             Schalte alle Profi-Features frei und erhalte eine vollständige Investitionsanalyse.
           </p>
         </div>
 
         {/* Features */}
-        <div className="px-8 py-6 bg-white">
+        <div className="px-8 py-6 bg-card">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
             Enthaltene Features
           </p>

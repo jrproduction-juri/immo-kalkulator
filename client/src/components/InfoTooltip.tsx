@@ -120,7 +120,7 @@ export function InfoTooltip({ text, className, preferSide = 'right' }: InfoToolt
           role="tooltip"
           className={cn(
             'absolute z-[9999] w-[280px] max-w-[calc(100vw-2rem)]',
-            'bg-gray-900 text-white text-xs rounded-lg shadow-xl',
+            'bg-card text-foreground text-xs rounded-lg shadow-xl',
             'px-3 py-2 leading-relaxed',
             'pointer-events-auto',
             positionClasses[side]

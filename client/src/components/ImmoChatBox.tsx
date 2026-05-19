@@ -145,20 +145,20 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
       {/* ─── Chat-Fenster ─────────────────────────────────────────────────── */}
       {isOpen && (
         <div className="
-          w-[92vw] max-w-[400px] bg-white rounded-2xl shadow-2xl border border-slate-200
+          w-[92vw] max-w-[400px] rounded-2xl shadow-2xl
           flex flex-col overflow-hidden
           animate-in slide-in-from-bottom-4 fade-in duration-200
         " style={{ height: 'min(560px, 80vh)' }}>
 
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-slate-900 text-white">
+          <div className="flex items-center justify-between px-4 py-3 bg-card text-white">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center">
-                <Sparkles className="w-3.5 h-3.5 text-white" />
+                <Sparkles className="w-3.5 h-3.5 text-foreground" />
               </div>
               <div>
                 <p className="font-semibold text-sm leading-tight">KI-Berater</p>
-                <p className="text-xs text-slate-400 leading-tight">
+                <p className="text-xs text-muted-foreground leading-tight">
                   {hasDealData ? 'Kennt dein aktuelles Objekt' : 'Allgemeine Beratung'}
                 </p>
               </div>
@@ -170,14 +170,14 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                   title="Chat zurücksetzen"
                   className="p-1.5 rounded-lg hover:bg-slate-700 transition-colors"
                 >
-                  <RotateCcw className="w-3.5 h-3.5 text-slate-300" />
+                  <RotateCcw className="w-3.5 h-3.5 text-foreground/80" />
                 </button>
               )}
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-1.5 rounded-lg hover:bg-slate-700 transition-colors"
               >
-                <ChevronDown className="w-4 h-4 text-slate-300" />
+                <ChevronDown className="w-4 h-4 text-foreground/80" />
               </button>
             </div>
           </div>
@@ -186,7 +186,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
           {!hasAccess ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-4 p-6 text-center bg-slate-50">
               <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center">
-                <Lock className="w-7 h-7 text-slate-400" />
+                <Lock className="w-7 h-7 text-muted-foreground" />
               </div>
               <div>
                 <p className="font-semibold text-slate-800 text-base">KI-Berater (Pro-Feature)</p>
@@ -197,7 +197,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
               </div>
               <Button
                 size="sm"
-                className="bg-slate-900 hover:bg-slate-800 text-white"
+                className="bg-card hover:bg-secondary text-white"
                 onClick={() => { navigate('/pricing'); setIsOpen(false); }}
               >
                 <Sparkles className="w-3.5 h-3.5 mr-1.5" />
@@ -229,7 +229,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                           onClick={() => sendMessage(prompt)}
                           className="
                             text-left text-xs px-3 py-2 rounded-lg border border-slate-200
-                            bg-white hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700
+                            hover:border-blue-500/30
                             text-slate-600 transition-colors leading-snug
                           "
                         >
@@ -252,8 +252,8 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                     <div className={cn(
                       'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
                       msg.role === 'user'
-                        ? 'bg-slate-900 text-white rounded-br-sm'
-                        : 'bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm'
+                        ? 'bg-card text-white rounded-br-sm'
+                        : 'rounded-bl-sm'
                     )}>
                       {msg.role === 'assistant' ? (
                         <div className="prose prose-sm max-w-none prose-slate">
@@ -269,7 +269,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                 {/* Lade-Indikator */}
                 {isLoading && (
                   <div className="flex justify-start">
-                    <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+                    <div className="rounded-2xl rounded-bl-sm px-4 py-3 bg-secondary border border-border">
                       <div className="flex items-center gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                         <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -283,7 +283,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
               </div>
 
               {/* Eingabefeld */}
-              <div className="p-3 border-t border-slate-200 bg-white">
+              <div className="p-3" style={{ borderTop: "1px solid var(--border)", background: "#0f1929" }}>
                 <div className="flex items-end gap-2">
                   <textarea
                     ref={inputRef}
@@ -295,7 +295,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                     disabled={isLoading}
                     className="
                       flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50
-                      px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400
+                      px-3 py-2 text-sm text-slate-800 placeholder:text-muted-foreground
                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                       disabled:opacity-50 max-h-32 leading-relaxed
                     "
@@ -310,7 +310,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                     size="icon"
                     disabled={!input.trim() || isLoading}
                     onClick={() => sendMessage(input)}
-                    className="h-9 w-9 rounded-xl bg-slate-900 hover:bg-slate-700 shrink-0"
+                    className="h-9 w-9 rounded-xl bg-card hover:bg-slate-700 shrink-0"
                   >
                     {isLoading
                       ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -318,7 +318,7 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
                     }
                   </Button>
                 </div>
-                <p className="text-xs text-slate-400 mt-1.5 text-center">
+                <p className="text-xs text-muted-foreground mt-1.5 text-center">
                   Keine Anlageberatung · Shift+Enter für Zeilenumbruch
                 </p>
               </div>
@@ -335,14 +335,14 @@ export function ImmoChatBox({ dealData, className }: ImmoChatBoxProps) {
           'hover:scale-105 active:scale-95',
           isOpen
             ? 'bg-slate-700 hover:bg-slate-600'
-            : 'bg-slate-900 hover:bg-slate-800',
+            : 'bg-card hover:bg-secondary',
         )}
         title={isOpen ? 'Chat schließen' : 'KI-Berater öffnen'}
         aria-label={isOpen ? 'Chat schließen' : 'KI-Berater öffnen'}
       >
         {isOpen
-          ? <X className="w-6 h-6 text-white" />
-          : <MessageCircle className="w-6 h-6 text-white" />
+          ? <X className="w-6 h-6 text-foreground" />
+          : <MessageCircle className="w-6 h-6 text-foreground" />
         }
         {/* Unread-Dot wenn neue KI-Antwort und Chat geschlossen */}
         {!isOpen && messages.length > 0 && messages[messages.length - 1].role === 'assistant' && (

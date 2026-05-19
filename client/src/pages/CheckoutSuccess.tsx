@@ -137,7 +137,7 @@ export default function CheckoutSuccess() {
                 <p className="text-sm text-slate-500 font-medium">Aktivierter Plan</p>
                 <div className="flex items-center gap-2">
                   {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                   ) : (
                     <Sparkles className="w-4 h-4 text-amber-500" />
                   )}
@@ -163,7 +163,7 @@ export default function CheckoutSuccess() {
         <div className="space-y-3">
           <Button
             onClick={() => navigate("/kalkulator")}
-            className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0"
+            className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-foreground border-0"
             size="lg"
           >
             Jetzt Immobilie analysieren
@@ -180,7 +180,7 @@ export default function CheckoutSuccess() {
         </div>
 
         {/* Countdown-Hinweis */}
-        <p className="text-center text-sm text-slate-400 mt-4">
+        <p className="text-center text-sm text-muted-foreground mt-4">
           Automatische Weiterleitung in{" "}
           <span className="font-semibold text-slate-600">{countdown}s</span>
           {" "}zum Kalkulator

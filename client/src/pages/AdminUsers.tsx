@@ -143,7 +143,7 @@ export default function AdminUsers() {
   }
 
   function SortIcon({ field }: { field: SortField }) {
-    if (sortField !== field) return <ChevronUp className="w-3 h-3 text-slate-300" />;
+    if (sortField !== field) return <ChevronUp className="w-3 h-3 text-foreground/80" />;
     return sortDir === "asc"
       ? <ChevronUp className="w-3 h-3 text-slate-600" />
       : <ChevronDown className="w-3 h-3 text-slate-600" />;
@@ -205,7 +205,7 @@ export default function AdminUsers() {
           <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Name, E-Mail oder Stripe-ID suchen..."
                   value={search}
@@ -280,14 +280,14 @@ export default function AdminUsers() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-12 text-slate-400">
+                    <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                       <RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2" />
                       Lade Nutzerdaten...
                     </TableCell>
                   </TableRow>
                 ) : sorted.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-12 text-slate-400">
+                    <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                       Keine Nutzer gefunden
                     </TableCell>
                   </TableRow>
@@ -299,7 +299,7 @@ export default function AdminUsers() {
                         <TableCell>
                           <div>
                             <p className="font-medium text-slate-900 text-sm">{u.name ?? "—"}</p>
-                            <p className="text-xs text-slate-400">{u.email ?? "—"}</p>
+                            <p className="text-xs text-muted-foreground">{u.email ?? "—"}</p>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -326,7 +326,7 @@ export default function AdminUsers() {
                               {u.stripeCustomerId}
                             </code>
                           ) : (
-                            <span className="text-xs text-slate-400">—</span>
+                            <span className="text-xs text-muted-foreground">—</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -372,7 +372,7 @@ export default function AdminUsers() {
                 <p className="text-sm font-medium text-slate-900">{editUser.name}</p>
                 <p className="text-xs text-slate-500">{editUser.email}</p>
                 <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-xs text-slate-400">Aktuell:</span>
+                  <span className="text-xs text-muted-foreground">Aktuell:</span>
                   <PlanBadge plan={editUser.plan as PlanType} />
                 </div>
               </div>
@@ -432,7 +432,7 @@ export default function AdminUsers() {
                 });
               }}
               disabled={changePlanMutation.isPending}
-              className="bg-slate-900 hover:bg-slate-800 text-white"
+              className="bg-card hover:bg-secondary text-white"
             >
               {changePlanMutation.isPending ? (
                 <RefreshCw className="w-4 h-4 animate-spin mr-2" />

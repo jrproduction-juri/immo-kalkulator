@@ -90,7 +90,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
         {/* Gesperrtes Overlay */}
         <div className="flex flex-col items-center gap-3">
           <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center">
-            <Lock className="w-7 h-7 text-slate-400" />
+            <Lock className="w-7 h-7 text-muted-foreground" />
           </div>
           <div>
             <p className="font-semibold text-slate-700 text-base">Exposé-Upload (Pro-Feature)</p>
@@ -101,7 +101,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
           </div>
           <Button
             size="sm"
-            className="mt-1 bg-slate-900 hover:bg-slate-800 text-white"
+            className="mt-1 bg-card hover:bg-secondary text-white"
             onClick={() => navigate('/pricing')}
           >
             <Sparkles className="w-3.5 h-3.5 mr-1.5" />
@@ -243,7 +243,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
             'relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all',
             isDragging
               ? 'border-blue-400 bg-blue-50'
-              : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/30'
+              : ''
           )}
         >
           <input
@@ -273,7 +273,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
           'flex items-center gap-3 px-3 py-2.5 rounded-xl border',
           isAnalyzing ? 'bg-blue-50 border-blue-100' :
           hasResult ? 'bg-emerald-50 border-emerald-100' :
-          isUploading ? 'bg-gray-50 border-gray-200' : 'bg-gray-50 border-gray-200'
+          isUploading ? '' : ''
         )}>
           <div className="shrink-0">
             {uploadedFile.type === 'application/pdf'
@@ -340,7 +340,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
                     'w-full flex items-center justify-between px-3 py-2 rounded-lg border text-left transition-all',
                     selectedFields.has(key)
                       ? 'bg-blue-50 border-blue-200'
-                      : 'bg-gray-50 border-gray-200 opacity-60'
+                      : 'opacity-60'
                   )}
                 >
                   <div>
@@ -352,7 +352,7 @@ export function ExposeUpload({ onDataExtracted, className }: ExposeUploadProps) 
                     selectedFields.has(key) ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
                   )}>
                     {selectedFields.has(key) && (
-                      <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 10">
+                      <svg className="w-2.5 h-2.5 text-foreground" fill="none" viewBox="0 0 10 10">
                         <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}

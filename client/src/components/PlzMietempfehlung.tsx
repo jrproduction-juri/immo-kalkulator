@@ -142,7 +142,7 @@ export function PlzMietempfehlung({ wohnflaeche, onVorschlagUebernehmen, classNa
           </div>
 
           {/* Formel */}
-          <p className="text-[10px] text-gray-400 mb-2">
+          <p className="text-[10px] text-muted-foreground mb-2">
             {wohnflaeche > 0 ? wohnflaeche : 70} m² × {query.data.mietpreisProQm.toFixed(2)} €/m² = {query.data.empfohleneKaltmiete.toLocaleString('de-DE')} €
           </p>
 

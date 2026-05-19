@@ -258,18 +258,18 @@ function SzenarioRow({
   if (!info) return null;
 
   return (
-    <div className={cn('rounded-lg border bg-gray-50 border-gray-100 overflow-hidden', disabled && 'opacity-70')}>
+    <div className={cn('rounded-lg overflow-hidden', disabled && 'opacity-70')} style={{ background: 'var(--muted)', border: '1px solid var(--border)' }}>
       {/* Hauptzeile */}
       <div className="flex items-center justify-between py-1.5 px-3">
         <div className="flex items-center gap-1.5 min-w-0">
-          {disabled && <Lock className="w-3 h-3 text-gray-400 shrink-0" />}
-          <span className={cn('text-sm cursor-pointer truncate', disabled ? 'text-gray-400' : 'text-gray-700')}>
+          {disabled && <Lock className="w-3 h-3 text-muted-foreground shrink-0" />}
+          <span className={cn('text-sm cursor-pointer truncate', disabled ? '' : '')}>
             {info.name}
           </span>
           <button
             type="button"
             onClick={() => setOpen(o => !o)}
-            className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-muted-foreground hover:text-blue-600 hover:bg-blue-50 transition-colors"
             aria-label="Info anzeigen"
           >
             <Info className="w-3.5 h-3.5" />
@@ -283,7 +283,7 @@ function SzenarioRow({
       </div>
       {/* Accordion-Inhalt */}
       {open && (
-        <div className="px-3 pb-3 pt-0 border-t border-gray-100">
+        <div className="px-3 pb-3 pt-0" style={{ borderTop: "1px solid var(--border)" }}>
           <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide mt-2 mb-1">{info.subtitle}</p>
           {info.text.map((t, i) => (
             <p key={i} className="text-xs text-gray-500 leading-relaxed mb-1.5 last:mb-0">{t}</p>
@@ -422,23 +422,23 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
                 type="button"
                 onClick={() => handleArtChange(opt.value)}
                 className={cn(
-                  'relative flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left transition-all text-sm',
+                  'relative flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all text-sm',
                   active
-                    ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                    ? 'border-blue-500 bg-blue-900/20 text-blue-300 font-medium border'
                     : locked
-                      ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-pointer hover:border-blue-300'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50/30'
+                      ? 'opacity-50 border border-border text-muted-foreground/50'
+                      : 'border border-border text-foreground/70 hover:border-blue-500/30'
                 )}
               >
-                <span className={active ? 'text-blue-600' : locked ? 'text-gray-400' : 'text-gray-500'}>
+                <span className={active ? 'text-blue-600' : locked ? 'text-muted-foreground' : 'text-gray-500'}>
                   {opt.icon}
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{opt.label}</div>
-                  <div className="text-[10px] text-gray-400 truncate">{opt.desc}</div>
+                  <div className="text-[10px] text-muted-foreground truncate">{opt.desc}</div>
                 </div>
                 {locked && (
-                  <Lock className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                  <Lock className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                 )}
                 {opt.proOnly && !locked && (
                   <Badge variant="secondary" className="text-[9px] px-1 py-0 h-4 bg-blue-100 text-blue-700">Pro</Badge>
@@ -448,7 +448,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
           })}
         </div>
         {!isPro && (
-          <p className="text-[11px] text-gray-400 mt-1.5 flex items-center gap-1">
+          <p className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-1">
             <Lock className="w-3 h-3" />
             MFH, Neubau & Gewerbe nur in der Pro-Version
           </p>
@@ -757,7 +757,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
           <Label className="text-xs font-semibold text-gray-800 uppercase tracking-wide cursor-pointer">
             Persönliche Daten (für Steuer)
           </Label>
-          <span className="text-gray-400">
+          <span className="text-muted-foreground">
             {showPersonal ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </span>
         </button>
@@ -776,7 +776,7 @@ export function InputForm({ data, onChange, onCalculate, isPro, onUpgrade, isLoa
                 placeholder="35"
                 step={1}
               />
-              <p className="text-xs text-gray-400 mt-1">Falls unbekannt, wird ein durchschnittlicher Steuersatz von 35 % angenommen.</p>
+              <p className="text-xs text-muted-foreground mt-1">Falls unbekannt, wird ein durchschnittlicher Steuersatz von 35 % angenommen.</p>
             </div>
             <div>
               <FieldLabel label="Eigennutzung (Monate)" field="eigennutzungMonate" />
